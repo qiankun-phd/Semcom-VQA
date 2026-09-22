@@ -1,0 +1,20 @@
+\section{Conclusion}\label{sec:conc}
+This paper presented an evidence-level routing system for structured
+aerial VQA that jointly selects the transmitted representation and
+the receiver's answering computation. A question-type rule exploits
+differences in evidence requirements, while per-sample correctness
+prediction and an energy price adjust the accuracy--energy trade-off.
+On VisDrone, the type rule improves accuracy over fixed-image
+transmission and reduces accounted system energy by about $55\%$
+across three channel models. On DroneVehicle, the validation-selected
+MLP improves accuracy by $1.67$ percentage points and reduces
+accounted system energy by $60.1\%$ relative to the type rule.
+The benefit of learned routing depends on the dataset and receiver;
+nonlinear prediction is not uniformly better than a linear baseline.
+These findings support matching both communication content and
+receiver computation to the question, with energy savings arising
+mainly from avoiding VLM inference when detection evidence is sufficient.
+The savings apply to the evaluated UAV-and-edge energy model and
+do not imply lower UAV energy, since onboard detection can outweigh
+radio savings. Future work will evaluate end-to-end energy and
+latency for online routing on embedded platforms.

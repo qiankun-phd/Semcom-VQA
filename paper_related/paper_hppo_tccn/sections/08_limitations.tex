@@ -1,0 +1,30 @@
+% §VIII --- Limitations (~0.25 page, ~250 words; >=6 honest items).
+% Drafted D11 per ml-paper-writing checklist (Limitations are required,
+% reviewers are explicitly told not to penalize honesty).
+\section{Limitations}\label{sec:limit}
+
+We list six concrete limitations that we did not fully resolve. First,
+the system model assumes a single base station co-located with the MEC
+server. Multi-cell extensions with handover and inter-cell interference
+are out of scope and would require both a new association rule and a
+hierarchical critic. Second, every UAV in our experiments flies at a
+fixed altitude $H_U=50$~m with the simplified flight / hover energy
+constants of \cite{liu2024jamminguav}; full 3-D trajectory control with
+realistic aerodynamics is a natural extension that requires a richer
+continuous action space. Third, the DeepSC-VQA semantic similarity
+look-up table that drives \eqref{eq:simlut} is discretized on a
+$5\!\times\!5$ symbol grid and a $7$-bin SINR axis; whether \method's
+gains transfer to LUTs derived from different semantic encoders or
+different VQA datasets remains unverified, and we leave this as a
+priority follow-up. Fourth, both \method and the MAPPO-hybrid baseline
+share the same training sample budget; whether the role-aware actor
+remains preferable in the deeply sample-constrained regime
+($\le 10^{4}$ rollouts) is open. Fifth, \method requires substantially
+more training compute than classical convex-optimization-based
+allocation methods; the wall-clock numbers in
+Table~\ref{tab:wallclock} make the trade-off explicit but reviewers
+deploying in compute-constrained settings should weigh this carefully.
+Finally, the adversarial-jamming experiments in
+Fig.~\ref{fig:jam} use a constant-power white-noise attacker; learning
+adversaries that adapt to \method's policy in a min--max framework are
+not modeled and may degrade the reported robustness margins.

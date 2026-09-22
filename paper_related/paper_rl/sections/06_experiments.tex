@@ -1,0 +1,405 @@
+% §VI --- Experiments. Status: REWRITTEN on the frozen v8 environment.
+% All numbers from outputs/rl/eps_recal_v8 + flat_ppo_v8 + m3_ablation_v8 +
+% m4_generalization_v8 + separation_v2 (paper2_numbers_v8.json).
+\section{Experiments}\label{sec:experiments}
+
+We follow the reporting template of constrained-DRL
+practice~\cite{khairy2021constrained,long2025lyahippo}: a convergence
+triptych with the dual trajectories, a dual-condition main comparison with
+oracle upper bounds and non-learning baselines, per-channel constraint
+accounting, a dual-machinery ablation, four-axis generalization sweeps
+with a dedicated zero-shot section, and the corrected safety bridge.
+
+\subsection{Protocol and metrics}\label{sub:protocol}
+All runs use the frozen environment of
+Sections~\ref{sec:system}--\ref{sec:algorithm} (communication-window
+deadlines, attainability-calibrated $\varepsilon_k$, certified escalation,
+structural cache ban, mission-aligned reward attribution, fair-share
+reference bandwidth, LUT out-of-support outage guard, per-channel dual
+caps with warm-up). Learning arms train $500$ episodes $\times3$ seeds and
+are evaluated deterministically on $50$ held-out episodes ($1{,}000$
+queries) per condition; non-learning baselines use the same evaluation.
+The peak-condition escalation budget is
+$\delta_{\mathrm{esc}}=0.155$ and the nominal budget $0.05$
+(Section~\ref{subsec:cert}). We report: \textbf{mission} (quality- and
+deadline-compliant fraction of the \emph{admitted} set, the honest
+headline of Eq.~\eqref{eq:cmdp}), \textbf{task} (end-to-end task success),
+\textbf{acc} (mean answer accuracy on the admitted set), \textbf{cacheR}
+(cache-route share), \textbf{neRejR} (non-escalated rejects: serveable
+queries the policy dropped), \textbf{critEsc} (critical-escalation rate
+vs.\ its budget), \textbf{ddlVio} (admitted-set deadline violations), and
+\textbf{conflict} (tactical-conflict rate vs.\ the $0.08$ TLS budget).
+
+Two oracles bound the problem from above. The \emph{best-feasible oracle}
+picks, per query, the cheapest evidence level that succeeds end-to-end,
+but never escalates; the \emph{escalation-aware oracle} additionally
+honours the certificate---a critical query with no spec-attainable
+transmission service is escalated rather than served badly. The gap
+between them measures what admission structure is worth.
+
+\subsection{Main dual-condition comparison}\label{sub:main}
+Table~\ref{tab:main} reports the main comparison.
+
+\textbf{Peak is an admission regime.} The escalation-aware oracle reaches
+admitted mission $0.916$ (admitted deadline violations $0.084$)---but only
+by escalating $0.666$ of the critical load. The best-feasible oracle,
+denied escalation, collapses to $0.528$ with admitted deadline violations
+of $0.412$: \emph{even an oracle cannot keep the mission constraint on the
+admitted set without shedding load}. The feasible region for a
+non-escalating strategy is essentially empty at peak, and safety in this
+regime is created by the certificate-plus-escalation structure, not by any
+strategy-layer optimization. Among learning arms, the constrained and
+fixed-penalty policies land at admitted mission
+$0.180$/$0.184$ with near-zero conflict ($0.003$, $27\times$ under
+budget) and tight admitted deadline compliance ($0.023$), but they
+over-reject (neRejR $\approx0.35$)---dropping serveable queries is the
+cheap escape from a pinned quality price
+(Section~\ref{sub:pathology})---while the unconstrained arm escalates
+$2$--$4\times$ more ($0.329$, over budget) and rejects less. The flat
+single-head baseline is instructive in the opposite direction: it trains
+stably ($0.344$ admitted mission) but \emph{never interacts with the
+admission machinery at all} (zero rejects, zero escalations)---it serves
+structurally unserveable critical queries rather than handing them up,
+its admitted quality-violation rate is $0.564$, and its conflict rate is
+$22\times$ the proposed policy's ($0.065$ vs.\ $0.003$, still under
+budget). No learning arm approaches the escalation-aware ceiling; we
+return to what peak \emph{does} certify in
+Section~\ref{sub:channels}.
+
+\textbf{Nominal is a pricing regime.} Under the feasible nominal
+condition the proposed policy reaches admitted mission $0.653$---$93\%$ of
+the escalation-aware oracle's $0.703$ and above semantic-greedy's
+$0.626$---with zero escalations and zero conflicts; trained directly on
+nominal it reaches $0.723$, and the fixed-penalty arm (its static quality
+price clamped to the same per-channel cap) reaches $0.727$. The flat
+baseline trails the hybrid arms ($0.592$), and the unconstrained arm gives
+up deadline discipline (admitted deadline violations $0.254$ vs.\ the
+proposed $0.168$ and nominal-trained $0.047$). The backend ablation
+(legacy LUT quality instead of the calibrated v5 table) shifts absolute
+numbers ($0.443$ nominal) without changing any ordering, so claims are
+conditional on the calibration but not artifacts of it.
+
+\begin{table*}[t]
+\centering
+\caption{Main dual-condition comparison on the frozen v8 environment
+(mean$\pm$std over $3$ seeds where applicable; oracles and heuristics are
+deterministic). Mission/acc/ddlVio are on the admitted set
+(Eq.~\eqref{eq:cmdp}); critEsc is against the escalation budget
+($0.155$ peak / $0.05$ nominal); conflict is against the $0.08$ TLS
+budget.}
+\label{tab:main}
+\scriptsize
+\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{@{}llcccccccc@{}}
+\toprule
+Cond. & Method & Mission (adm.) & Task & Acc (adm.) & CacheR & neRejR & CritEsc & DdlVio (adm.) & Conflict \\
+\midrule
+\multirow{9}{*}{peak}
+ & Esc-aware oracle & $0.916$ & $0.789$ & $0.808$ & $0.000$ & $0.000$ & $0.666$ & $0.084$ & $0.193$ \\
+ & Best-feasible oracle & $0.528$ & $0.260$ & $0.757$ & $0.008$ & $0.000$ & $0.000$ & $0.412$ & $0.612$ \\
+ & Semantic greedy & $0.616$ & $0.268$ & $0.719$ & $0.008$ & $0.000$ & $0.000$ & $0.380$ & $0.612$ \\
+ & Always cache & $0.000$ & $0.000$ & $0.000$ & $1.000$ & $0.000$ & $0.000$ & $0.000$ & $0.000$ \\
+ & Random & $0.292\pm0.007$ & $0.120\pm0.017$ & $0.454\pm0.010$ & $0.339\pm0.019$ & $0.000$ & $0.000$ & $0.333\pm0.022$ & $0.419\pm0.027$ \\
+ & Flat PPO (single head) & $0.344\pm0.051$ & $0.295\pm0.052$ & $0.361\pm0.021$ & $0.549\pm0.026$ & $0.000$ & $0.000$ & $0.093\pm0.036$ & $0.065\pm0.023$ \\
+ & No-Lagrangian & $0.164\pm0.015$ & $0.384\pm0.226$ & $0.213\pm0.074$ & $0.298\pm0.193$ & $0.287\pm0.076$ & $0.329\pm0.271$ & $0.093\pm0.097$ & $0.005\pm0.002$ \\
+ & Fixed-penalty & $0.184\pm0.013$ & $0.214\pm0.024$ & $0.168\pm0.007$ & $0.452\pm0.029$ & $0.327\pm0.040$ & $0.081\pm0.016$ & $0.021\pm0.009$ & $0.003\pm0.002$ \\
+ & \textbf{Proposed} & $0.180\pm0.011$ & $0.210\pm0.023$ & $0.166\pm0.005$ & $0.439\pm0.035$ & $0.345\pm0.042$ & $0.086\pm0.021$ & $0.023\pm0.010$ & $0.003\pm0.002$ \\
+\midrule
+\multirow{9}{*}{nominal}
+ & Esc-aware oracle & $0.703$ & $0.703$ & $0.454$ & $0.000$ & $0.033$ & $0.000$ & $0.234$ & $0.000$ \\
+ & Best-feasible oracle & $0.691$ & $0.691$ & $0.485$ & $0.037$ & $0.000$ & $0.000$ & $0.281$ & $0.000$ \\
+ & Semantic greedy & $0.626$ & $0.626$ & $0.461$ & $0.052$ & $0.000$ & $0.000$ & $0.339$ & $0.000$ \\
+ & Always cache & $0.250$ & $0.250$ & $0.000$ & $0.750$ & $0.000$ & $0.000$ & $0.000$ & $0.000$ \\
+ & Flat PPO (single head) & $0.592\pm0.074$ & $0.592\pm0.074$ & $0.441\pm0.018$ & $0.162\pm0.054$ & $0.000$ & $0.000$ & $0.263\pm0.112$ & $0.000$ \\
+ & No-Lagrangian & $0.593\pm0.072$ & $0.593\pm0.072$ & $0.438\pm0.048$ & $0.151\pm0.083$ & $0.000$ & $0.000$ & $0.254\pm0.148$ & $0.000$ \\
+ & Fixed-penalty & $0.727\pm0.017$ & $0.727\pm0.017$ & $0.409\pm0.011$ & $0.155\pm0.017$ & $0.000$ & $0.000$ & $0.049\pm0.031$ & $0.000$ \\
+ & \textbf{Proposed} & $0.653\pm0.097$ & $0.653\pm0.097$ & $0.436\pm0.022$ & $0.153\pm0.067$ & $0.000$ & $0.000$ & $0.168\pm0.159$ & $0.000$ \\
+ & Proposed (nominal-trained) & $0.723\pm0.017$ & $0.723\pm0.017$ & $0.421\pm0.010$ & $0.170\pm0.060$ & $0.000$ & $0.000$ & $0.047\pm0.028$ & $0.000$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Per-channel constraint accounting}\label{sub:channels}
+Table~\ref{tab:channels} reports every dual channel's realized evaluation
+cost against its limit, in the implemented constraint semantics
+(joint risk-class event rate on the admitted set). The pattern is the
+paper's core empirical claim. \emph{Structural channels hold everywhere}:
+conflict ($0.003$ peak, $0.000$ nominal, vs.\ $0.08$), battery, GPU, both
+critical-deadline channels at peak, and the escalation budget ($0.086$ vs.\
+$0.155$ peak; $0$ vs.\ $0.05$ nominal). \emph{Quality channels expose the
+regime split}: at peak the realized quality cost sits an order of
+magnitude above its limit ($0.41$ vs.\ $0.02$ critical)---the infeasible
+domain, where the accounting shows exactly \emph{which} promise cannot be
+made and the certificate/escalation layer bounds what happens to the
+unserveable load instead. Under nominal the quality costs drop to
+$0.08$--$0.12$: still above the tight risk-aware limits at episode $500$,
+with an interior, still-climbing dual pricing the residual gap
+(Section~\ref{sub:pathology})---approaching, not attained, and stated as
+such. We emphasize what this table replaces: an earlier draft of this work
+claimed ``constraint satisfaction by construction''; the honest,
+channel-resolved statement is that the \emph{hard-structure} channels are
+satisfied by construction, the escalation budget is satisfied by
+certificate, and the quality channels are priced but not closed.
+
+\begin{table}[t]
+\centering
+\caption{Per-channel realized eval cost vs.\ limit $d_i$ (admitted set;
+$\checkmark$ within limit, $\times$ above). Peak/nominal columns: the
+peak-trained policy in its own condition and evaluated on nominal;
+nom-tr = trained on nominal.}
+\label{tab:channels}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Channel $c_i$ & $d_i$ & peak & nominal & nom-tr \\
+\midrule
+quality (normal)   & $0.05$ & $0.389\,\times$ & $0.101\,\times$ & $0.109\,\times$ \\
+quality (critical) & $0.02$ & $0.408\,\times$ & $0.083\,\times$ & $0.121\,\times$ \\
+deadline (normal)  & $0.05$ & $0.022\,\checkmark$ & $0.090\,\times$ & $0.001\,\checkmark$ \\
+deadline (critical)& $0.02$ & $0.001\,\checkmark$ & $0.077\,\times$ & $0.046\,\times$ \\
+conflict           & $0.08$ & $0.003\,\checkmark$ & $0.000\,\checkmark$ & $0.000\,\checkmark$ \\
+battery            & ---    & $0.000$ & $0.000$ & $0.000$ \\
+GPU (VRAM)         & ---    & $0.000$ & $0.000$ & $0.000$ \\
+escalation         & $0.155/0.05$ & $0.086\,\checkmark$ & $0.000\,\checkmark$ & $0.000\,\checkmark$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Convergence and the dual-pathology contrast}\label{sub:pathology}
+Fig.~\ref{fig:conv} shows the convergence triptych---episode return, the
+quality-critical constraint cost against its $0.02$ limit, and the dual
+trajectories---for the peak-trained and nominal-trained proposed policy
+($3$ seeds, $\pm$std). The dual warm-up (episodes $0$--$149$, shaded)
+freezes ascent while the BC/prior shaping decays; what happens after it
+lifts is the paper's central diagnostic, isolated in
+Fig.~\ref{fig:lambda}. Under \emph{peak}, $\lambda_{QC}$ resumes from
+$\approx\!0$ and ratchets monotonically---$1.95$ by episode $200$, $5.48$
+by $300$, pinned at the per-channel cap $8.00$ by episode
+$\approx\!370$ on $3/3$ seeds with zero fall-back---against a realized
+cost stuck at $\approx\!0.4$. Under \emph{nominal}, the same machinery
+climbs $\approx\!4\times$ slower and stays interior: $0.50$ at episode
+$200$, $1.33$ at $300$, $3.29$ at $500$, never touching the cap, against
+a cost declining toward its limit ($0.053$ at the training tail). One
+algorithm, one schedule, two textbook behaviours: an interior shadow
+price where the constraint is feasible, and the classical divergence of
+the multiplier where it is not~\cite{altman1999constrained,chow2017risk}.
+The pin is robust across three engineering generations (caps $20/20/8$
+pin at $18.3/18.4/8.0$) and across the quality backend ($2/2$ seeds under
+the legacy LUT), while the constrained arm's peak behaviour is invariant
+under all of it (admitted mission $0.179/0.179/0.180$)---the levers move
+the ceiling, not the feasibility.
+
+\evfigwide{fig1_convergence.pdf}{0.98}{Convergence triptych on the frozen v8
+environment: (a) episode return, (b) quality-critical constraint cost vs.\
+its $0.02$ limit, (c) dual trajectories ($\lambda_{QC}$, and
+$\lambda_{\mathrm{conflict}}$ at peak), peak-trained vs.\ nominal-trained,
+$3$ seeds $\pm$std; dual warm-up window shaded.}{fig:conv}
+
+\evfig{fig2_lambda_golden.pdf}{0.85}{The dual-pathology contrast:
+$\lambda_{QC}$ ratchets to its cap under peak (infeasibility signature)
+and converges interior under nominal (shadow price), same machinery and
+schedule.}{fig:lambda}
+
+\subsection{Dual-machinery ablation}\label{sub:m3}
+Table~\ref{tab:ablation} ablates the dual machinery itself at peak
+($3$ seeds each). \textbf{(i) Quality channel off}
+($\lambda^{\max}_{Q}{=}0$): removing the quality price entirely leaves the
+admitted-set mission statistically unchanged ($0.155$ vs.\ $0.180$)---in
+the infeasible domain the price was not buying compliance---but the
+behavioural split moves toward the unconstrained arm (cache $0.304$,
+escalation $0.230$ and over budget): the pinned price had been shaping
+\emph{how} the policy sheds load, not \emph{whether} it satisfies quality.
+\textbf{(ii) Warm-start at the pin} ($\lambda_{QC}(0){=}8$, no warm-up):
+starting the dual where it will end leaves the headline unchanged
+(admitted mission $0.177$ vs.\ $0.180$; $\lambda_{QC}$ enters at $8.00$
+and never leaves on $3/3$ seeds)---the pin is the domain's destiny, not an
+artifact of the ascent schedule. The one visible effect is again on the
+load-shedding split: with the full price active from episode $0$ the
+critical-escalation rate lands at $0.134$, \emph{inside} the
+certificate band $[0.105,0.205]$, where the warmed-up reference
+under-escalates ($0.086$)---corroborating that in an infeasible domain the
+dual's schedule shapes \emph{how} load is shed, not whether the constraint
+is met.
+\textbf{(iii) No slow head}: removing the learned mobility actor
+(deterministic mobility defaults) also leaves the headline unchanged
+($0.176$) and even zeroes the residual conflict rate ($0.000$ vs.\
+$0.003$; both $\ll0.08$)---in this admission-dominated regime the mobility
+hierarchy is \emph{not} what suppresses conflict, and we retract the
+stronger causal reading an earlier draft attached to it. Its visible
+effect is, once more, on the shedding split (critical escalation $0.168$,
+the top of the band). The three ablations tell one story: at peak,
+\emph{no} strategy-layer knob moves the admitted-mission headline (all
+arms sit in $0.155$--$0.184$); each knob only redistributes how the
+unserveable load is shed among escalate/reject/cache. The controlling
+structure is the certificate and its budget---which is exactly what the
+admission-regime reading predicts.
+
+\begin{table*}[t]
+\centering
+\caption{Dual-machinery ablation at peak (mean$\pm$std over $3$ seeds).
+$\lambda_{QC}^{\mathrm{end}}$ lists the terminal quality-critical dual per
+seed; the reference row is the proposed v8 arm.}
+\label{tab:ablation}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+Arm & Mission (adm.) & Task & CacheR & neRejR & CritEsc & DdlVio (adm.) & Conflict & $\lambda_{QC}^{\mathrm{end}}$ \\
+\midrule
+Proposed (reference) & $0.180\pm0.011$ & $0.210\pm0.023$ & $0.439\pm0.035$ & $0.345\pm0.042$ & $0.086\pm0.021$ & $0.023\pm0.010$ & $0.003\pm0.002$ & $8.00/8.00/8.00$ \\
+\;(i) quality channel off & $0.155\pm0.025$ & $0.276\pm0.115$ & $0.304\pm0.144$ & $0.392\pm0.044$ & $0.230\pm0.213$ & $0.051\pm0.036$ & $0.004\pm0.004$ & $0.00/0.00/0.00$ \\
+\;(ii) warm-start at the pin & $0.177\pm0.016$ & $0.229\pm0.004$ & $0.444\pm0.012$ & $0.320\pm0.015$ & $0.134\pm0.037$ & $0.021\pm0.006$ & $0.003\pm0.002$ & $8.00/8.00/8.00$ \\
+\;(iii) no slow mobility head & $0.176\pm0.017$ & $0.246\pm0.015$ & $0.435\pm0.025$ & $0.316\pm0.018$ & $0.168\pm0.057$ & $0.018\pm0.002$ & $0.000$ & $8.00/8.00/8.00$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Sample efficiency}\label{sub:sampleeff}
+Table~\ref{tab:sampleeff} reports episodes to $90\%$ of the terminal
+smoothed return (min-to-terminal span) on a uniform $500$-episode budget.
+The BC warm start front-loads the peak arms (the return span is nearly
+flat from episode $0$), so their ep-to-$90\%$ is small by construction; the
+nominal-trained arm, whose return genuinely improves over training,
+reaches $90\%$ at $146\pm123$ episodes, and the flat baseline at
+$27\pm18$. Wall-clock is $\approx\!3$ minutes per $500$-episode arm on a
+single consumer GPU---the whole $36$-arm matrix reruns in under an hour,
+which is what made the three-generation lineage of
+Section~\ref{sub:pathology} affordable.
+
+\begin{table}[t]
+\centering
+\caption{Sample efficiency: episodes to $90\%$ of terminal smoothed
+return; $500$-episode budget, $3$ seeds.}
+\label{tab:sampleeff}
+\footnotesize
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Arm & ep-to-$90\%$ & budget \\
+\midrule
+Proposed (peak) & $3\pm1$ & $500$ \\
+No-Lagrangian (peak) & $2\pm1$ & $500$ \\
+Fixed-penalty (peak) & $3\pm1$ & $500$ \\
+Legacy-LUT backend (peak) & $2\pm2$ & $500$ \\
+Flat PPO (peak) & $27\pm18$ & $500$ \\
+Quality-channel-off (peak) & $3\pm2$ & $500$ \\
+Warm-start-at-pin (peak) & $2\pm2$ & $500$ \\
+No-slow-head (peak) & $3\pm2$ & $500$ \\
+Proposed (nominal-trained) & $146\pm123$ & $500$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Generalization and zero-shot robustness}\label{sub:m4}
+Following the constrained-DRL reporting
+standard~\cite{khairy2021constrained}, we evaluate the peak-trained
+policies \emph{without retraining} along four test-time axes
+(Fig.~\ref{fig:m4axes}; $5$ points each, $50$ rollouts per point,
+$3$ seeds per learning arm) and at three unseen operating points
+(Fig.~\ref{fig:zeroshot}).
+
+\textbf{Fleet size ($2$--$8$ UAVs).} Admitted mission is flat for every
+arm (proposed $0.172$--$0.191$; escalation-aware oracle
+$0.909$--$0.916$), and the arm ordering is preserved at every point. The
+padded observation and mask machinery transfer across fleet sizes without
+retraining.
+
+\textbf{Arrival load ($12$--$28$ queries per fixed burst horizon).} The
+one axis with real motion, and it moves exactly as the admission-regime
+reading predicts: the learning arms decline smoothly (proposed
+$0.254\to0.134$) as the un-serveable fraction grows, while the
+escalation-aware oracle's admitted mission \emph{rises} ($0.741\to0.933$)
+because its escalation rate climbs with overload ($0.450\to0.667$)---the
+harder the domain, the more the certificate sheds and the cleaner the
+admitted core. The widening scissors between the oracle and the learning
+arms is the clearest picture of what strategy-layer learning does not
+solve at peak.
+
+\textbf{Link attenuation ($+0$ to $+15.5$\,dB excess loss) and
+interference floor ($-120\to-116$\,dBm).} Both link axes leave admitted
+mission flat (proposed $0.180\to0.174$ and $0.180\to0.179$
+respectively)---the extra attenuation drops the mean sensed SNR from
+$28.8$ to $15.9$\,dB, still inside the calibrated quality plateau, and the
+raised noise floor shifts SINR by $\lesssim\!2$\,dB. At the peak operating
+point the bottleneck is the admission geometry, not the link: a useful
+robustness statement, and an honest one---these axes would bite only past
+the LUT support edge, where the outage guard (Section~\ref{sec:system})
+takes over.
+
+\textbf{Zero-shot triple.} At the \emph{unseen soft-conflict profile}
+(calibrated softer UTM geometry) the peak-trained constrained arms
+transfer well (proposed $0.619\pm0.219$, fixed-penalty $0.714\pm0.153$)
+and beat the unconstrained arm ($0.473$)---and, notably, the
+escalation-aware oracle itself ($0.486$), whose certificate-triggered
+shedding is too aggressive for a near-feasible domain. At
+\emph{$1.5\times$ load} the arms continue the arrival-axis trend
+($0.123$). The \emph{unseen low-SNR blockage profile} is the failure
+mode we highlight: the certificate marks essentially the whole critical
+load unserveable---the escalation-aware oracle escalates nearly
+everything and its admitted mission collapses to $0.000$---while the
+zero-shot policies never engage escalation at all (critEsc $0.000$) and
+keep serving with $0.22$ admitted deadline violations (proposed
+$0.149\pm0.085$). The certificate transfers; the learned \emph{shedding
+behaviour} does not. Making the escalate/serve split itself robust to
+unseen link regimes is the concrete open problem this sweep isolates.
+
+\evfigwide{fig3_m4_axes.pdf}{0.9}{Zero-shot generalization of the
+peak-trained policies along four axes (no retraining): (a) fleet size,
+(b) arrival load on the fixed burst horizon, (c) excess link attenuation,
+(d) interference floor. Bands: $\pm$std over $3$ seeds.}{fig:m4axes}
+
+\evfig{fig4_zeroshot.pdf}{1.0}{Three-point zero-shot evaluation: unseen
+soft-conflict profile, $1.5\times$ arrival load, unseen low-SNR blockage
+profile.}{fig:zeroshot}
+
+\subsection{Safety bridge, corrected: evidence choice as an airspace tax}
+\label{sub:bridge}
+Finally we close the loop between communication and separation with the
+M/G/1 coupling of Section~\ref{subsec:mg1}
+(Table~\ref{tab:bridge}, Fig.~\ref{fig:bridge}). At the $-5$\,dB Rayleigh
+worst case with the WP5 $2\sigma$ band, a token upload adds $7.5$\,ms of
+queueing wait to the tactical loop: $\dtc=370.6$\,m, indistinguishable
+from the BUBBLES default-comm baseline of $370.5$\,m, at $99.98\%$
+relative capacity. An image upload at peak shared-C2 load adds $1.98$\,s:
+$\dtc=394.3$\,m ($+23.7$\,m over baseline) and $94.0\%$ relative capacity
+($\approx\!6\%$ of airspace forfeited); under nominal load the tax is
+$+11.2$\,m and $\approx\!3\%$. A dedicated C2 band roughly $\!$halves the
+peak image tax ($+17.2$\,m). \emph{Honest correction}: an earlier version
+of this bridge substituted the payload airtime for the official $1.8$\,s
+separation-communication mean, so light evidence appeared to
+\emph{shorten} $\dtc$ below the deliverable's baseline ($-48.8$\,m,
+``$1.14\times$ capacity''); that gain was an artifact of letting the
+payload stand in for the separation loop's own exchange. Under the
+corrected queueing coupling nothing beats the baseline---heavy evidence
+taxes the airspace, light evidence avoids the tax---and the co-design
+signal survives in honest form: at low SNR, routing to tokens keeps the
+separation service at its certified baseline while the image path costs
+up to $6\%$ of capacity precisely when spectrum is scarcest.
+
+\begin{table}[t]
+\centering
+\caption{Corrected safety bridge at $-5$\,dB Rayleigh, $2\sigma$ band,
+shared C2: M/G/1 wait $W$, contact distance, and relative capacity
+(baseline $\dtc$: $370.49$\,m; dedicated-C2 peak image in parentheses).}
+\label{tab:bridge}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Evidence / load & $W$ (s) & $\dtc$ (m) & $\Delta\dtc$ (m) & rel.\ capacity \\
+\midrule
+$s_1$ token, nominal & $0.004$ & $370.53$ & $+0.04$ & $1.000$ \\
+$s_1$ token, peak    & $0.008$ & $370.58$ & $+0.09$ & $1.000$ \\
+$s_2$ image, nominal & $0.930$ & $381.65$ & $+11.2$ & $0.971$ \\
+$s_2$ image, peak    & $1.984$ & $394.29$ & $+23.8$ & $0.940$ \\
+\;\;(dedicated C2)   & $1.435$ & $387.70$ & $+17.2$ & $0.956$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\evfigwide{fig8_safetybridge.pdf}{0.92}{Corrected safety bridge (Rayleigh,
+$2\sigma$): (a) tactical-contact separation $\dtc$ and (b) relative
+airspace capacity vs.\ SNR for token and image under peak/nominal shared-C2
+load. The M/G/1 coupling adds queueing wait to the official $1.8$\,s
+mean, so no evidence level beats the BUBBLES baseline; images pay an
+airspace tax that grows as the link weakens.}{fig:bridge}

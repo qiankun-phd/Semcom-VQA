@@ -1,0 +1,148 @@
+{
+  "params": {
+    "mlp": "(32,16) relu adam early_stopping",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "protocol": "identical features/split/replay/billing as W5"
+  },
+  "per_channel": {
+    "awgn": {
+      "logistic_paper": {
+        "acc": 0.6832,
+        "j_per_answer": 8.655,
+        "f_img": 0.253
+      },
+      "logistic_sklearn": {
+        "acc": 0.6845,
+        "j_per_answer": 8.533,
+        "f_img": 0.2493
+      },
+      "mlp_seeds": [
+        {
+          "acc": 0.7019,
+          "j_per_answer": 10.143,
+          "f_img": 0.2988
+        },
+        {
+          "acc": 0.7057,
+          "j_per_answer": 6.682,
+          "f_img": 0.1923
+        },
+        {
+          "acc": 0.7058,
+          "j_per_answer": 8.676,
+          "f_img": 0.2537
+        }
+      ],
+      "mlp_mean": {
+        "acc": 0.7045,
+        "acc_std": 0.0018,
+        "j_per_answer": 8.5,
+        "f_img": 0.2483
+      },
+      "oracle_per_sample": {
+        "acc": 0.7472,
+        "j_per_answer": 4.083,
+        "f_img": 0.1125
+      },
+      "all_token": {
+        "acc": 0.6346,
+        "j_per_answer": 0.435,
+        "f_img": 0.0
+      }
+    },
+    "rayleigh": {
+      "logistic_paper": {
+        "acc": 0.6804,
+        "j_per_answer": 8.656,
+        "f_img": 0.2528
+      },
+      "logistic_sklearn": {
+        "acc": 0.6809,
+        "j_per_answer": 8.675,
+        "f_img": 0.2536
+      },
+      "mlp_seeds": [
+        {
+          "acc": 0.7026,
+          "j_per_answer": 9.842,
+          "f_img": 0.2892
+        },
+        {
+          "acc": 0.7041,
+          "j_per_answer": 6.827,
+          "f_img": 0.1968
+        },
+        {
+          "acc": 0.7046,
+          "j_per_answer": 7.768,
+          "f_img": 0.2254
+        }
+      ],
+      "mlp_mean": {
+        "acc": 0.7038,
+        "acc_std": 0.0008,
+        "j_per_answer": 8.146,
+        "f_img": 0.2371
+      },
+      "oracle_per_sample": {
+        "acc": 0.7455,
+        "j_per_answer": 4.058,
+        "f_img": 0.1116
+      },
+      "all_token": {
+        "acc": 0.6339,
+        "j_per_answer": 0.435,
+        "f_img": 0.0
+      }
+    },
+    "rician": {
+      "logistic_paper": {
+        "acc": 0.6798,
+        "j_per_answer": 8.868,
+        "f_img": 0.2594
+      },
+      "logistic_sklearn": {
+        "acc": 0.6795,
+        "j_per_answer": 8.792,
+        "f_img": 0.2571
+      },
+      "mlp_seeds": [
+        {
+          "acc": 0.7019,
+          "j_per_answer": 9.02,
+          "f_img": 0.2639
+        },
+        {
+          "acc": 0.7041,
+          "j_per_answer": 9.687,
+          "f_img": 0.2842
+        },
+        {
+          "acc": 0.7041,
+          "j_per_answer": 12.575,
+          "f_img": 0.3734
+        }
+      ],
+      "mlp_mean": {
+        "acc": 0.7034,
+        "acc_std": 0.001,
+        "j_per_answer": 10.427,
+        "f_img": 0.3072
+      },
+      "oracle_per_sample": {
+        "acc": 0.745,
+        "j_per_answer": 4.039,
+        "f_img": 0.1111
+      },
+      "all_token": {
+        "acc": 0.6339,
+        "j_per_answer": 0.435,
+        "f_img": 0.0
+      }
+    }
+  }
+}

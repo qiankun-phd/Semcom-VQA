@@ -1,0 +1,107 @@
+% §I --- Introduction. Status: DRAFT.
+\section{Introduction}\label{sec:intro}
+
+\IEEEPARstart{T}{he} low-altitude economy is turning urban airspace into a
+shared resource for fleets of small unmanned aerial vehicles (UAVs)
+performing inspection, delivery, and surveillance. A recurring application
+is aerial \emph{visual question answering} (VQA): a ground operator or an
+automated safety service asks natural-language questions about a live
+UAV feed (``how many vehicles at this junction?'', ``is the pad clear?''),
+and an edge server must answer over a bandwidth-limited, error-prone
+air-to-ground (A2G) link. Reconstructing the full image for every question
+is wasteful; a companion study shows that most questions are answered more
+cheaply---and often more accurately---from lower \emph{levels} of evidence:
+a cached answer, a few symbolic detector tokens, or the raw
+image~\cite{zhang2026askb4tx}. That study characterizes the
+per-question evidence--question complementarity in isolation. The present
+paper asks the systems question that follows: when \emph{many} UAVs and
+\emph{many} questions contend for spectrum, compute, and---crucially---the
+same regulated airspace, how should evidence levels and physical resources
+be scheduled \emph{jointly}, under hard safety constraints?
+
+Two facts make this more than a standard resource-allocation problem.
+First, the airspace is governed. Under the European U-space
+framework~\cite{eu2021664}, a separation management service keeps aircraft
+apart to a target level of safety; the SESAR JU BUBBLES
+project~\cite{bubbles2022d21} formalizes the separation minima, the traffic
+performance envelope, and the demand profile that any conformant simulation
+must respect. Most learning-based UAV resource papers invent their own
+mobility, arrival, and conflict models, which makes their safety claims
+hard to audit. Second, the communication choice \emph{is} a safety
+variable: the tactical-contact separation distance in
+BUBBLES grows with a communication-delay term, so transmitting the heavy
+image instead of light tokens over a weak link literally pushes aircraft
+apart and shrinks airspace capacity. Semantic communication thus enters
+the separation loop, not merely the throughput budget.
+
+We turn these observations into a single simulation-and-control study with
+three contributions.
+
+\textbf{(1) A U-space/BUBBLES-conformant semantic evidence-scheduling
+framework with a corrected safety bridge.} Every scenario parameter is
+anchored to a SESAR deliverable: the traffic performance envelope
+(cruise/climb speeds, airframe size), the Appendix-G demand profile
+(daily-mean $8.17$ and peak $20$ concurrent aircraft, giving a nominal and
+a peak operating condition), the chained tactical-contact separation
+minimum $\dtc$, and a per-slot conflict budget of $\approx\!0.08$ obtained
+by walking the TLS$_{\mathrm{MAC}}=2.5\times10^{-7}$
+fatal-accidents-per-flight-hour figure up the mitigation-barrier ladder.
+Our separation kernel reproduces the official Table~G-4/G-5 numerics to
+within $0.18\%$ (a $370.53\to370.49$\,m contact-distance check). On top of
+this we build a \emph{safety bridge} whose coupling we state honestly: the
+payload contends with the separation service's own exchange on the shared
+RAN, modelled as an M/G/1 priority queue on top of the official $1.8$\,s
+separation-communication mean. Token uploads add milliseconds (separation
+stays at the BUBBLES baseline), while image uploads at peak load add
+$1.98$\,s of queueing wait, inflating $\dtc$ by $23.7$\,m and forfeiting
+$\approx\!6\%$ of relative airspace capacity at $-5$\,dB---heavy evidence
+\emph{taxes} the airspace; nothing beats the baseline.
+
+\textbf{(2) An admitted-set CMDP with a certificate-based escalation
+channel.} Peak overload contains queries that no transmission service can
+serve within spec, so we make unserveability a certified state: a
+per-slot \emph{spec-attainability certificate} (an environment property,
+recomputed from the remaining deadline) adjudicates every critical query
+that ends rejected or expired---serveable ones are charged to the policy,
+unserveable ones are \emph{escalated} to a higher tier against a budget
+$\delta_{\mathrm{esc}}$ that is itself calibrated from the certificate
+($0.155$ peak, $0.05$ nominal). The rate constraints are stated on the
+\emph{admitted} (non-escalated) set, which is the promise an overloaded
+safety system can actually keep. On top we train a risk-aware constrained
+hybrid-action PPO (two-timescale actor, eight dual channels with
+per-channel caps, dual warm-up, and a six-layer constraint stack), audited
+by an epoch-0 policy-ratio$\equiv$1 gate and a $321$-test suite.
+
+\textbf{(3) A dual-pathology study across a feasible and an infeasible
+regime, with a reporting-standard evaluation matrix.} Operating the same
+dual machinery in both conditions yields both textbook behaviours: under
+nominal the quality-critical multiplier converges \emph{interior} ($3.29$,
+never touching its cap of $8$) and the learned policy reaches $93\%$ of
+the escalation-aware oracle's admitted mission success ($0.653$ vs.\
+$0.703$); under peak the same multiplier ratchets to its cap on $3/3$
+seeds---the classical CMDP infeasibility signature---the constrained and
+unconstrained arms coincide, and the correct safety story is
+architectural: the escalation-aware oracle attains admitted mission
+$0.916$ only by escalating $0.666$ of the critical load, while a
+non-escalating oracle collapses to $0.528$. We report a per-channel
+constraint-accounting table (conflict $0.003$ vs.\ budget $0.08$;
+escalation $0.086$ vs.\ $0.155$; quality channels priced but not closed),
+a flat single-head PPO baseline, dual-machinery ablations (channel-off,
+warm-start-at-the-pin, no slow head), four-axis zero-shot generalization
+(UAV count, arrival load, link attenuation, interference floor) plus a
+dedicated three-point zero-shot section, and explicit red lines
+throughout.
+
+The rest of the paper is organized as follows. Section~\ref{sec:related}
+positions the work against semantic-aware DRL resource allocation,
+constrained/safe RL for wireless, and U-space separation management.
+Section~\ref{sec:system} develops the BUBBLES-conformant system model, the
+M/G/1 safety-bridge coupling, the deadline QoS anchoring, and the
+spec-attainability certificate. Section~\ref{sec:problem} formalizes the
+admitted-set CMDP with the escalation budget. Section~\ref{sec:algorithm}
+details the two-timescale network, the six-layer constraint machinery, the
+correctness fixes, and the training configuration.
+Section~\ref{sec:experiments} reports the evaluation matrix, the
+dual-pathology evidence, and the corrected safety bridge.
+Section~\ref{sec:discussion} distills the pricing-versus-admission lesson
+for constrained-RL practice, and Section~\ref{sec:conclusion} concludes.

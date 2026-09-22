@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>组会汇报 · Ask Before You Transmit（论文一 · TGCN 投稿版）</title>
+<style>
+  :root {
+    --ink: #1a2332;
+    --muted: #5b6b7f;
+    --faint: #8896a8;
+    --bg: #f6f8fa;
+    --card: #ffffff;
+    --line: #e3e8ef;
+    --accent: #0f766e;       /* teal — 主色 */
+    --accent-soft: #e6f4f2;
+    --blue: #1d4ed8;
+    --blue-soft: #e8eefc;
+    --amber: #b45309;
+    --amber-soft: #fdf3e3;
+    --red: #b91c1c;
+    --red-soft: #fdeaea;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 15.5px; line-height: 1.75;
+  }
+  /* ---------- 顶栏 ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 24px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  }
+  .topbar .t { font-weight: 700; font-size: 15px; }
+  .topbar .s { color: var(--muted); font-size: 13px; }
+  /* ---------- 布局 ---------- */
+  .wrap { max-width: 1400px; margin: 0 auto; display: flex; gap: 28px; padding: 24px; }
+  nav.toc {
+    position: sticky; top: 66px; align-self: flex-start;
+    width: 218px; flex: 0 0 218px; font-size: 13px;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+  }
+  nav.toc a {
+    display: block; color: var(--muted); text-decoration: none;
+    padding: 5px 10px; border-left: 2px solid var(--line); line-height: 1.45;
+  }
+  nav.toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+  main { flex: 1; min-width: 0; }
+  /* ---------- 封面 ---------- */
+  .cover {
+    background: linear-gradient(135deg, #0f3d38 0%, #10554d 55%, #145f68 100%);
+    color: #f0faf8; border-radius: 18px; padding: 42px 46px; margin-bottom: 28px;
+  }
+  .cover .kicker { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; opacity: .75; }
+  .cover h1 { font-size: 30px; line-height: 1.35; margin: 10px 0 6px; }
+  .cover .zh { font-size: 19px; opacity: .92; margin-bottom: 18px; }
+  .cover .meta { font-size: 13.5px; opacity: .85; display: flex; gap: 26px; flex-wrap: wrap; }
+  .cover .meta b { opacity: 1; }
+  /* ---------- 章节 ---------- */
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 30px 36px; margin-bottom: 26px; }
+  h2 {
+    font-size: 21px; margin: 0 0 6px; display: flex; align-items: center; gap: 10px;
+  }
+  h2 .num {
+    flex: 0 0 auto; background: var(--accent); color: #fff; font-size: 13px;
+    width: 26px; height: 26px; border-radius: 8px; display: inline-flex;
+    align-items: center; justify-content: center; font-weight: 700;
+  }
+  h2 + .sub { color: var(--muted); font-size: 13.5px; margin-bottom: 16px; }
+  h3 { font-size: 16.5px; margin: 26px 0 8px; color: #0f3d38; }
+  p { margin: 8px 0; }
+  b, strong { color: #0c1f3d; }
+  code { font-family: var(--mono); font-size: .88em; background: #eef1f5; padding: 1px 5px; border-radius: 4px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; }
+  li { margin: 4px 0; }
+  /* ---------- 组件 ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 12px; margin: 18px 0; }
+  .kpi { background: var(--accent-soft); border: 1px solid #cde8e4; border-radius: 12px; padding: 12px 14px; }
+  .kpi .v { font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1.2; }
+  .kpi .l { font-size: 12.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .callout { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 14px 0; }
+  .callout.blue { border-left-color: var(--blue); background: var(--blue-soft); }
+  .callout.amber { border-left-color: var(--amber); background: var(--amber-soft); }
+  .callout.red { border-left-color: var(--red); background: var(--red-soft); }
+  .callout .h { font-weight: 700; margin-bottom: 2px; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--line); padding: 7px 11px; text-align: center; }
+  th { background: #f0f3f7; font-weight: 700; }
+  td.l, th.l { text-align: left; }
+  tr.hl td { background: var(--accent-soft); font-weight: 700; }
+  .best { color: var(--accent); font-weight: 800; }
+  .bad { color: var(--red); font-weight: 700; }
+  figure { margin: 20px 0; text-align: center; }
+  figure img {
+    max-width: 100%; border: 1px solid var(--line); border-radius: 10px;
+    background: #fff; padding: 8px;
+  }
+  figure.w60 img { max-width: 62%; }
+  figure.w75 img { max-width: 78%; }
+  figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; text-align: left; padding: 0 6px; }
+  figcaption b { color: var(--ink); }
+  .figrow { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+  .figrow figure { flex: 1 1 320px; margin: 10px 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .qa { border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; overflow: hidden; }
+  .qa summary { cursor: pointer; padding: 10px 16px; font-weight: 700; background: #f0f3f7; list-style: none; }
+  .qa summary::before { content: "Q · "; color: var(--accent); }
+  .qa div { padding: 10px 16px; border-top: 1px solid var(--line); }
+  .tag { display: inline-block; font-size: 11.5px; font-weight: 700; border-radius: 999px; padding: 1px 10px; margin-right: 6px; vertical-align: 1px; }
+  .tag.t1 { background: var(--accent-soft); color: var(--accent); }
+  .tag.t2 { background: var(--blue-soft); color: var(--blue); }
+  .tag.t3 { background: var(--amber-soft); color: var(--amber); }
+  .ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 16px 0; }
+  .lv { border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; background: #fbfcfe; }
+  .lv .n { font-family: var(--mono); font-weight: 800; color: var(--blue); font-size: 15px; }
+  .lv .b { font-size: 12.5px; color: var(--muted); }
+  .lv.main { border-color: var(--accent); background: var(--accent-soft); }
+  @media (max-width: 1000px) { nav.toc { display: none; } .two-col { grid-template-columns: 1fr; } .wrap { padding: 12px; } section { padding: 20px; } }
+  @media print {
+    .topbar, nav.toc { display: none; }
+    body { background: #fff; } section { border: none; page-break-inside: avoid; }
+    .qa div { display: block; } .qa summary::after { content: ""; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="t">组会汇报 · 论文一（TGCN 投稿版）</span>
+  <span class="s">Ask Before You Transmit — 面向无人机 VQA 的能效型证据级语义通信</span>
+  <span class="s" style="margin-left:auto">张乾坤 · 2026-07-24</span>
+</div>
+
+<div class="wrap">
+<nav class="toc">
+  <a href="#s1">1 · 一页总览</a>
+  <a href="#s2">2 · 背景与动机</a>
+  <a href="#s3">3 · 核心思想与系统架构</a>
+  <a href="#s4">4 · 系统模型与计费口径</a>
+  <a href="#s5">5 · 路由方法（三个选择器）</a>
+  <a href="#s6">6 · 理论支撑</a>
+  <a href="#s7">7 · 实验设置</a>
+  <a href="#s8">8 · 主结果：精度</a>
+  <a href="#s9">9 · 主结果：能耗前沿</a>
+  <a href="#s10">10 · 能量可控路由（λ 扫描）</a>
+  <a href="#s11">11 · 互补性与消融实验</a>
+  <a href="#s12">12 · 稳健性检验</a>
+  <a href="#s13">13 · 延迟与安全桥</a>
+  <a href="#s15">15 · 总结</a>
+</nav>
+
+<main>
+
+<!-- ============ 封面 ============ -->
+<div class="cover">
+  <div class="kicker">Group Meeting · Paper 1 · IEEE TGCN (submitted)</div>
+  <h1>Ask Before You Transmit: An Energy-Frugal Evidence-Level<br>Semantic Communication System for UAV Visual Question Answering</h1>
+  <div class="zh">先问后传：面向无人机视觉问答的能效型「证据级」语义通信系统</div>
+  <div class="meta">
+    <span><b>作者</b>：Qiankun Zhang, Yue Liu, Zhijin Qin</span>
+    <span><b>目标期刊</b>：IEEE Trans. on Green Communications and Networking</span>
+    <span><b>状态</b>：全文完成（8 节 + 17 图 + 全部实测数据）</span>
+  </div>
+</div>
+
+<!-- ============ 1 一页总览 ============ -->
+<section id="s1">
+  <h2><span class="num">1</span>一页总览：这篇论文做了什么</h2>
+  <div class="sub">如果只记住一句话和六个数字</div>
+
+  <div class="callout">
+    <div class="h">一句话</div>
+    无人机 VQA 服务的默认做法是「传图 + 跑视觉语言大模型（VLM）」；我们证明：<b>在发送之前先问一句「这个问题到底需要哪一级证据」</b>，用一条<b>零参数规则</b>（符号推理类问题→发 0.9 KB 检测 token，感知类问题→发图）做路由，就能<b>同时更省能量、更高精度</b>——因为这条路由决定的不仅是发多少字节，更是<b>最耗能的 VLM 前向推理到底跑不跑</b>。
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v">21,108</div><div class="l">打分决策总数（16,848 主池 + 4,260 复现池）——已知最大规模「真实 VLM 过编码无线信道」VQA 评测</div></div>
+    <div class="kpi"><div class="v">0.67 vs 0.60</div><div class="l">路由 vs 全图传输精度（三信道全部成立；连无差错传图 0.611 也被超过）</div></div>
+    <div class="kpi"><div class="v">2.2×</div><div class="l">路由相对速率自适应传图的每答案能耗节省（每个 SNR 都成立，且精度更高）</div></div>
+    <div class="kpi"><div class="v">75–79×</div><div class="l">固定 token 策略相对传图的每答案能耗差距（0.435 J vs ≈33 J）</div></div>
+    <div class="kpi"><div class="v">≈15 pt</div><div class="l">token 必须用符号解码器解码——把同样 token 交给 VLM 当文本读会掉约 15 个点</div></div>
+    <div class="kpi"><div class="v">+7.7 pt</div><div class="l">「少即是多」：threshold 类问题按置信度截断 token 到 top-32 反而涨 7.7 个点</div></div>
+  </div>
+
+  <p><b>三条贡献</b>（对应论文 §I.A）：</p>
+  <ol>
+    <li><span class="tag t1">发现</span><b>证据–问题互补性 + 零参数路由规则</b>：符号推理类问题（计数/比较/共存）用 0.9 KB 检测 token 回答得比传完整图<b>更准</b>（+0.11~+0.17），感知类问题（存在性）需要图（−0.08）；零参数规则与数据校准的 Wilson-LCB 选择器统计不可区分。</li>
+    <li><span class="tag t2">方法学</span><b>统一「信道使用 + 焦耳」双轴的大规模评测方法</b>：8 种方法、5 类问题、6 个 SNR、3 种信道，在统一复信道使用计费上叠加实测 GPU 功率的联合「通信+计算」能耗轴。</li>
+    <li><span class="tag t3">反直觉结论</span>①路由在<b>无差错信道</b>上也赢传图（收益来自证据选择本身而非抗噪）；②每答案能耗前沿被<b>计算主导</b>——发射机最大的节能杠杆不是功率/速率自适应，而是<b>拒绝跑 VLM</b>；③token 截断非单调「少即是多」。外加能量价格 λ 让路由在全 token 与精度优先两端间<b>连续可控</b>。</li>
+  </ol>
+</section>
+
+<!-- ============ 2 背景 ============ -->
+<section id="s2">
+  <h2><span class="num">2</span>背景与动机</h2>
+  <div class="sub">对应论文 §I、§II</div>
+
+  <h3>2.1 场景：无人机在线视觉问答</h3>
+  <p>无人机做低空巡检/交通监控/应急响应时，地面操作员（或自动决策回路）对实时画面提出自然语言问题——「桥上有多少辆车？」。这是一个 VQA 任务，现代 VLM 只要拿到图就答得不错。<b>瓶颈不再是「回答者」，而是「喂给它的成本」</b>：</p>
+  <ul>
+    <li>无人机<b>电池受限</b>，空地信道<b>带宽受限且易错</b>；</li>
+    <li>我们实测发现：<b>边缘 VLM 前向推理是整条链路中最耗能的单步</b>——在我们测试的每一个链路条件下，它都比把图传过去更贵；</li>
+    <li>默认「每问传一张图」把系统最稀缺的两种资源（发射能量 + 边缘推理能量）花在<b>大多数根本不需要图的问题</b>上。</li>
+  </ul>
+
+  <h3>2.2 现有语义通信工作的两个隐含假设（我们都不采用）</h3>
+  <ul>
+    <li><b>假设一：图（或其学习潜变量）是精度上界</b>，更便宜的表示只是拿精度换时延（GO-SG 等）。→ 我们证明恰恰相反：对符号类问题，token <b>比图更准</b>，路由甚至能超过无差错传图。</li>
+    <li><b>假设二：收发端联合训练/协同设计</b>（MU-DeepSC、VideoQA-SC 等），把结果绑死在某一个推理后端上。→ 我们用<b>任务无关的发射机</b>（现成检测器 + 标准信道编码）配<b>冻结的商用 VLM</b>，不训练任何端到端 codec。</li>
+  </ul>
+
+  <div class="callout blue">
+    <div class="h">与 TGCN 绿色语义通信文献的相对位置</div>
+    Zheng（aerial EE）、Dai（PSCom，联合通信+计算能耗）、Xu（RSMA green）等是「对<b>固定语义表示</b>做能量优化，任务质量用解析代理」；我们互补的两点：①任务结果是<b>实测</b>的（真实冻结 VLM 过编码链路的逐题准确率），能耗是<b>实测功率</b>定价的每答案前沿；②我们的杠杆是「<b>到底传哪一级证据</b>」，从而决定最大能耗项（VLM 推理）<b>运行与否</b>。
+  </div>
+</section>
+
+<!-- ============ 3 核心思想 ============ -->
+<section id="s3">
+  <h2><span class="num">3</span>核心思想与系统架构</h2>
+  <div class="sub">对应论文 §III 开头 + 图 F12</div>
+
+  <p>在<b>发送时刻</b>问：给定<b>这个</b>问题，答案到底需要哪一<b>级</b>证据？我们实例化一个四级「证据阶梯」：</p>
+
+  <div class="ladder">
+    <div class="lv"><div class="n">s₀ 缓存</div>在新鲜度约束内直接返回存储答案，<b>0 B</b>、零计算（条件选项）<div class="b">transmit nothing</div></div>
+    <div class="lv main"><div class="n">s₁ 符号 token</div>检测器输出（类别/框/置信度）打包成 <b>0.7–1.2 KB</b> 帧；LDPC r=1/2 + BPSK<div class="b">主对比等级 · 由符号解码器回答</div></div>
+    <div class="lv main"><div class="n">s₂ 自适应图像</div>速率自适应 JPEG+LDPC，交付 <b>14–215 KB</b>（典型 ~110 KB）<div class="b">主对比等级 · 由冻结 VLM 回答</div></div>
+    <div class="lv"><div class="n">s₃ ROI 裁剪</div>检测引导的局部裁剪（按 s₂ 编码）；保留为条件路由选项/oracle 余量探针<div class="b">不进主对比</div></div>
+  </div>
+
+  <figure>
+    <img src="figures/F12_architecture.png" alt="系统架构图">
+    <figcaption><b>F12 · 系统总览。</b>问题类型路由器在<b>传输之前</b>选证据级：符号类问题发检测 token 包（0.7–1.2 KB），感知类问题发速率自适应 JPEG+LDPC 图像。由于 token 由规则符号解码器回答、图像由冻结 VLM 回答，<b>路由同时选择了「哪个计算会运行」</b>——底部能量芯片：token 路 0.435 J/答案（检测器主导） vs 图像路 ≈33 J（VLM 主导），差 ≈75×。决策时刻<b>不需要任何 CSI</b>。</figcaption>
+  </figure>
+
+  <div class="callout">
+    <div class="h">为什么这是能量决策，而不只是带宽决策</div>
+    两个证据级由<b>两个不同的解码器</b>回答：s₂ 把（受损）图 + 问题喂给冻结 VLM（贪心解码，≤24 新 token）；s₁ <b>完全不经过 VLM</b>——一个轻量符号解码器按问题族用确定性规则回答（presence = 收到目标计数 &gt; 0；counting = 校准后的计数；comparison / co_presence / threshold = 对每类计数做相应谓词）。token 路径上<b>没有任何神经网络运行</b>，所以选 s₁ 就等于「拒绝支付」32.3 J 的 VLM 前向推理。
+  </div>
+
+  <p><b>组件选择</b>：发射端 YOLOv8n（在 VisDrone-DET 官方<b>训练集</b> 6,471 张图上微调，评测图零泄漏）；接收端 Qwen2-VL-2B（冻结、商用、不参与任何训练）。整条流水线里<b>没有一个为本任务端到端训练的通信模块</b>——这正是「任务无关发射机 + 冻结接收机」的卖点。</p>
+</section>
+
+<!-- ============ 4 系统模型 ============ -->
+<section id="s4">
+  <h2><span class="num">4</span>系统模型与两套计费口径</h2>
+  <div class="sub">对应论文 §III.B–H —— 这一节是审稿人最爱抠细节的地方，也是我们做得最扎实的地方</div>
+
+  <h3>4.1 物理层</h3>
+  <ul>
+    <li><b>token（s₁）</b>：逐帧打包，LDPC r=1/2 + BPSK（0.5 bit/use，16 复用/字节）。两套丢帧模型：主线用 Monte-Carlo 估计的<b>信息中断概率</b>（非乐观的闭式遍历值）；固定速率基线用<b>真实 LDPC/BPSK 编解码 Monte-Carlo</b> 得到的 FER。丢帧时 50% 概率整帧丢弃、否则载荷乱码（标签→unknown、框抖动）——损坏 token 仍带部分计数证据，s₁ 优雅退化。</li>
+    <li><b>诚实声明（有限码长）</b>：token 帧很短（≈96–150 复用），按标称 r=1/2 计费忽略了 ≈0.8–1 dB 的散度惩罚——token 空口在低 SNR 被<b>轻微少计费</b>，最多把 265× 的图像/token 差距虚增 ≈1.3×；结论完全不受影响。</li>
+    <li><b>图像（s₂）</b>：JPEG 质量匹配可达谱效率（字节预算 = B·τ·SE/8，SE 取衰落分布上的期望；q∈[8,95]，深衰落交灰帧）——经典 SSCC 基线。固定速率版本在低 SNR 产生数字悬崖。</li>
+    <li><b>信道</b>：AWGN、Rayleigh（无 LoS 最坏界）、Rician K=6 dB（落在 UAV 空地实测 K≈2–15 dB 区间内）；SNR ∈ {−5,0,5,10,15,20} dB。块衰落合理性已验证（96 μs 码字 ≪ 3.8 ms 相干时间；0.3 s 窗覆盖 ≈79 个相干块，支撑遍历谱效计费）。</li>
+  </ul>
+
+  <h3>4.2 口径一：统一复信道使用（谱资源轴）</h3>
+  <p>所有方法（模拟/数字/学习型）统一按<b>每次查询的复信道使用数</b>计费。−5 dB Rayleigh 的量级对比：</p>
+  <table>
+    <tr><th class="l">方法</th><th>复信道使用 / 查询</th><th>相对 token</th></tr>
+    <tr><td class="l">速率自适应传图</td><td>3.72 × 10⁶（12.4 个时隙）</td><td>265×</td></tr>
+    <tr><td class="l">固定速率传图</td><td>5.28 × 10⁶（常数）</td><td>377×</td></tr>
+    <tr><td class="l">未编码模拟</td><td>3 × 10⁵（常数）</td><td>21×</td></tr>
+    <tr class="hl"><td class="l">符号 token</td><td>≈1.4 × 10⁴</td><td>1×</td></tr>
+  </table>
+
+  <h3>4.3 口径二：联合「通信 + 计算」能耗（论文的 TGCN 主轴）</h3>
+  <p>每个被回答的问题计费 <code>E(s,γ) = (u_s/B)·P_tx + E_cmp(s)</code> [J/答案]：</p>
+  <ul>
+    <li><b>发射项</b>：空口时间 × P_tx，P_tx 在 0.1–1 W 参数化（覆盖 3GPP TR 36.777 空中 UE 的 23 dBm=0.2 W），主线取 0.5 W 并做敏感性扫描；</li>
+    <li><b>计算项</b>：s₂ 触发边缘 VLM——在跑<b>实验战役工作负载本身</b>时实测 RTX 4060 功率；s₁ 触发机上检测器——按 Jetson 级嵌入式 GPU 频带参数化（7–15 W × 15–50 ms），桌面实测 0.066 J 作交叉验证；符号解码器几次算术运算计 0 J（声明制）；</li>
+    <li><b>声明的不对称</b>：token 路付检测器编码能量（0.43 J），图像路的 JPEG/DJSCC 源编码计 0 J——这是<b>对 token 路不利</b>的保守计费；</li>
+    <li><b>口径</b>：主线计<b>增量能耗</b>（相对空闲），同时报告总功率口径；计算主导结论限定在「非批处理、单租户」边缘推理；推进/悬停能量（各传输方案不变量）不计。</li>
+  </ul>
+
+  <h3>4.4 任务、数据与划分</h3>
+  <ul>
+    <li><b>主基准</b>：VisDrone-DET 验证集 548 张真实航拍图；<b>复现基准</b>：DroneVehicle 490 张图；</li>
+    <li><b>五类问题</b>确定性生成：presence（存在性）、counting（计数）、comparison（两类计数比较）、co_presence（联合存在）、threshold（计数过阈值）；</li>
+    <li><b>测试集</b>：按 <code>crc32(image_id) % 100 &lt; 20</code> 的 20% 保留——确定性、零泄漏、逐位可复现；所有报告数字均为测试集；</li>
+    <li><b>答案先验平衡</b>：yes/no 显式配平（comparison 269/269，threshold 274/274 等），「永远答 yes」只能拿 0.49–0.55，远低于所有被比方法。</li>
+  </ul>
+</section>
+
+<!-- ============ 5 路由方法 ============ -->
+<section id="s5">
+  <h2><span class="num">5</span>问题条件化证据路由：三个选择器</h2>
+  <div class="sub">对应论文 §IV —— 全部在发射端运行、全部不需要信道状态反馈</div>
+
+  <h3>5.1 Wilson-LCB 校准选择器（LUT）</h3>
+  <p>对每个（问题类型 × SNR 分箱 × 可选上下文）单元、每个证据级，在<b>训练划分</b>上估计答题准确率并取 Wilson 下置信界，选 <code>argmax LCB</code>——下置信界防止稀疏单元被虚高估计。这就是主实验里的「evidence routing」：<b>训练集上学、测试集上报</b>。</p>
+
+  <h3>5.2 零参数语义规则（论文的招牌结果）</h3>
+  <div class="callout">
+    <div class="h">规则全文（无任何自由参数）</div>
+    <b>counting / comparison / co_presence / threshold（符号类）→ s₁ token；presence（感知类）→ s₂ 图像。</b>完。
+  </div>
+  <p>三信道合并：规则 <b>0.6698</b> vs 校准 LUT <b>0.6686</b>——配对 McNemar p=0.12（16,848 个决策里只有 167 个不一致），<b>统计不可区分</b>；AWGN 上两者<b>逐位相同</b>（每个校准单元选级完全一致），两个衰落信道各只在一个单元偏离（−5 dB 的 presence）；第二数据集上规则 0.7293 vs 选择器 0.7246，同样不可分（p=0.20）。<b>数据校准学到的就是这条规则本身。</b></p>
+
+  <h3>5.3 逐样本参数化预测器（升级版）</h3>
+  <p>规则是问题条件化但样本盲的。我们用 logistic 回归在<b>仅发送端可得</b>的特征（问题类型、目标类、原始检测数、SNR、任务元数据）上训练 <code>P(correct|x,s)</code>，逐样本选 <code>argmax</code>。作为离线重选评估：三信道全部 <b>+0.7~+1.1 pt</b>（收回 oracle 差距的 10–15%），同时载荷<b>近乎减半</b>（111→58 KB）——机制是当发送端检测证据已充分时把 presence 也路由到 token。</p>
+  <div class="callout amber">
+    <div class="h">为什么预测器必须在发送端（实测理由）</div>
+    接收端 VLM 自己「说出来」的置信度是<b>轻度反校准</b>的（AUC 0.406，低于随机）——拿它指导路由会主动帮倒忙。
+  </div>
+</section>
+
+<!-- ============ 6 理论 ============ -->
+<section id="s6">
+  <h2><span class="num">6</span>理论支撑：两个条件引理 + 一个 Pareto 命题</h2>
+  <div class="sub">对应论文 §V —— 定位是「解释方向」，经验差距扛主张；理想化假设全部显式声明</div>
+
+  <h3>6.1 引理 1（计数充分性）—— 为什么符号类归 token</h3>
+  <p>若检测器是目标类的「无噪计数器」（超阈检测数 = 真实计数），则传输的计数是答案的<b>充分统计量</b>：<code>I(A;N̂(Z)) = H(A) ≥ I(A;Î)</code>（数据处理不等式作用在 A→I→Î 上）。token 路<b>精确</b>保留答案，图像路只保留有损映射 κ 留下的信息——任何基于图的回答者都不可能严格超过基于精确计数的回答者。现实检测器下退化为<b>噪声源比较</b>：token 只输在检测误差 η，图像同时输在 VLM 识别误差 + 信道/压缩失真——实测正是这个 regime（计数：token 0.45 vs 图像 0.28），且结论单调扩展到 comparison / co_presence / threshold（它们的答案都是每类计数的单调函数）。</p>
+
+  <h3>6.2 引理 2（虚警约束下的存在性检测界）—— 为什么感知类归图像</h3>
+  <p>存在性问题是<b>召回受限</b>的，方向反转。固定虚警预算 α：token 路答 yes 需要至少一个类别 token 存活，检测概率被检测器工作点召回率封顶 <code>P_D ≤ ρ(θ)</code>——检测器漏掉（或信道丢掉）的实例从 Z 中<b>不可恢复</b>；而图像保留<b>亚阈值像素证据</b>，同一 α 下可实现不被 ρ(θ) 封顶的检测概率。推论：截断 top-t 降低召回（伤 presence）却提高 yes 偏置问题的精确率——<b>截断的净效应非单调且类型相关</b>，正是 §11 实测的 +7.7 pt。</p>
+
+  <h3>6.3 命题（能量–精度 Pareto 支配）—— TGCN 版的理论核心</h3>
+  <p>在两条<b>实测前提</b>下：<b>(E1)</b> 逐点能量序 <code>e_s1(t) &lt; e_s2(t)</code> 对每个类型成立（token 空口更便宜<b>且</b>计算更便宜——它拒绝了 VLM 前向：0.43 vs 32.3 J）；<b>(E2)</b> 带严格感知偏好的互补性（符号类 a_s1≥a_s2，感知类 a_s2&gt;a_s1）。则在全体类型可测策略上，零参数规则 r 满足：(i) 精度最大；(ii) 精度最大策略中能量最小；(iii) 对每个可达精度目标都是能量不劣的可行解——特别地<b>严格 Pareto 支配固定传图策略</b>。</p>
+  <div class="callout blue">
+    <div class="h">诚实声明的边界</div>
+    命题是条件性的：E1/E2 是<b>本系统的实测性质</b>而非普适真理（若未来符号 codec 比 VLM 更耗算，E1 可失效）。threshold 类在 E2 的边界之外（其 Δ 的 CI 在两个数据集上都过零、符号还翻转），把它路由到 token 仅靠 E1 支撑——严格更便宜、精度在 CI 内中性。
+  </div>
+</section>
+
+<!-- ============ 7 实验设置 ============ -->
+<section id="s7">
+  <h2><span class="num">7</span>实验设置：8 方法 × 5 问题类型 × 6 SNR × 3 信道</h2>
+  <div class="sub">对应论文 §VI.A–C</div>
+
+  <table>
+    <tr><th class="l">方法</th><th class="l">含义 / 范式</th></tr>
+    <tr><td class="l">Error-free image</td><td class="l">理想无差错传图（参考线——<b>并非上界</b>，这是本文亮点）</td></tr>
+    <tr><td class="l">Fixed-rate image</td><td class="l">固定速率 LDPC 数字传图（数字悬崖代表）</td></tr>
+    <tr><td class="l">Rate-adaptive image</td><td class="l">速率自适应 JPEG+LDPC（SSCC，固定 s₂）</td></tr>
+    <tr><td class="l">Uncoded analog</td><td class="l">未编码模拟传图（JSCC-lite / DeepSC 代理）</td></tr>
+    <tr><td class="l">DJSCC (learned)</td><td class="l">紧凑 SNR 条件化深度 JSCC（我们复现，1.67 M 参数）</td></tr>
+    <tr><td class="l">Fixed token</td><td class="l">固定发检测 token（GO-SG 风格符号基线）</td></tr>
+    <tr class="hl"><td class="l">Evidence routing（ours）</td><td class="l">（问题类型, SNR）Wilson-LCB 路由</td></tr>
+    <tr><td class="l">Oracle</td><td class="l">逐决策取 {s₁,s₂} 最优（选择上界）</td></tr>
+  </table>
+
+  <p><b>样本量与显著性口径</b>：主评测 936 个唯一测试问题（presence 410 / counting 214 / 其余各 104）× 6 SNR = 每信道 5,616 个打分决策，三信道合并 16,848；DroneVehicle 加 710 题 × 6 = 4,260（仅 Rician）。问题与其 SNR 重放不独立，所以<b>所有置信区间按图像级重采样</b>（image-clustered bootstrap，5000 次）。</p>
+</section>
+
+<!-- ============ 8 主结果：精度 ============ -->
+<section id="s8">
+  <h2><span class="num">8</span>主结果一：精度——路由处处最优，且超过无差错传图</h2>
+  <div class="sub">对应论文 §VI.B、§VI.C；图 F1 / F2</div>
+
+  <table>
+    <tr><th>信道</th><th>路由（ours）</th><th>固定 token</th><th>自适应图像</th><th>固定速率@−5dB</th><th>Oracle@20dB</th></tr>
+    <tr><td>AWGN</td><td class="best">0.653→0.679</td><td>0.635</td><td>0.575→0.611</td><td class="bad">0.369</td><td>0.756</td></tr>
+    <tr><td>Rayleigh</td><td class="best">0.641→0.679</td><td>0.633</td><td>0.561→0.612</td><td class="bad">0.409</td><td>0.755</td></tr>
+    <tr><td>Rician</td><td class="best">0.651→0.681</td><td>0.635</td><td>0.584→0.611</td><td class="bad">0.369</td><td>0.758</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--muted)">范围为 −5→20 dB；无差错传图参考 = 0.611。</p>
+
+  <ul>
+    <li><b>头条</b>：20 dB 处路由 0.679–0.681 <b>超过无差错传图 0.611 约 7 个点</b>——在图是较弱证据的地方拒绝传图。收益来自<b>证据选择本身</b>，不是抗信道。</li>
+    <li><b>合并统计</b>（三信道，图像聚类 95% CI）：自适应图像 0.6040 [0.579,0.631] &lt; 固定 token 0.6341 [0.601,0.667] &lt; <b>路由 0.6698 [0.640,0.700]</b> &lt; oracle 0.7459。路由对图像 McNemar <b>p&lt;10⁻¹⁰³</b>，对 token <b>p&lt;10⁻⁵¹</b>——不是边缘显著，是压倒性的。</li>
+    <li><b>一个看似 bug 的真实现象</b>：−5 dB 固定速率在 Rayleigh（0.409）反而高于 AWGN（0.369）——实测 FER 显示 AWGN 在瀑布下方<b>确定性全灭</b>（FER 1.000），而 Rayleigh 衰落上穿越偶尔送达（FER 0.979）。这类细节我们全部主动解释并在 F10 给出证据。</li>
+  </ul>
+
+  <div class="figrow">
+    <figure>
+      <img src="figures/F1_accuracy_snr.png" alt="精度 vs SNR">
+      <figcaption><b>F1 · 精度 vs SNR（三信道，Wilson 95% 带）。</b>路由（绿）在所有 SNR 均为最优非 oracle 方法；固定速率数字悬崖 vs 模拟/自适应平滑退化清晰可见。</figcaption>
+    </figure>
+    <figure>
+      <img src="figures/F2_cliff.png" alt="悬崖效应">
+      <figcaption><b>F2 · 悬崖效应（Rayleigh）。</b>固定速率数字方案在低 SNR 崩塌（≈0.41 @−5 dB），自适应路由优雅退化——语义通信叙事里的经典对照。</figcaption>
+    </figure>
+  </div>
+
+  <h3>DJSCC 学习基线：动了图像路的效率，动不了「传什么」的答案</h3>
+  <p>为公平加入现代学习型 codec：紧凑 SNR 条件化自编码器（1.67 M 参数，1/32 带宽比），在<b>不相交</b>训练集上训练，同一冻结 VLM/提示词/打分端到端评测。三条诚实读数：(a) 行为符合预期——低 SNR 赢模拟代理（0.521 vs 0.479 @−5 dB）、高 SNR 收敛、每信道使用最便宜的图像管线；(b) 任一 SNR 都<b>没有</b>赢过速率自适应传图（非 SOTA，已在局限性声明）；(c) <b>路由结论纹丝不动</b>——DJSCC 的计数同样差（0.277），固定 token 在每个 SNR 都赢它，路由领先 7.6–9.3 pt。</p>
+  <figure class="w75">
+    <img src="figures/F16_djscc_snr.png" alt="DJSCC 基线">
+    <figcaption><b>F16 · DJSCC 基线（Rician 网格）。</b>学习编码改变图像路径的<b>效率</b>，改变不了「该传哪级证据」的<b>答案</b>。</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 9 能耗 ============ -->
+<section id="s9">
+  <h2><span class="num">9</span>主结果二：实测能耗前沿——计算主导，路由是最大杠杆</h2>
+  <div class="sub">对应论文 §VI.F；表 tab:power；图 F14 / F13 / F5(a) / F11 —— TGCN 投稿的核心章节</div>
+
+  <h3>9.1 实测功率（不是估算，是跑实验负载本身测的）</h3>
+  <table>
+    <tr><th class="l">阶段（角色）</th><th>P̄ (W)</th><th>利用率</th><th>s/项</th><th>增量 J/项</th><th>总 J/项</th></tr>
+    <tr><td class="l">空闲（基线）</td><td>52.3</td><td>0%</td><td>—</td><td>—</td><td>—</td></tr>
+    <tr><td class="l">YOLOv8n（s₁ 检测器，交叉验证）</td><td>58.7</td><td>18%</td><td>0.0104</td><td>0.066</td><td>0.61</td></tr>
+    <tr><td class="l">Qwen2-VL-2B（s₂ 回答者）</td><td>107.9</td><td>81%</td><td>0.581</td><td class="bad">32.3</td><td>62.7</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--muted)">RTX 4060（115 W 上限）声明为边缘服务器代理；nvidia-smi ~8 Hz 采样，弃 20 s 预热，窗间标准差 ≤1.1 W；VLM 负载 = 413 张信道退化测试图 + 真实问题。</p>
+
+  <div class="callout red">
+    <div class="h">核心发现：前沿被计算主导</div>
+    在我们测试的<b>每个 SNR、每个发射功率</b>下，VLM 前向推理都比无线电贵：任何图像方法的最大发射能量是 2.7 J/答案（0.5 W 时；1 W 时 5.3 J），而 VLM 增量计算是 <b>32.3 J</b>。速率/功率自适应只动小项；<b>只有证据路由能拒绝掉大项</b>。（限定：非批处理单租户边缘推理；~10× 批处理会把 32.3 J 摊到 ≈3 J——与发射项同量级，主导变平价，但永远高于 0.435 J 的 token 路。）
+  </div>
+
+  <h3>9.2 每答案能耗前沿的三条读数</h3>
+  <ul>
+    <li><b>(a) 类型感知路由严格 Pareto 支配所有固定图像管线</b>（命题的带余量实证）：每 SNR 都比速率自适应传图省 <b>2.2×</b>（−5 dB：15.3 vs 34.4 J；六个 SNR 上比值 2.23–2.25），同时精度<b>高</b> +4.7~+7 pt；DJSCC 与模拟基线躺在 VLM 地板（≈32.4 J）上且精度更低。</li>
+    <li><b>(b) 固定 token 是前沿的便宜端点</b>：0.435 J/答案——比自适应传图低 75–79×、比路由低 33–35×，精度只低 2–5 pt；<b>方法库里没有任何方法既比它便宜又比它准</b>。</li>
+    <li><b>(c) 效率口径</b>：每焦耳正确答案——token <b>1.46</b>，路由 0.043–0.047，全图方法 0.011–0.019。</li>
+  </ul>
+
+  <div class="figrow">
+    <figure>
+      <img src="figures/F14_energy_vs_snr.png" alt="能耗 vs SNR">
+      <figcaption><b>F14 · 每答案联合能耗 vs SNR（Rician，log 轴，naturefig 风格）。</b>横轴 SNR，纵轴每答案焦耳；绿=路由、橙=自适应图像、灰=token 等。路由与自适应图像间约 <b>2.2×</b>。token/路由/自适应图像在每个 SNR 点标 <b>P<sub>tx</sub> 0.1–1 W</b> 能量误差条（图注原文 shaded）。曲线几乎水平 → 计算主导、对发射功率不敏感。</figcaption>
+    </figure>
+    <figure>
+      <img src="figures/F13_energy_stack.png" alt="能耗分解">
+      <figcaption><b>F13 · 每答案能耗分解（Rician −5 dB）。</b>每条证据路径拆成无线电/检测器/VLM 三块，柱顶标注实测精度；插图：token 柱放大——检测器主导（0.435 J 中的 0.43）。</figcaption>
+    </figure>
+  </div>
+  <div class="figrow">
+    <figure>
+      <img src="figures/F5_pareto_energy.png" alt="能量-精度前沿">
+      <figcaption><b>F5(a) · 能量–精度前沿。</b>虚线 = §10 的 λ 可调逐样本路由器；点线竖参考 = 实测 VLM 计算地板。</figcaption>
+    </figure>
+    <figure>
+      <img src="figures/F11_answers_per_joule.png" alt="每焦耳正确答案">
+      <figcaption><b>F11 · 每焦耳正确答案 vs SNR。</b>token 1.46 对全图 0.011–0.019——两个数量级。</figcaption>
+    </figure>
+  </div>
+
+  <p><b>敏感性</b>：因为前沿是计算主导的，没有任何结论依赖发射功率参数化——P_tx 全带扫描下图像/路由比值钉在 2.2×，所有排序不变；总功率口径同样成立。token 路检测器主导（Jetson 带 0.11–0.76 J，桌面 0.07 J）与图像路 VLM 主导（32.4–35.0 J）差两个数量级，与 265× 信道使用差自洽。</p>
+</section>
+
+<!-- ============ 10 能量可控 ============ -->
+<section id="s10">
+  <h2><span class="num">10</span>从「能量已审计」到「能量可控」：λ 价格扫描</h2>
+  <div class="sub">对应论文 §VI.G —— 把静态前沿变成一个单旋钮可调的运行点族</div>
+
+  <p>用 §5.3 的发送端预测器，逐样本按 <code>s*(x) = argmax_s [P(correct|x,s) − λ·E_s(γ)]</code> 路由，扫描能量价格 λ 描出 F5(a) 的虚线前沿：</p>
+  <ul>
+    <li><b>端点自验证</b>：λ→∞ 收敛到全 token 点（0.435 J, 0.634）；λ=0 收敛到精度优先路由器（8.9 J, 0.680）；全图策略（33.0 J, 0.606）<b>严格在曲线下方</b>；</li>
+    <li><b>精度早饱和</b>：2.4 J 就到 0.680——精度优先水平的 <b>3.7× 省能</b>；峰值 0.691 @4.7 J（AWGN/Rayleigh 峰 0.694/0.690）；引入逐样本证据后，连类型规则（0.67 @14.6 J）也被支配；</li>
+    <li><b>部署边界</b>：≈5 J 以上实测曲线非单调（图像侧小于价格的预测收益多为预测器噪声），部署不应在 λ &lt; 3×10⁻³ J⁻¹ 运行；</li>
+    <li><b>接口意义</b>：λ 是每答案能量预算的对偶变量，可直接与时隙级资源分配器组合（连接姊妹调度研究）。</li>
+  </ul>
+</section>
+
+<!-- ============ 11 互补性与消融 ============ -->
+<section id="s11">
+  <h2><span class="num">11</span>互补性本体与四组关键消融</h2>
+  <div class="sub">对应论文 §VI.I–M；图 F6 / F4 / F8 / F17 —— 回答「为什么规则成立」「哪根柱子承重」</div>
+
+  <h3>11.1 证据–问题互补性（规则背后的现象）</h3>
+  <figure>
+    <img src="figures/F6_complementarity.png" alt="互补性">
+    <figcaption><b>F6 · 互补性。</b>(a) 两个证据级的逐类型精度（VisDrone 三信道合并，Wilson 95%）；(b) Δ=acc(token)−acc(image) 在两个数据集上的图像聚类 bootstrap 95% CI。counting/comparison 在两个数据集上均排除零；presence 在 VisDrone 上稳固偏图像；co_presence 符号一致但 VisDrone 区间勉强清零；<b>threshold 是边界类型</b>——CI 双数据集过零且符号翻转（−0.015 vs +0.077）。5 个类型中 4 个跨数据集符号一致。</figcaption>
+  </figure>
+  <figure class="w60">
+    <img src="figures/F4_bytype.png" alt="逐类型精度">
+    <figcaption><b>F4 · 逐类型精度（Rician @5 dB，分组柱状图，高清重绘、样式同原稿）。</b>每类题一组柱：固定 token / 自适应图像 / 路由等；Wilson 误差条。路由柱贴着每类赢家（符号类≈token，presence≈图像）。</figcaption>
+  </figure>
+
+  <h3>11.2 消融一：谁来解码 token？——符号解码器是承重设计</h3>
+  <p>质疑：token 优势会不会只是「用校准符号解码器答符号题」的工件？直接测试：把<b>同样的信道退化 token 文本</b>交给 VLM（无图像输入）回答。</p>
+  <table>
+    <tr><th class="l">类型</th><th>n</th><th>VLM 读 token</th><th>符号解码器</th><th>VLM 读图</th></tr>
+    <tr><td class="l">presence</td><td>1230</td><td>0.554</td><td>0.678</td><td class="best">0.761</td></tr>
+    <tr><td class="l">counting</td><td>642</td><td>0.364</td><td class="best">0.450</td><td>0.273</td></tr>
+    <tr><td class="l">comparison</td><td>312</td><td>0.532</td><td class="best">0.846</td><td>0.712</td></tr>
+    <tr><td class="l">co_presence</td><td>312</td><td>0.449</td><td class="best">0.663</td><td>0.574</td></tr>
+    <tr><td class="l">threshold</td><td>312</td><td>0.446</td><td>0.596</td><td class="best">0.609</td></tr>
+    <tr class="hl"><td class="l">合并</td><td>2808</td><td>0.485</td><td class="best">0.634</td><td>0.606</td></tr>
+  </table>
+  <p>VLM 是 token 的<b>最差消费者</b>：合并 0.485 vs 0.634（<b>−14.9 pt</b>，p&lt;10⁻²⁷），comparison 上差距最大（0.532 vs 0.846）——VLM 从文本里复现不了计数算术。<b>边缘侧符号解码器是承重设计选择</b>，也是 token 柱与接收 VLM 无关的原因。</p>
+  <p><b>追加的自由措辞探针</b>（回应「模板对齐」质疑）：440 个保留问题各配两个自由改写（880 项）。回答优势对措辞稳健：改写下解码器对 VLM 差距 +0.165 vs 原措辞 +0.159，五类符号全保持；但严格模板解析器在改写上 100% 失败——一个轻量关键词意图分类器恢复解析（0% 失败、100% 意图匹配），此后逐类精度与原措辞<b>零不一致对</b>。结论：优势在<b>回答</b>而非模板对齐；开放措辞部署需要意图前端（已入局限性）。</p>
+
+  <h3>11.3 消融二：token 预算 top-t——「少即是多」</h3>
+  <figure>
+    <img src="figures/F8_token_budget.png" alt="token 预算扫描 F8">
+    <figcaption><b>F8 · top-<i>t</i> token 预算扫描（Rician，符号类；每个 <i>t</i> 重新校准；naturefig 重绘）。</b>
+      边端按检测置信度只传最高的 <i>t</i> 个 token（横轴为实际发出的平均 token 数，非标称 <i>t</i>）。
+      <b>(a)</b> SNR = −5 dB、<b>(b)</b> 20 dB：accuracy vs 平均 token 数（log）；
+      <b>(c)</b> 5 dB：同一扫描换成每问句复数信道用途（×10⁴），看预算旋钮买到的空口代价。
+      两条发现：<b>(A)</b> 预算敏感度差一个数量级——comparison 在 <i>t</i>=3 近饱和（0.817 vs 全量 0.846），counting 要到 <i>t</i>=48 才到 0.453，是互补性的第二根轴；
+      <b>(B) 少即是多</b>——threshold 在 <i>t</i>=32 达 <b>0.673 vs 全量 0.596（+7.7 pt）</b>，co-presence 三信道均约 +3.9 pt：置信度截断在 yes 偏置题上滤掉低置信假阳性。
+      包头主导 s₁ 载荷（<i>t</i>=1 时 ≈0.7 KB vs 全量 ≈1.2 KB），截断大约只省 ~30% 带宽——<b>旋钮的价值是精度过滤，不是省带宽</b>。</figcaption>
+  </figure>
+
+  <h3>11.4 消融三：哪些路由维度承重？——只有问题类型</h3>
+  <figure class="w60">
+    <img src="figures/F17_dim_ablation.png" alt="维度消融">
+    <figcaption><b>F17 · 路由维度消融（LCB 选择器，同一划分）。</b>仅问题类型即得 0.670（对比无条件 0.634）；再加 SNR/视角/新鲜度/风险最多变动 ±0.003（SNR 与视角反而略降）——<b>零参数规则的经验根基</b>；其余维度属于调度层。</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 12 稳健性 ============ -->
+<section id="s12">
+  <h2><span class="num">12</span>稳健性：CSI 失配、跨 VLM、跨数据集、可复现性</h2>
+  <div class="sub">对应论文 §VI.J / §VI.L / §VI.N；图 F7 / F15 / F10</div>
+
+  <div class="figrow">
+    <figure>
+      <img src="figures/F7_mismatch.png" alt="CSI 失配矩阵 F7">
+      <figcaption><b>F7 · CSI 失配热力图（策略假定 SNR × 真实 SNR；三信道；naturefig 重绘）。</b>
+        选路用「假定 SNR」查表，答题结果读「真实 SNR」上的日志；物理链路仍按真实 SNR 自适应——只测调度 CSI 误差。
+        因部署规则<b>不看 SNR</b>，矩阵近乎全平：最差失配格（0.641–0.653）等于匹配对角线的最低值。对照组：自适应编码文献通常不报这根轴。</figcaption>
+    </figure>
+    <figure>
+      <img src="figures/F15_crossvlm.png" alt="跨 VLM">
+      <figcaption><b>F15 · 跨 VLM 复现（Rician）。</b>三个接收模型（Qwen2-VL-2B / Qwen2.5-VL-3B / 架构不同的 SmolVLM）：路由方向 4/5 类型一致，唯一分歧是 |Δ| 最小的边界类型 threshold。3B 读退化图明显更强（counting 0.375 vs 0.280）但<b>路由判定不变——互补性是结构性的，不是某个接收机的癖好</b>。</figcaption>
+    </figure>
+  </div>
+
+  <figure class="w60">
+    <img src="figures/F10_fer.png" alt="残余丢帧 F10">
+    <figcaption><b>F10 · 残余丢帧概率 vs SNR（naturefig 重绘）。</b>
+      实线 = token 信息中断（按实测 s₁ 平均载荷算 outage）；虚线+圆点 = 固定速率 LDPC 实测 FER（校准缓存）。
+      Token 在 −5 dB 仅 0.7%（Rician）/ 5.2%（Rayleigh），AWGN 全程 ≈0——解释 token 精度曲线为何平坦；
+      固定速率 LDPC 从 5 dB 的 1.4–36% 爬到 −5 dB 的 98–100%——解释数字悬崖，也解释 Rayleigh(0.979) 与 AWGN(1.000) 的低 SNR 倒挂。</figcaption>
+  </figure>
+
+  <p><b>可复现性三连</b>：① crc32 划分逐位可复现，脚本/校准产物/逐决策日志全部版本管理；② 不同硬件独立重算在共享子集上逐点一致（AWGN 路由 0.628→0.668 vs 0.627→0.668）；③ 两次端到端 s₁ 重跑 99.15% 判定一致（聚合都是 0.6709），十次信道种子重抽两个最常引用单元 ±0.003——<b>种子噪声比每一个被解释的差距低一个数量级</b>。</p>
+</section>
+
+<!-- ============ 13 延迟与安全 ============ -->
+<section id="s13">
+  <h2><span class="num">13</span>延迟与 U-space 安全桥</h2>
+  <div class="sub">对应论文 §VI.E、§VII.A;图 F3 / F9</div>
+
+  <div class="two-col">
+    <div>
+      <h3>13.1 端到端延迟</h3>
+      <p>−5 dB Rayleigh：速率自适应传图 = 3.72 s 上传 + 0.60 s VLM 推理 = <b>4.32 s</b>；token 路全程 <b>0.089 s</b>——<b>49×</b>；固定速率传图 5.87 s。弱链路下的实时性论证。</p>
+      <figure>
+        <img src="figures/F3_latency.png" alt="延迟分解 F3">
+        <figcaption><b>F3 · 端到端延迟分解（Rayleigh；naturefig 重绘）。</b>
+          对数纵轴；每柱堆叠：<b>实心 = 空口上传</b>、斜线 = 边端检测器、<b>点阵 = 接收端推理</b>。
+          −5 dB：速率自适应图像 3.72 s 上传 + 0.60 s VLM ≈ <b>4.32 s</b>；token 全程 <b>0.089 s（约 49×）</b>；固定速率图像 ≈ 5.87 s。
+          弱链路实时性论据：token 把延迟压到亚秒，图像路径被上传主导。</figcaption>
+      </figure>
+    </div>
+    <div>
+      <h3>13.2 安全桥：同一份「证据节俭」保住间隔基线</h3>
+      <p>U-space 间隔管理中，战术间隔最小值随通信延迟增长（BUBBLES D2.1）。姊妹调度研究的 M/G/1 分析（Rayleigh、峰值负载、共享 C2、2σ）：<b>token 路由把认证间隔最小值保在基线（370.6 vs 370.5 m）</b>；连续传图峰值膨胀到 394.3 m，固定速率约 404 m。省能量的同一机制同时保住了空域安全预算。</p>
+      <figure>
+        <img src="figures/F9_separation.png" alt="安全桥 F9">
+        <figcaption><b>F9 · U-space 安全桥（Rayleigh，峰值负载，共享 C2，2σ；naturefig 重绘）。</b>
+          上：战术间隔最小值 <i>d</i><sub>TC</sub> vs SNR（虚线 = BUBBLES 基线 370.5 m）；下：空域容量损失 %。
+          <b>Fixed token ≈ 基线</b>（−5 dB 时 370.6 vs 370.5 m）；速率自适应图像膨胀到 <b>394.3 m（+23.7 m）</b>，固定速率 ≈ 404 m。
+          与 F3 同一条「证据节俭」：省延迟/能量的机制同时保住认证间隔预算。</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15 总结 ============ -->
+<section id="s15">
+  <h2><span class="num">15</span>总结</h2>
+  <div class="callout">
+    <div class="h">带走的信息</div>
+    <p style="margin:6px 0">在任务导向的空中 VQA 里，<b>能效不来自更好的信源/信道编码，而来自证据节俭</b>：先问「这个问题需要哪级证据」，再决定传什么、以及最贵的那次 VLM 推理跑不跑。</p>
+    <ul style="margin:6px 0">
+      <li>零参数规则 = 数据校准选择器（AWGN 逐位相同）——<b>规则简单不是妥协，是数据自己学出来的答案</b>；</li>
+      <li>路由赢过无差错传图（0.68 vs 0.61）——证据选择本身就是精度来源；</li>
+      <li>实测每答案前沿计算主导，路由省 2.2× 且更准，token 便宜 75–79×，λ 一个旋钮实现全 token↔精度优先连续可调；</li>
+      <li>21,108 个打分决策、8 方法、双数据集、三信道、跨 VLM、全部实测功率——证据链完整。</li>
+    </ul>
+  </div>
+  <p><b>当前状态与下一步</b>：全文 8 节完成、17 图全部由 160 服务器当前日志重新生成（图–数据–脚本三方台账在 <code>figures/MANIFEST.md</code>）、cover letter 定位稿已备；TGCN 审读格式（单栏双倍行距 ≤30 页）已按官方模板排版。欢迎大家对叙事重点和图的取舍提意见。</p>
+</section>
+
+</main>
+</div>
+
+</body>
+</html>

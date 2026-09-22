@@ -1,0 +1,62 @@
+{
+  "hardware": "NVIDIA GeForce RTX 4060 (115 W limit), NUC9i7QNX host",
+  "driver": "550.144.03; power via nvidia-smi -q -d POWER Power-Samples (~8 Hz internal sampler, ~14.4 s trailing window); NVML power.draw unsupported on this card",
+  "method": "poll every 4.0s; per phase use samples >= 20.0s after the steady loop starts; average window-averages",
+  "config": "configs/v2_0_rician_cmp.json",
+  "phases": {
+    "idle": {
+      "n_windows": 25,
+      "power_avg_w": 52.29960000000002,
+      "power_win_min_w": 52.11,
+      "power_win_max_w": 52.53,
+      "power_std_between_windows_w": 0.09844714317845839,
+      "util_avg_pct": 0.0,
+      "steady_used_sec": 100.10008549690247
+    },
+    "yolo": {
+      "n_windows": 32,
+      "power_avg_w": 58.653749999999995,
+      "power_win_min_w": 56.63,
+      "power_win_max_w": 60.43,
+      "power_std_between_windows_w": 0.1498697351035226,
+      "util_avg_pct": 18.03125,
+      "steady_used_sec": 130.0026183128357,
+      "weights": "outputs/detector/visdrone_yolov8n/weights/best.pt",
+      "imgsz": 640,
+      "n_items": 14389,
+      "sec_per_item_mean": 0.010422905848912164,
+      "sec_per_item_median": 0.010352848097682,
+      "joule_per_item_total": 0.6113425139356318,
+      "joule_per_item_incremental": 0.06622870719986497
+    },
+    "vlm": {
+      "n_windows": 55,
+      "power_avg_w": 107.87127272727274,
+      "power_win_min_w": 58.88,
+      "power_win_max_w": 125.5,
+      "power_std_between_windows_w": 1.0889645699979151,
+      "util_avg_pct": 81.2909090909091,
+      "steady_used_sec": 220.12503623962402,
+      "model_ref": "/home/qiankun/.cache/huggingface/hub/models--Qwen--Qwen2-VL-2B-Instruct/snapshots/895c3a49bc3fa70a340399125c650a463535e71c",
+      "min_pixels": 200704,
+      "max_pixels": 802816,
+      "max_new_tokens": 24,
+      "n_items": 413,
+      "sec_per_item_mean": 0.5814139346477122,
+      "sec_per_item_median": 0.6484591541811824,
+      "workload": "campaign degraded images @5dB Rician + real questions",
+      "joule_per_item_total": 62.71786111182009,
+      "joule_per_item_incremental": 32.310144895318594
+    },
+    "idle_post": {
+      "n_windows": 10,
+      "power_avg_w": 52.757999999999996,
+      "power_win_min_w": 52.53,
+      "power_win_max_w": 53.1,
+      "power_std_between_windows_w": 0.11855800268223099,
+      "util_avg_pct": 0.0,
+      "steady_used_sec": 40.0601122379303
+    }
+  },
+  "idle_baseline_w": 52.29960000000002
+}

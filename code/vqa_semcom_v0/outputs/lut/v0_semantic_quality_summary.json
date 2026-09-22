@@ -1,0 +1,29 @@
+{
+  "status": "v0_semantic_quality_lut_ready",
+  "task_count": 20,
+  "lut_rows": 540,
+  "service_levels": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "quality_constraint": "A_k >= epsilon_k",
+  "deadline_constraint": "T_k <= tau_k",
+  "critical_is_risk_level": true,
+  "schema": [
+    "question_type",
+    "service_level",
+    "channel_bin",
+    "view_quality_bin",
+    "freshness_bin",
+    "risk_level",
+    "expected_accuracy",
+    "payload_bytes",
+    "sample_count",
+    "std_or_ci"
+  ],
+  "empirical_calibration_enabled": true,
+  "min_sample_count": 1,
+  "max_sample_count": 5
+}

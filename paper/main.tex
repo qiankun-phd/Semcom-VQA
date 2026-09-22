@@ -1,0 +1,188 @@
+%% main.tex --- Paper 1 (Semantic-communication effectiveness), TGCN edition.
+%% Target venue: IEEE Transactions on Green Communications and Networking.
+%% "Ask Before You Transmit: An Energy-Frugal Evidence-Level Semantic
+%%  Communication System for UAV Visual Question Answering."
+%% Submission format: single column, double spaced, 12 pt, <= 30 pages.
+%% Compile: latexmk -pdf -outdir=build main.tex   (or pdflatex x2 + bibtex)
+
+\documentclass[12pt,lettersize,journal,onecolumn]{IEEEtran}
+% Class options follow the official TGCN initial-submission sample
+% (bare_jrnl_new_sample4.tex): 12 pt, letter-size paper, journal mode,
+% single column; double spacing via setspace below, as in the sample.
+% (Older IEEEtran V1.8b releases report `lettersize' as an unused global
+% option; letter paper is their default, so the layout is identical.)
+
+% --------------------------------------------------------------------------
+% Packages --- ordered as in the TGCN sample preamble, followed by the
+% packages this manuscript additionally requires.
+% --------------------------------------------------------------------------
+% Template-mandated set (bare_jrnl_new_sample4.tex / New_IEEEtran_how-to):
+\usepackage{amsmath,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{cite}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+% Manuscript-required additions (theorems, tables, macros, review spacing):
+\usepackage[T1]{fontenc}
+\usepackage{amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{setspace}
+\doublespacing % TGCN review format (single column, double spaced)
+% Floats (tables/figures + captions) stay single-spaced, standard for
+% review-format submissions; body text remains double-spaced.
+\usepackage{etoolbox}
+\AtBeginEnvironment{table}{\singlespacing}
+\AtBeginEnvironment{figure}{\singlespacing}
+% Float-placement tuning: avoid stranded bottom whitespace on pages that
+% carry a top float (page budget; standard IEEE values are stricter).
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.9}
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+% Tighter float/caption separation (page budget; floats are single-spaced
+% while the body is double-spaced, so the stock 20pt gaps read oversized).
+\setlength{\textfloatsep}{8pt plus 2pt minus 3pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{8pt plus 2pt minus 3pt}
+\setlength{\dblfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\usepackage{hyperref}
+% Submission style: keep hyperlinks functional but typeset in black.
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+
+% --------------------------------------------------------------------------
+% Custom macros
+% --------------------------------------------------------------------------
+\newcommand{\eg}{e.g.,\xspace}
+\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\etal}{\textit{et al.}\xspace}
+\newcommand{\sz}[1]{s_{#1}}
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\CITE}[1]{\textcolor{red}{[CITATION NEEDED: #1]}}
+
+% Visible placeholder box for figures whose PDF asset is not yet under figures/.
+% The \IfFileExists guard lets the document compile with or without the asset.
+% \evfigw scales figure widths for the single-column review layout (a factor
+% of 1.0 maps to ~0.5 text width; the length must be set at \AtBeginDocument
+% time---in the preamble \linewidth is not yet the final text width, which
+% silently collapsed every \evfig figure to a dot in earlier builds).
+\newlength{\evfigw}
+\AtBeginDocument{\setlength{\evfigw}{0.46\linewidth}}
+\newcommand{\evfig}[4]{% {file}{width}{caption}{label}
+  \begin{figure}[t]\centering
+    \IfFileExists{figures/#1}{\includegraphics[width=#2\evfigw]{figures/#1}}%
+      {\fbox{\parbox[c][4.5cm][c]{#2\evfigw}{\centering
+        \textcolor{red}{\textbf{[\texttt{\detokenize{#1}} --- place PDF under figures/]}}}}}
+    \caption{#3}\label{#4}
+  \end{figure}}
+
+% Theorem environments for the evidence-routing theory in Section V.
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+% --------------------------------------------------------------------------
+% Front matter
+% --------------------------------------------------------------------------
+\title{Ask Before You Transmit: An Energy-Frugal\\
+Evidence-Level Semantic Communication System\\
+for UAV Visual Question Answering}
+
+% Author order (Zhang, Liu, Qin, Liang, da Fonseca): H. Liang after
+% Z. Qin, per the corresponding author's instruction of 2026-09.
+\author{Qiankun Zhang,
+        Yue Liu,~\IEEEmembership{Member,~IEEE,}
+        Zhijin Qin,~\IEEEmembership{Senior Member,~IEEE,}
+        Hongbin Liang,~\IEEEmembership{Member,~IEEE,}
+        and~Nelson~L.~S.~da~Fonseca,~\IEEEmembership{Senior Member,~IEEE}
+\thanks{Manuscript submitted September~2026. \emph{(Corresponding author: Yue Liu.)}}
+\thanks{Q.\ Zhang and Y.\ Liu are with the Faculty of Applied Sciences,
+Macao Polytechnic University, Macao SAR, China
+(e-mail: yue.liu@mpu.edu.mo).}
+\thanks{Z.\ Qin is with the Department of Electronic Engineering, Tsinghua
+University, Beijing, China.}
+\thanks{H.\ Liang is with the School of Transportation and Logistics,
+Southwest Jiaotong University, Chengdu, China
+(e-mail: hbliang@swjtu.edu.cn).}
+\thanks{N.\ L.\ S.\ da Fonseca is with the Institute of Computing, State
+University of Campinas (UNICAMP), Campinas 13083-852, Brazil
+(e-mail: nfonseca@ic.unicamp.br).}}
+
+\markboth{IEEE Transactions on Green Communications and Networking (submitted)}%
+{Zhang \MakeLowercase{\textit{et al.}}: Energy-Frugal Evidence-Level Semantic Communication for UAV VQA}
+
+\maketitle
+% IEEEtran.bst control: force "et al." beyond 6 authors (review page budget).
+\bstctlcite{BSTcontrol}
+
+% --------------------------------------------------------------------------
+% Abstract
+% --------------------------------------------------------------------------
+\begin{abstract}
+Uploading aerial images from an unmanned aerial vehicle (UAV) to an
+edge vision--language model (VLM) enables visual question answering,
+but image transmission and model inference incur energy costs for
+every query. This paper proposes an evidence-level semantic
+communication system for structured aerial visual question answering.
+The transmitter selects either detection records or an image,
+and the receiver uses a symbolic decoder or a frozen VLM,
+respectively. A training-free question-type rule selects evidence
+according to the information needed for the answer. A per-sample
+router predicts branch correctness from sender-side features, while
+an energy price adjusts the accuracy--energy trade-off. Evaluation
+uses two aerial datasets and separates transmission, onboard
+detection, and edge inference costs. Across three channel models
+on VisDrone, the type rule improves accuracy over fixed-image
+transmission and reduces accounted system energy by about $55\%$.
+On DroneVehicle, a validation-selected learned router attains
+$74.60\%$ accuracy at $4.47$ J per query, compared with $72.93\%$
+at $11.21$ J for the type rule. Matched-receiver comparisons show
+that adaptation can help, but nonlinear routing is not uniformly
+better than a linear reference. The results support selecting
+both evidence and answering computation according to the task.
+The energy gains apply to the stated combined UAV-and-edge model,
+not to measured UAV endurance.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Energy efficiency, evidence-level routing, semantic communication,
+unmanned aerial vehicles, vision--language models, visual question answering.
+\end{IEEEkeywords}
+
+% --------------------------------------------------------------------------
+% Body --- one \input{} per section.
+% --------------------------------------------------------------------------
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_system_model}
+\input{sections/04_evidence_routing}
+\input{sections/06_experiments}
+\input{sections/08_conclusion}
+% Appendix folded into §VI (reproducibility paragraph) for the 30-page
+% TGCN review limit; 09_appendix.tex retained on disk but not \input.
+
+% --------------------------------------------------------------------------
+% References (single-spaced; body text remains double-spaced)
+% --------------------------------------------------------------------------
+\begin{singlespace}% IEEE-style smaller reference type (page budget):
+% IEEEtran's thebibliography forces \footnotesize internally, so remap it
+% to \scriptsize inside this group only.
+\renewcommand{\footnotesize}{\scriptsize}%
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{singlespace}
+
+\end{document}

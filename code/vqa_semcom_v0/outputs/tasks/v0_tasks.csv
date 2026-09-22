@@ -1,0 +1,21 @@
+image_id,question_type,question,answer,target_class,object_count,risk_level,epsilon_k,tau_k,view_quality_bin,scale_proxy,occlusion_score,truncation_score,density_score
+demo_001,presence,Are there car objects in this area?,yes,car,1,normal,0.65,5.0,good,0.9125,0.5,0.0,2.0
+demo_001,counting,How many car objects are in this area?,1,car,1,normal,0.65,5.0,good,0.9125,0.5,0.0,2.0
+demo_001,attribute,What is the visible condition of the car objects in this area?,clear,car,1,normal,0.72,4.5,good,0.9125,0.5,0.0,2.0
+demo_001,presence,Are there pedestrian objects in this area?,yes,pedestrian,1,normal,0.65,5.0,good,0.9125,0.5,0.0,2.0
+demo_001,counting,How many pedestrian objects are in this area?,1,pedestrian,1,normal,0.65,5.0,good,0.9125,0.5,0.0,2.0
+demo_001,attribute,What is the visible condition of the pedestrian objects in this area?,clear,pedestrian,1,normal,0.72,4.5,good,0.9125,0.5,0.0,2.0
+demo_001,relation,Are people close to vehicles in this area?,separate,person_vehicle,2,normal,0.74,4.5,good,0.9125,0.5,0.0,2.0
+demo_001,risk,Is this area crowded or blocked?,no,scene,2,critical,0.82,3.0,good,0.9125,0.5,0.0,2.0
+demo_002,presence,Are there bus objects in this area?,yes,bus,1,normal,0.65,5.0,poor,0.170553,2.0,1.0,1.0
+demo_002,counting,How many bus objects are in this area?,1,bus,1,normal,0.65,5.0,poor,0.170553,2.0,1.0,1.0
+demo_002,attribute,What is the visible condition of the bus objects in this area?,occluded,bus,1,normal,0.72,4.5,poor,0.170553,2.0,1.0,1.0
+demo_002,risk,Is this area crowded or blocked?,no,scene,1,critical,0.82,3.0,poor,0.170553,2.0,1.0,1.0
+demo_003,presence,Are there motor objects in this area?,yes,motor,2,normal,0.65,5.0,medium,0.699146,1.0,0.0,2.0
+demo_003,counting,How many motor objects are in this area?,2,motor,2,normal,0.65,5.0,medium,0.699146,1.0,0.0,2.0
+demo_003,attribute,What is the visible condition of the motor objects in this area?,occluded,motor,2,normal,0.72,4.5,medium,0.699146,1.0,0.0,2.0
+demo_003,risk,Is this area crowded or blocked?,no,scene,2,critical,0.82,3.0,medium,0.699146,1.0,0.0,2.0
+demo_004,presence,Are there van objects in this area?,yes,van,1,normal,0.65,5.0,good,1.0,0.0,0.0,1.0
+demo_004,counting,How many van objects are in this area?,1,van,1,normal,0.65,5.0,good,1.0,0.0,0.0,1.0
+demo_004,attribute,What is the visible condition of the van objects in this area?,clear,van,1,normal,0.72,4.5,good,1.0,0.0,0.0,1.0
+demo_004,risk,Is this area crowded or blocked?,no,scene,1,critical,0.82,3.0,good,1.0,0.0,0.0,1.0

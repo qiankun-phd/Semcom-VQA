@@ -1,0 +1,177 @@
+% §V --- Algorithm. Status: DRAFT.
+\section{Risk-Aware Constrained Hybrid-Action PPO\\ with Dual-Price Monitoring}
+\label{sec:algorithm}
+
+We name the method precisely: a \emph{risk-aware constrained hybrid-action
+PPO with a certified escalation layer and dual-price diagnostics}, trained
+on the two-timescale action space of Section~\ref{sec:problem} with a slow
+mobility--semantic actor. The name reflects the division of labour
+established in Section~\ref{sec:experiments}: in the feasible operating
+regime the Lagrangian duals converge to interior shadow prices, and in the
+infeasible overload regime the certificate-based escalation/admission
+layer carries the safety guarantee while the dual's ceiling ratchet serves
+as an infeasibility diagnostic. This section covers the network and
+training (§\ref{sub:net}), the six-layer constraint machinery
+(§\ref{sub:layers}), the correctness fixes and the ratio$\equiv$1 test
+gate (§\ref{sub:fixes}).
+
+\subsection{Network and training}\label{sub:net}
+A shared MLP encoder ($128,128$; ReLU) feeds single-layer policy heads and
+a value head; continuous heads use a state-independent learnable
+$\log\sigma$. We optimize with Adam (lr $3\times10^{-4}$), PPO clip
+$0.2$~\cite{schulman2017ppo}, and four epochs per episode.
+Advantages use Monte-Carlo discounted returns minus the shared value
+baseline (no GAE): episodes are short ($20$ steps) and rewards dense, so
+GAE's bias--variance trade buys little and costs a hyperparameter; the
+price is higher variance, noted as a limitation. Entropy is annealed
+linearly $0.10\to0.02$ to suppress premature collapse to the cache action,
+and a behaviour-cloning (BC) warm start from greedy demonstrations
+is applied through a decaying auxiliary loss. Rollout collection is wrapped
+in \texttt{no\_grad}. Training configuration is summarized in
+Table~\ref{tab:train}.
+
+\begin{table}[t]
+\centering
+\caption{Training configuration.}
+\label{tab:train}
+\footnotesize
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.4cm}@{}}
+\toprule
+Component & Setting \\
+\midrule
+Shared encoder & MLP $(128,128)$ + ReLU; policy/value share encoder \\
+Action heads & single linear layer each; state-indep.\ $\log\sigma$ \\
+Optimizer & Adam, lr $3\times10^{-4}$ \\
+PPO clip / epochs & $0.2$ / $4$ per episode \\
+Advantage & MC return $-$ $V$ baseline; scale-only norm.\ (no GAE) \\
+Entropy coeff. & $0.10\to0.02$ linear anneal (over $120$ ep) \\
+BC warm start & greedy demos, $50$ ep; \texttt{bc\_aux} $0.05$ + service prior $0.65$, both time-decayed \\
+Dual schedule & lr $0.1$ ($0.2$ conflict); caps $\lambda^{\max}{=}20$, per-channel $8$ (quality, conflict); leak $0.01$; warm-up $150$ ep \\
+Episode & $20$ decision slots ($1$\,s each) \\
+Protocol & $3$ seeds $\times500$ train ep; test $50$ rollouts/point \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Six-layer constraint machinery}\label{sub:layers}
+Constraint handling is realized by six stacked layers. The division of
+labour, established empirically in Section~\ref{sec:experiments}, is that
+the \emph{structural} layers (2--5) plus the \emph{admission} layer (6)
+carry the safety load, while the \emph{dual} layer (1) prices the
+constraints where they are feasible and diagnoses them where they are not.
+\begin{enumerate}
+\item \textbf{Lagrangian dual} (eight multipliers $\lambda_i$, incl.\ the
+escalation channel): projected dual ascent
+$\lambda_i\!\leftarrow\![(1{-}\kappa)\lambda_i+
+\eta_i(c_i-d_i)]_{0}^{\lambda_i^{\max}}$
+with risk-aware limits, ascent rates $\eta_i=0.1$ ($0.2$ for the conflict
+channel), a leak $\kappa{=}0.01$ (releasing the ratchet so $\lambda$ can
+decrease; disabled on the quality/escalation channels, which are pure
+projected sub-gradients), per-channel ceilings
+($\lambda^{\max}_{Q}{=}\lambda^{\max}_{\mathrm{conf}}{=}8$ vs.\ the global
+$20$), and a $150$-episode dual warm-up during which ascent is frozen so
+the policy forms under the BC/prior shaping before the constraint prices
+start to move.
+\item \textbf{Action mask}: hard feasibility masks (GPU-VRAM masks the
+service level, battery masks the UAV, and manoeuvre modes are masked by
+state).
+\item \textbf{Semantic feasibility projection}: on a hard violation the
+service is re-selected by a semantic safety score; a cache-override forces
+an evidence upgrade under a large semantic gap, and a deadline-infeasible
+transmission is rewritten into token$\to$cache$\to$reject$\to$defer, the
+reject/defer outcomes of Section~\ref{sec:problem}. A structural
+\emph{critical-cache ban} rules a critical/high query served from cache
+alone never quality-compliant, closing the degenerate cache shortcut.
+\item \textbf{Resource-floor projection}: per-route lower bounds on
+bandwidth/power/CPU/GPU; resources are zeroed for $s_0$.
+\item \textbf{Lyapunov virtual queues} ($\times5$): quality, deadline,
+energy, risk, and UTM queues enter the observation and a drift-plus-penalty
+term~\cite{chow2018lyapunov,neely2010stochastic}; updated incrementally.
+\item \textbf{Certified escalation/admission} (Section~\ref{subsec:cert}):
+the spec-attainability certificate adjudicates every critical/high query
+that ends rejected or expired---attainable ones are charged as quality
+violations, unattainable ones are escalated against the budget
+$\delta_{\mathrm{esc}}$ through the dedicated dual channel. This is the
+layer that \emph{creates} a feasible region in the overload regime
+(Section~\ref{sec:experiments}).
+\end{enumerate}
+
+\begin{algorithm}[t]
+\caption{Risk-aware constrained hybrid-action PPO with certified escalation}
+\label{alg:main}
+\footnotesize
+\begin{algorithmic}[1]
+\STATE Init.\ shared encoder, heads, value; $\lambda_i\!\gets\!0$; BC warm start.
+\FOR{episode $=1,\dots,500$}
+  \STATE Collect rollout ($20$ slots) under \texttt{no\_grad}; every slot run
+         fast head, every $K{=}3$ slots run slow head; apply masks (L2),
+         feasibility projection incl.\ reject/defer rewrite (L3), resource
+         floors (L4).
+  \STATE Certificate adjudication (L6): critical rejected/expired queries
+         are charged (attainable) or escalated against
+         $\delta_{\mathrm{esc}}$ (unattainable).
+  \STATE Update Lyapunov queues (L5); log costs $c_i$ and multipliers $\lambda_i$.
+  \FOR{epoch $=1,\dots,4$}
+    \STATE Recompute log-probs; \textbf{assert} epoch-0 ratio$\equiv1$ (unit gate).
+    \STATE PPO clip loss $+$ Lagrangian term $\sum_i\lambda_i c_i$ $+$
+           Lyapunov drift $+$ decayed BC aux.
+    \STATE Scale-only advantage normalization (preserve mean; keep $\lambda$ penalty).
+  \ENDFOR
+  \IF{episode $>150$ (dual warm-up over)}
+    \STATE $\lambda_i\!\gets\!\mathrm{clip}\big((1{-}\kappa)\lambda_i+\eta_i(c_i-d_i),\,0,\,\lambda_i^{\max}\big)$
+           per channel (L1).
+  \ENDIF
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Correctness audit and the ratio$\equiv$1 gate}\label{sub:fixes}
+A two-model independent read-only audit (cross-validated, zero
+contradictions) surfaced defects that had contaminated an earlier
+``two-timescale vs.\ monolithic'' ablation. We enumerate the load-bearing
+findings and their fixes.
+\begin{itemize}
+\item \textbf{Slow-head credit assignment (P0)}: the slow mobility head's
+log-prob was counted every step ($\times K$), and its action mask was
+applied at sampling but not at update, so the policy ratio $\neq1$ even at
+epoch~0, spuriously triggering the PPO clip and mis-counting entropy.
+\emph{Fix}: count the log-prob once per decision step (zero on
+non-decision steps), store the mobility mask for replay, and multiply
+entropy by the decision mask.
+\item \textbf{Two-timescale mobility double-count (P0)}: the mobility cost
+was already inside the \texttt{semantic\_utility} reward, and the
+two-timescale path added it again, so the old structural ablation partly
+measured a reward-definition difference. \emph{Fix}: remove the duplicate
+adjustment and re-run.
+\item \textbf{Multiplier ratchet (P1)}: with a zero limit and non-negative
+cost, $\lambda$ was monotone non-decreasing---a barrier, not a shadow
+price. \emph{Fix}: add the leak term and per-channel caps.
+\item \textbf{Penalty double-counting (P1)}: a conflict set both an
+airspace and a UTM flag, stacking a shaped penalty with the Lagrangian and
+Lyapunov terms. \emph{Fix}: penalize the same event once; zero the UTM
+channel weight; make queues incremental.
+\item \textbf{Assigned-UAV CPA (P1-env)}: CPA used the nearest UAV, making
+conflicts nearly exogenous. \emph{Fix}: use the assigned UAV's kinematics,
+restoring policy controllability of conflict.
+\item \textbf{BC lock-in / advantage normalization / efficiency (P1--P2)}:
+decay the BC auxiliary weight; use scale-only advantage normalization so
+the near-constant $\lambda$ penalty is not subtracted away; wrap rollout
+collection in \texttt{no\_grad}.
+\item \textbf{Reward-attribution wiring (P0, found post-audit)}: the
+mission-aligned success attribution (a quality- and deadline-compliant
+service that is merely UTM-blocked earns a discounted success bonus
+instead of a penalty) was applied in the environment log but \emph{not} in
+the learner's shaped reward, so the gradient never saw it. \emph{Fix}:
+mirror the attribution into the controller reward; the unconstrained arm's
+peak behaviour then improves measurably
+(Section~\ref{sub:pathology}), which doubles as an end-to-end witness that
+the reward path is load-bearing.
+\end{itemize}
+The standing regression gate is an \textbf{epoch-0 ratio$\equiv$1 unit
+test}: immediately after collection we recompute the log-probs and assert
+they equal the stored old log-probs step-by-step, guaranteeing the PPO
+importance ratio starts at exactly $1$. The full suite passes $321$ tests,
+including bit-for-bit legacy-regression guards on every constraint-machinery
+lever (escalation, cache ban, dual caps, warm-up, reward attribution).
+Per the audit, the results in Section~\ref{sec:experiments} are all on
+the corrected system.

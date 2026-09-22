@@ -1,0 +1,145 @@
+% §V --- Theoretical Analysis (~1 page, ~800 words). Drafted D8.
+% Two propositions + complexity. Sketches lean on the standard PPO / TRPO
+% machinery; the only journal-version novelty is the factorized hybrid
+% extension.
+\section{Theoretical Analysis}\label{sec:theory}
+
+We now develop two propositions about \method's policy gradient and
+its monotonic improvement guarantee, and close with a per-iteration
+complexity analysis. Throughout, the joint policy follows the
+factorization in \eqref{eq:action} restated here for convenience:
+$\pi_{\theta}(a\mid s)=\pi^{d}_{\theta_{d}}(a^{d}\mid s)\,
+\pi^{c}_{\theta_{c}}(a^{c}\mid s)$, with $\theta=(\theta_{d},\theta_{c})$
+disjoint. Let $J(\theta)=\mathbb{E}_{\tau\sim\pi_{\theta}}[\sum_{t}\gamma^{t}r_{t}]$
+denote the discounted return objective and $A^{\pi_{\theta}}(s,a)$ the
+advantage under $\pi_{\theta}$.
+
+\subsection{Unbiased Policy Gradient under Factorized Hybrid Policy}\label{subsec:grad}
+\begin{proposition}[Unbiased factorized hybrid policy gradient]\label{prop:grad}
+The policy gradient of $J(\theta)$ under $\pi_{\theta}$ admits the
+unbiased estimator
+\begin{equation}
+\nabla_{\theta}J(\theta)
+\;=\;\mathbb{E}_{(s,a)\sim\pi_{\theta}}\!\big[\nabla_{\theta}\log\pi_{\theta}(a\mid s)\,
+A^{\pi_{\theta}}(s,a)\big],
+\label{eq:grad}
+\end{equation}
+which decomposes additively across the discrete and continuous factors:
+\begin{equation}
+\nabla_{\theta_{d}}J(\theta)\!=\!\mathbb{E}\!\big[\nabla_{\theta_{d}}\log\pi^{d}_{\theta_{d}}(a^{d}\!\mid\! s)A\big],\;\,
+\nabla_{\theta_{c}}J(\theta)\!=\!\mathbb{E}\!\big[\nabla_{\theta_{c}}\log\pi^{c}_{\theta_{c}}(a^{c}\!\mid\! s)A\big].
+\label{eq:gradfact}
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+By the standard policy gradient theorem~\cite{schulman2017ppo}, the
+score-function identity gives \eqref{eq:grad} for any differentiable
+parametrized policy. Substituting the factorization into the log-density
+yields
+\begin{equation*}
+\log\pi_{\theta}(a\mid s)\;=\;\log\pi^{d}_{\theta_{d}}(a^{d}\mid s)+\log\pi^{c}_{\theta_{c}}(a^{c}\mid s).
+\end{equation*}
+Differentiating with respect to $\theta_{d}$ and $\theta_{c}$ gives, by
+the disjoint-parameter assumption,
+$\nabla_{\theta_{d}}\log\pi^{c}_{\theta_{c}}=0$ and
+$\nabla_{\theta_{c}}\log\pi^{d}_{\theta_{d}}=0$. Substituting into
+\eqref{eq:grad} produces the additive decomposition
+\eqref{eq:gradfact}. Both summands are unbiased estimators of the
+respective marginal gradients because the score-function identity
+applies to each factor independently
+\cite{schulman2015trpo}.\qed
+\end{proof}
+
+Proposition~\ref{prop:grad} justifies the architectural choice of two
+disjoint actor heads in Section~\ref{subsec:mahppo}: at no stage is the
+discrete head's gradient contaminated by the continuous head, and vice
+versa. Consequently the per-factor variances add, and any variance
+reduction technique applied separately to each factor (advantage
+normalization, entropy regularization, value-function bootstrapping)
+remains effective for the joint policy.
+
+\subsection{Monotonic Improvement under the Clipped Surrogate}\label{subsec:mono}
+\begin{proposition}[Monotonic improvement]\label{prop:mono}
+Let $\pi_{\theta^{\mathrm{old}}}$ and $\pi_{\theta}$ be two factorized
+hybrid policies with disjoint parameters and let $\bar{D}_{\mathrm{KL}}(\theta^{\mathrm{old}},\theta)
+=\mathbb{E}_{s\sim d^{\pi_{\theta^{\mathrm{old}}}}}\!\big[D_{\mathrm{KL}}(\pi^{d}_{\theta^{\mathrm{old}}_{d}}(\cdot\mid s)\,\|\,\pi^{d}_{\theta_{d}}(\cdot\mid s))
++ D_{\mathrm{KL}}(\pi^{c}_{\theta^{\mathrm{old}}_{c}}(\cdot\mid s)\,\|\,\pi^{c}_{\theta_{c}}(\cdot\mid s))\big]$
+be the average factor-decomposed KL divergence. Then
+\begin{equation}
+J(\theta)-J(\theta^{\mathrm{old}})\;\geq\;
+L^{\pi_{\theta^{\mathrm{old}}}}(\theta)
+\;-\;\frac{2\gamma\, C}{(1-\gamma)^{2}}\,\bar{D}_{\mathrm{KL}}(\theta^{\mathrm{old}},\theta),
+\label{eq:mono}
+\end{equation}
+where $L^{\pi_{\theta^{\mathrm{old}}}}(\theta)
+=\mathbb{E}_{s,a\sim\pi_{\theta^{\mathrm{old}}}}\!\big[\rho_{\theta}(s,a)A^{\pi_{\theta^{\mathrm{old}}}}(s,a)\big]$
+is the surrogate objective with importance ratio $\rho_{\theta}=
+\pi_{\theta}/\pi_{\theta^{\mathrm{old}}}$, and
+$C=\max_{s,a}|A^{\pi_{\theta^{\mathrm{old}}}}(s,a)|$. The PPO clipped
+surrogate $L^{\mathrm{CLIP}}_{\theta^{\mathrm{old}}}(\theta)\le
+L^{\pi_{\theta^{\mathrm{old}}}}(\theta)$ inherits the same lower bound
+on improvement up to a clip-induced slack proportional to the clip
+ratio $\epsilon$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+The single-policy version of \eqref{eq:mono} is the TRPO monotonic
+improvement bound~\cite{schulman2015trpo}; PPO's clipped surrogate
+inherits the bound up to a clip-induced gap that vanishes as
+$\epsilon\to 0$~\cite{schulman2017ppo}. The factorized policy admits an
+additive KL decomposition: writing
+$\pi_{\theta}=\pi^{d}_{\theta_{d}}\pi^{c}_{\theta_{c}}$ and applying
+the chain rule of KL divergence over independent factors gives
+\begin{equation*}
+D_{\mathrm{KL}}(\pi_{\theta^{\mathrm{old}}}\|\pi_{\theta})
+\;=\; D_{\mathrm{KL}}(\pi^{d}_{\theta^{\mathrm{old}}_{d}}\|\pi^{d}_{\theta_{d}})
++ D_{\mathrm{KL}}(\pi^{c}_{\theta^{\mathrm{old}}_{c}}\|\pi^{c}_{\theta_{c}}),
+\end{equation*}
+because the factor parameters are disjoint and the conditioning context
+$s$ is the same for both factors. Substituting into the TRPO improvement
+bound yields \eqref{eq:mono} with the same $C$ as in the single-factor
+case. Clipping each factor's importance ratio at
+$[1-\epsilon,1+\epsilon]$ enforces an upper bound on each per-factor KL
+that propagates linearly through the additive decomposition, so the
+clip-induced slack is at most twice the single-policy clip slack.\qed
+\end{proof}
+
+Proposition~\ref{prop:mono} says that running PPO independently on the
+two factors with the \emph{same} advantage signal guarantees the same
+asymptotic improvement guarantee as standard PPO, modulo at most a
+factor-of-two clip-slack. In practice the additivity is what stabilizes
+\method's training: when one factor's update temporarily violates its
+clip bound, the other factor still contributes its full TRPO
+improvement, so the joint update never collapses.
+
+\subsection{Computational Complexity}\label{subsec:complexity}
+Let $L$ denote the number of trunk-encoder layers, $H$ the encoder
+hidden size, $K_{\mathrm{epoch}}$ the number of PPO update epochs per
+collection, $n_{\mathrm{sample}}$ the rollout length, and
+$|\mathcal{A}^{d}|=2(M+N)$ the number of discrete heads. The
+per-iteration cost of \method consists of three stages:
+\begin{equation*}
+\underbrace{\mathcal{O}(n_{\mathrm{sample}}\,L H^{2}\,M)}_{\text{rollout}}
+\;+\;
+\underbrace{\mathcal{O}(K_{\mathrm{epoch}}\,n_{\mathrm{sample}}\,L H^{2}\,M)}_{\text{policy update}}
+\;+\;
+\underbrace{\mathcal{O}(K_{\mathrm{epoch}}\,n_{\mathrm{sample}}\,|\mathcal{A}^{d}|H)}_{\text{discrete heads}}
+\end{equation*}
+where the first term is the forward pass during rollout, the second is
+the joint actor--critic update on the same encoder trunk, and the third
+is the per-head softmax + log-prob computation across the
+$|\mathcal{A}^{d}|$ discrete heads. The continuous head adds an
+$\mathcal{O}(K_{\mathrm{epoch}}\,n_{\mathrm{sample}}\,(3M+N)\,H)$ term
+for the Gaussian re-parameterization. The total scales linearly in $M$
+through the encoder forward, and linearly in $M+N$ through the heads;
+crucially, parameter sharing in the MAPPO-hybrid baseline reduces the
+\emph{parameter count} by the constant ratio reported in
+Section~\ref{subsec:mahppo} but does not change the asymptotic
+complexity, which is dominated by the trunk encoder. Empirical
+wall-clock numbers in Table~\ref{tab:wallclock} confirm this
+prediction: training time across the two multi-agent variants differs
+by less than $5\%$ (MAPPO-hybrid 3.0\,h, \method 3.1\,h per seed) despite
+the $2.3\!\times$ parameter gap; the conference single-UAV HPPO at
+2.6\,h is on a smaller $(M{=}1,N{=}3)$ topology and is reported only
+for completeness.

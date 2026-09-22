@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UAV-VQA 语义通信 — 对比实验方案</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#161c26; --panel2:#1d2530; --ink:#e6edf3; --muted:#9aa7b4;
+    --acc:#4ea1ff; --acc2:#5ad19a; --warn:#ffb454; --bad:#ff6b6b; --line:#2a3340;
+    --code:#0b0f14;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft Yahei",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 22px 80px}
+  header.hero{border:1px solid var(--line);border-radius:14px;padding:26px 28px;
+    background:linear-gradient(135deg,#16202e,#11161d);margin-bottom:26px}
+  h1{font-size:26px;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:13.5px}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+    color:var(--acc);border-radius:999px;padding:2px 10px;font-size:12px;margin:4px 6px 0 0}
+  h2{font-size:20px;margin:34px 0 12px;padding-left:11px;border-left:4px solid var(--acc)}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--acc2)}
+  p{margin:9px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.2px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--acc)}
+  tr:nth-child(even) td{background:#131922}
+  code,pre{font-family:"SF Mono",Menlo,Consolas,monospace}
+  code{background:var(--code);color:#9fe6c4;padding:1px 6px;border-radius:5px;font-size:12.8px}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+    overflow:auto;font-size:12.6px;color:#cfe3ff}
+  .formula{background:#0d1622;border-left:3px solid var(--acc2)}
+  .good{color:var(--acc2)} .warn{color:var(--warn)} .bad{color:var(--bad)} .mut{color:var(--muted)}
+  ul{margin:8px 0 8px 2px;padding-left:20px} li{margin:4px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .kbd{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:12px}
+  .toc a{color:var(--acc);text-decoration:none;margin-right:14px;font-size:13px;white-space:nowrap}
+  .note{border-left:3px solid var(--warn);background:#1d1a12;padding:10px 14px;border-radius:8px;margin:12px 0}
+  .star{border-left:3px solid var(--acc2);background:#10201a;padding:10px 14px;border-radius:8px;margin:12px 0}
+  svg{width:100%;height:auto;display:block}
+  .legend span{display:inline-flex;align-items:center;font-size:12px;margin-right:14px;color:var(--muted)}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px}
+  .ok{color:var(--acc2);font-weight:600} .todo{color:var(--bad);font-weight:600} .part{color:var(--warn);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>UAV-VQA 语义通信 · 对比实验方案</h1>
+  <div class="sub">用领域认可的实验范式，证明"目标导向 + 自适应服务选择"相对传统通信与现有 VQA 语义通信的创新性</div>
+  <div style="margin-top:10px">
+    <span class="pill">标准四方 + 双上界</span>
+    <span class="pill">AWGN / Rayleigh / Rician</span>
+    <span class="pill">cliff-effect 招牌图</span>
+    <span class="pill">2026-06-28 · v1</span>
+  </div>
+  <div class="toc" style="margin-top:14px">
+    <a href="#claim">1 创新主张</a><a href="#fair">2 公平协议</a><a href="#methods">3 对比方法</a>
+    <a href="#metric">4 指标</a><a href="#chan">5 信道</a><a href="#fig">6 图表</a>
+    <a href="#gap">7 现状/待补</a><a href="#seq">8 执行顺序</a><a href="#story">9 叙事</a><a href="#ref">10 文献</a>
+  </div>
+</header>
+
+<div class="card">
+<p><b>本方案只定义对比实验</b>（怎么比、和谁比、用什么指标、画什么图）。系统本身设计见 <code>UAV_VQA_SemCom_System_Spec.html</code>。实验分两组，职责严格分离：</p>
+<svg viewBox="0 0 960 215" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="12">
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#4ea1ff"/></marker></defs>
+  <rect x="10" y="20" width="460" height="170" rx="10" fill="#161c26" stroke="#4ea1ff"/>
+  <text x="28" y="44" fill="#4ea1ff" font-size="13">实验组 1 — 对外 head-to-head（传输方案）</text>
+  <text x="28" y="70" fill="#e6edf3">对手：传统通信 + 现有 VQA 语义通信</text>
+  <text x="28" y="94" fill="#cfe3ff">M1 传统SSCC · M2 DeepSC模拟 · M3 GO-SG token</text>
+  <text x="28" y="116" fill="#cfe3ff">M4 我们的自适应 · M0/M5 上界</text>
+  <text x="28" y="142" fill="#9aa7b4" font-size="11">证明：低SNR优势 / 优雅降级 / 目标导向效率</text>
+  <text x="28" y="166" fill="#5ad19a" font-size="11">方法 = 规则版 LCB 贪心（不依赖 RL，现在就能跑）</text>
+  <rect x="490" y="20" width="460" height="170" rx="10" fill="#161c26" stroke="#5ad19a"/>
+  <text x="508" y="44" fill="#5ad19a" font-size="13">实验组 2 — 对内消融（资源分配）</text>
+  <text x="508" y="70" fill="#e6edf3">对手：我方 静态 / 阈值 / 贪心 / 随机</text>
+  <text x="508" y="94" fill="#cfe3ff">我方 RL 双时标（PPO + Lyapunov 队列）</text>
+  <text x="508" y="118" fill="#9aa7b4" font-size="11">DeepSC/GO-SG 无"多流/队列/预算"维度，</text>
+  <text x="508" y="138" fill="#9aa7b4" font-size="11">强行对外比不公平 → 只在我方内部比</text>
+  <text x="508" y="166" fill="#ffb454" font-size="11">RL 仍 blocked → 后置里程碑，不阻塞组1</text>
+</svg>
+</div>
+
+<h2 id="claim">1. 创新主张与待证命题</h2>
+<div class="card">
+<table>
+<tr><th>命题</th><th>内容</th><th>对应图/表</th></tr>
+<tr><td class="good">C1 优雅降级</td><td>传统整图在阈值 SNR 以下断崖崩溃；我方自适应实现平滑降级 <b>（招牌）</b></td><td>F2</td></tr>
+<tr><td class="good">C2 低SNR优势</td><td>低 SNR / 衰落下，我方准确率显著高于传统 SSCC 与固定单一服务</td><td>F1, T1</td></tr>
+<tr><td class="good">C3 目标导向效率</td><td>相同准确率下，我方传输代价（字节/CBR/时延）远低于整图</td><td>F3, F5, T2</td></tr>
+<tr><td class="good">C4 自适应增益</td><td>自适应优于任何固定服务，且贴近 Oracle 上界</td><td>F1</td></tr>
+<tr><td class="good">C5 资源分配增益</td><td>（内部）RL 双时标在多流/受限预算下优于静态/阈值/贪心</td><td>F6</td></tr>
+</table>
+</div>
+
+<h2 id="fair">2. 公平对比协议（审稿人最先攻击的点）</h2>
+<div class="card">
+<p>三条铁律保证准确率差异 <b class="good">100% 归因于通信方案</b>：</p>
+<ul>
+<li><b>同后端</b>：所有方法统一用 Qwen2-VL-2B 作答（s1 直解码路语义来自同一检测器）。</li>
+<li><b>同信道</b>：同一衰落实现（E[|h|²]=1）、同 SNR 点、同种子（seed=23）。</li>
+<li><b>同预算</b>：同字节/时延预算 τ（<code>tx_time_budget_s=0.3</code>, <code>bandwidth_hz=1e6</code>）。</li>
+<li><b>同数据</b>：VisDrone-DET val 548 图 → presence+counting（<code>v1_7_tasks.csv</code>），同一任务列表。</li>
+<li><b>同评分</b>：presence 精确匹配；counting 用 <code>count_tolerance_ratio=0.1</code> 容差；归一化规则统一。</li>
+</ul>
+</div>
+
+<h2 id="methods">3. 对比方法定义（标准四方 + 双上界）</h2>
+<div class="card">
+<table>
+<tr><th>ID</th><th>方法</th><th>类别</th><th>传什么 / 怎么编码</th><th>框架位置</th><th>文献</th></tr>
+<tr><td>M0</td><td>Error-free 上界</td><td>上界</td><td>无噪原图 → Qwen</td><td>—</td><td>MU-DeepSC/GO-SG</td></tr>
+<tr><td>M1</td><td>传统 SSCC</td><td>传统</td><td>整图→JPEG(率自适应)→<b>LDPC+BPSK/QAM</b>→衰落→重建→Qwen</td><td>= 固定 <b>s2</b></td><td>MU-DeepSC</td></tr>
+<tr><td>M2</td><td>DeepSC 模拟特征</td><td>语义</td><td>紧凑特征→功率归一→<b>模拟复高斯噪声</b>(无数字码)→后端</td><td>新增 analog</td><td>DeepSC</td></tr>
+<tr><td>M3</td><td>GO-SG 数字 token</td><td>语义</td><td>检测证据(类/框/置信)token→LDPC+BPSK</td><td>= 固定 <b>s1</b></td><td>Liu 2411.02452</td></tr>
+<tr><td class="good">M4</td><td class="good"><b>我们的自适应选择</b></td><td class="good">本文</td><td>按语义效用 LCB 在 s0/s1/s2/s3 逐任务择优</td><td>核心贡献</td><td>—</td></tr>
+<tr><td>M5</td><td>Oracle 逐样本</td><td>上界</td><td>天选每任务真实最优服务</td><td>天花板</td><td>自定义</td></tr>
+</table>
+<div class="star">
+<b>M2 实现选项（A 阶段拍板，唯一需新写的基线）</b><br>
+DeepSC 精髓 = 模拟传输 + 无数字编码 → 换"无悬崖、优雅降级"。在 Qwen(吃像素)后端下三选一：
+<ul>
+<li><b>M2a 最忠实(成本高)</b>：训轻量 JSCC 自编码器(image→feat→加噪→重建)→Qwen。≈DeepJSCC，要训练。</li>
+<li><b class="good">M2b 折中(推荐)</b>：JPEG 后 DCT/像素系数当模拟符号过信道(功率归一+复高斯，无 LDPC)→重建→Qwen。经典 uncoded analog，<b>无需训练</b>，干净体现"数字 vs 模拟"对照。</li>
+<li><b>M2c 最轻</b>：检测特征(bbox/置信)上加模拟噪声→语义解码器。仅 token 路模拟对照。</li>
+</ul>
+<span class="good">推荐 M2b</span>：无训练、忠实体现 DeepSC 卖点、与 M1 形成最干净对照；M2a 留作 reviewer 追问的升级选项。
+</div>
+</div>
+
+<h2 id="metric">4. 评价指标（对齐 GO-SG / MU-DeepSC / How-to-Evaluate）</h2>
+<div class="card">
+<h3>4.1 任务准确率（主）</h3>
+<p>总体 accuracy；<b>按问题类型</b>拆分(presence/counting)；95% Wilson 置信区间 + 多种子。</p>
+<h3>4.2 传输代价（目标导向核心）</h3>
+<ul>
+<li><b>payload bytes / query</b>（已有 <code>payload_bytes</code>）</li>
+<li><b>CBR</b> = 信道符号数 / 源维度，符号数 = payload_bits / bits_per_symbol（DeepJSCC 归一约定）</li>
+<li><b>端到端时延</b>：<code>t = payload_bits/(B·log₂(1+SNR·|h|²)) + t_detector + t_vlm</code>（GO-SG latency 分解）</li>
+</ul>
+<h3>4.3 鲁棒性</h3>
+<p>准确率随 SNR 下降的<b>斜率</b>（越平越好 → 量化 cliff-effect）。</p>
+</div>
+
+<h2 id="chan">5. 信道模型与 SNR 扫描</h2>
+<div class="card">
+<table>
+<tr><th>项</th><th>取值</th><th>说明</th></tr>
+<tr><td>信道</td><td><b>AWGN + Rayleigh + Rician(K=6dB)</b></td><td><code>sample_power_gain</code> 已支持三种，配置层补全</td></tr>
+<tr><td>SNR 扫描</td><td><b>−5, 0, 5, 10, 15, 20 dB</b></td><td>覆盖 GO-SG(−2→8) 与 MU-DeepSC(0→20)</td></tr>
+<tr><td>带宽 B</td><td>1 MHz</td><td><code>bandwidth_hz=1e6</code></td></tr>
+<tr><td>预算 τ</td><td>0.3 s</td><td><code>tx_time_budget_s</code></td></tr>
+<tr><td>归一</td><td>E[|h|²]=1</td><td>公平功率约束</td></tr>
+</table>
+<p>每种信道画一条 Acc-SNR 曲线族（对齐 MU-DeepSC 的 AWGN/Rayleigh/Rician 三幅图）。</p>
+</div>
+
+<h2 id="fig">6. 图表清单</h2>
+<div class="card">
+<table>
+<tr><th>编号</th><th>类型</th><th>X 轴</th><th>Y 轴</th><th>曲线/分组</th><th>证</th><th>对标</th></tr>
+<tr><td>F1</td><td>Acc-SNR ×3 信道</td><td>SNR(dB)</td><td>accuracy</td><td>M1–M4 + M0/M5</td><td>C2,C4</td><td>MU-DeepSC</td></tr>
+<tr><td class="good">F2 ★招牌</td><td class="good">cliff-effect</td><td>SNR(dB)</td><td>accuracy</td><td>M1 断崖 vs M4 平滑</td><td>C1</td><td>DeepJSCC</td></tr>
+<tr><td>F3</td><td>Acc-vs-代价</td><td>bytes/CBR</td><td>accuracy</td><td>M1–M4</td><td>C3</td><td>GO-SG 4b</td></tr>
+<tr><td>F4</td><td>按问题类型</td><td>presence/counting</td><td>accuracy</td><td>各方法柱</td><td>C2</td><td>GO-SG 5</td></tr>
+<tr><td>F5</td><td>Pareto</td><td>latency</td><td>accuracy(气泡=字节)</td><td>各方法散点</td><td>C3</td><td>GO-SG 6</td></tr>
+<tr><td>T1</td><td>主结果表</td><td colspan="2">方法 × SNR → accuracy±CI</td><td>全方法</td><td>C2,C4</td><td>通用</td></tr>
+<tr><td>T2</td><td>代价表</td><td colspan="2">方法 → bytes/CBR/latency</td><td>全方法</td><td>C3</td><td>通用</td></tr>
+<tr><td>F6(内部)</td><td>资源分配</td><td>负载/流数</td><td>准确率/队长</td><td>RL vs 静/阈/贪</td><td>C5</td><td>—</td></tr>
+</table>
+
+<h3>F2 招牌图示意（cliff-effect 优雅降级）</h3>
+<svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="12">
+  <!-- axes -->
+  <line x1="70" y1="270" x2="680" y2="270" stroke="#2a3340" stroke-width="1.5"/>
+  <line x1="70" y1="40" x2="70" y2="270" stroke="#2a3340" stroke-width="1.5"/>
+  <text x="375" y="300" fill="#9aa7b4" text-anchor="middle">SNR (dB)  −5 → 20</text>
+  <text x="22" y="155" fill="#9aa7b4" transform="rotate(-90 22 155)" text-anchor="middle">VQA accuracy</text>
+  <!-- gridlines -->
+  <line x1="70" y1="60" x2="680" y2="60" stroke="#1d2530"/><text x="58" y="64" fill="#9aa7b4" text-anchor="end">0.9</text>
+  <line x1="70" y1="165" x2="680" y2="165" stroke="#1d2530"/><text x="58" y="169" fill="#9aa7b4" text-anchor="end">0.6</text>
+  <text x="58" y="269" fill="#9aa7b4" text-anchor="end">0.3</text>
+  <!-- random guess -->
+  <line x1="70" y1="245" x2="680" y2="245" stroke="#ff6b6b" stroke-dasharray="4 4" stroke-width="1"/>
+  <text x="676" y="240" fill="#ff6b6b" text-anchor="end" font-size="11">随机猜 ~0.35</text>
+  <!-- M1 traditional: cliff -->
+  <path d="M90,245 L210,243 L300,238 L330,150 L420,75 L540,62 L660,60" fill="none" stroke="#ffb454" stroke-width="2.5"/>
+  <text x="300" y="232" fill="#ffb454" font-size="11">M1 传统整图：阈值前断崖</text>
+  <!-- M4 ours: graceful -->
+  <path d="M90,205 L210,188 L300,165 L390,120 L480,90 L570,70 L660,62" fill="none" stroke="#5ad19a" stroke-width="2.5"/>
+  <text x="120" y="200" fill="#5ad19a" font-size="11">M4 自适应：平滑降级（切 token/cache）</text>
+  <!-- M0 upper bound -->
+  <path d="M90,72 L660,55" fill="none" stroke="#4ea1ff" stroke-width="1.5" stroke-dasharray="6 3"/>
+  <text x="120" y="68" fill="#4ea1ff" font-size="11">M0 error-free 上界</text>
+  <!-- cliff marker -->
+  <circle cx="330" cy="150" r="5" fill="#ffb454"/>
+  <text x="345" y="138" fill="#e6edf3" font-size="10">cliff @ ~3–5 dB</text>
+</svg>
+<p class="mut" style="font-size:12px">示意图（非实测）：传统整图在 LDPC 解不出的阈值 SNR 处断崖崩到随机猜；我方在该区自动切换 token/cache，准确率平滑下降——与 DeepJSCC 同样的优雅降级性质，但机制是可解释的效用驱动服务选择。实测曲线由 A 阶段产出。</p>
+</div>
+
+<h2 id="gap">7. 现状对齐 vs 待补</h2>
+<div class="card">
+<table>
+<tr><th>项</th><th>状态</th><th>文件 / 动作</th></tr>
+<tr><td>M1 传统 SSCC(整图)</td><td class="ok">✅ 已有</td><td>= s2，<code>transmit_image_rate_adaptive</code></td></tr>
+<tr><td>M3 数字 token(GO-SG式)</td><td class="ok">✅ 已有</td><td>= s1，<code>build_detector_lightweight_evidence</code></td></tr>
+<tr><td>三信道 awgn/rayleigh/rician</td><td class="ok">✅ 底层就绪</td><td><code>sample_power_gain</code>，配置层补扫描</td></tr>
+<tr><td>M4 自适应(规则版)</td><td class="part">⚠️ 半成品</td><td>LUT 已在，需写 LCB 贪心选择器</td></tr>
+<tr><td>M2 DeepSC 模拟特征</td><td class="todo">❌ 待写</td><td>新增 analog 路（推荐 M2b）</td></tr>
+<tr><td>M0/M5 上界</td><td class="todo">❌ 待写</td><td>eval 加两条上界路径</td></tr>
+<tr><td>latency + CBR 归一</td><td class="todo">❌ 待写</td><td>后处理脚本加列</td></tr>
+<tr><td>全量可信 LUT</td><td class="part">⏳ 阻塞</td><td>先修 <code>run_v1_detector_eval</code> EXIT_1，再跑 548</td></tr>
+<tr><td>对比图 F1–F5</td><td class="todo">❌ 待写</td><td><code>make_comparison_figures.py</code></td></tr>
+<tr><td>组 2 RL</td><td class="part">⏳ 后置</td><td>RL 闭环 unblock 后</td></tr>
+</table>
+</div>
+
+<h2 id="seq">8. 执行顺序与里程碑</h2>
+<div class="card">
+<ol>
+<li><b>M0</b>（本文档，B 阶段）<span class="ok">✅</span></li>
+<li><b>A1</b>：修 EXIT_1 → 跑 548 全量 → 带 Wilson 区间的可信 LUT（数据底座）</li>
+<li><b>A2</b>：实现 M2(DeepSC 模拟,M2b) + M0/M5 上界 + 三信道配置 + latency/CBR 后处理</li>
+<li><b>A3</b>：写 M4 规则版 LCB 贪心选择器</li>
+<li><b>A4</b>：一次性跑组 1 标准四方 + 上界扫描（共用任务/信道，省算力）</li>
+<li><b>A5</b>：出图 F1–F5 + 表 T1–T2</li>
+<li><b>B(后置)</b>：RL unblock → 组 2 资源分配消融 → F6</li>
+</ol>
+<div class="note"><b>关键省算力点：</b>M1/M3/M4 共享同一批 Qwen 推理结果（只是选不同服务），一次全量扫描可同时产出 LUT + 组 1 多数曲线。</div>
+</div>
+
+<h2 id="story">9. 预期叙事（论文 Story）</h2>
+<div class="card">
+<p class="good">"现有 VQA 语义通信（GO-SG / MU-DeepSC）在<b>单一固定</b>传输策略下取得低 SNR 增益；但真实低空 A2G 信道 SNR 剧烈波动，固定策略要么浪费带宽（总传图）要么精度不足（总传 token）。我们提出<b>语义效用驱动的自适应服务选择</b>：用带 Wilson 下界的语义质量 LUT 在 cache/token/image/ROI 间逐任务择优，在传统整图发生悬崖式崩溃的低 SNR 区实现优雅降级，并由两时标 RL 在多流约束下优化资源分配——相同后端/信道/预算下，准确率全程贴近 Oracle 上界，传输代价远低于整图传输。"</p>
+</div>
+
+<h2 id="ref">10. 文献依据</h2>
+<div class="card">
+<ul>
+<li><b>MU-DeepSC / DeepSC-VQA</b>, Xie &amp; Qin, arXiv:2108.07357 — CLEVR；基线 error-free / JPEG75+Huffman+LDPC1/3+16QAM / 单模态；AWGN+Rayleigh+Rician，0–20dB。</li>
+<li><b>Liu GO-SG</b>, arXiv:2411.02452 — 场景图+bbox top-N；基线 DO-SG/Original-SG/Image-Transmission/Ground-Truth；Rayleigh，−2→8dB；+59% acc / −65% latency。</li>
+<li><b>DeepSC</b>(text), Xie 2021 — Huffman/Brotli+Turbo/RS+8PSK；BLEU+句相似度；传统 >12dB 才反超、Rayleigh 下崩。</li>
+<li><b>DeepJSCC 系列</b> — cliff-effect；基线 BPG+容量码 / JPEG+5G-LDPC；CBR 归一。</li>
+<li><b>How to Evaluate SemCom</b>, arXiv:2309.04891 — task 指标 + 语义指标，别只用 PSNR；CBR=k/n 归一。</li>
+</ul>
+</div>
+
+<p class="mut" style="margin-top:30px;font-size:12px;text-align:center">UAV-VQA 语义通信对比实验方案 · v1 · 2026-06-28 · 配套 UAV_VQA_SemCom_System_Spec</p>
+</div>
+</body>
+</html>

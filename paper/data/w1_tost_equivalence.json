@@ -1,0 +1,83 @@
+{
+  "margin_delta": 0.01,
+  "alpha": 0.05,
+  "per_channel": {
+    "awgn": {
+      "n": 5616,
+      "acc_rule": 0.6725,
+      "acc_lcb": 0.6725,
+      "discordant_rule_only": 0,
+      "discordant_lcb_only": 0,
+      "mcnemar_p": 1.0,
+      "diff_rule_minus_lcb": 0.0,
+      "ci90": [
+        0.0,
+        0.0
+      ],
+      "tost_delta": 0.01,
+      "tost_equivalent": true,
+      "delta_star_min_margin": 0.0
+    },
+    "rayleigh": {
+      "n": 5616,
+      "acc_rule": 0.6667,
+      "acc_lcb": 0.666,
+      "discordant_rule_only": 47,
+      "discordant_lcb_only": 43,
+      "mcnemar_p": 0.7518,
+      "diff_rule_minus_lcb": 0.00071,
+      "ci90": [
+        -0.00207,
+        0.00349
+      ],
+      "tost_delta": 0.01,
+      "tost_equivalent": true,
+      "delta_star_min_margin": 0.00349
+    },
+    "rician": {
+      "n": 5616,
+      "acc_rule": 0.6702,
+      "acc_lcb": 0.6672,
+      "discordant_rule_only": 47,
+      "discordant_lcb_only": 30,
+      "mcnemar_p": 0.0682,
+      "diff_rule_minus_lcb": 0.00303,
+      "ci90": [
+        0.00046,
+        0.0056
+      ],
+      "tost_delta": 0.01,
+      "tost_equivalent": true,
+      "delta_star_min_margin": 0.0056
+    }
+  },
+  "policy_deviations": {
+    "awgn": [],
+    "rayleigh": [
+      "presence@-5dB"
+    ],
+    "rician": [
+      "presence@-5dB"
+    ]
+  },
+  "pooled_3ch": {
+    "n": 16848,
+    "acc_rule": 0.6698,
+    "acc_lcb": 0.6686,
+    "discordant_rule_only": 94,
+    "discordant_lcb_only": 73,
+    "mcnemar_p": 0.1217,
+    "diff_rule_minus_lcb": 0.00125,
+    "ci90": [
+      -2e-05,
+      0.00251
+    ],
+    "tost_delta": 0.01,
+    "tost_equivalent": true,
+    "delta_star_min_margin": 0.00251
+  },
+  "reproduction_anchor": {
+    "expected": "n=16848, 167 discordant, AWGN identical, McNemar p~0.12",
+    "pass": true
+  }
+}

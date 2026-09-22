@@ -1,0 +1,32 @@
+% §IX --- Conclusion (~0.25 page, ~250 words). Drafted D11.
+\section{Conclusion}\label{sec:concl}
+
+We presented \method, a multi-agent hybrid PPO algorithm that jointly
+optimizes UAV trajectories, transmit powers, channel selection, and
+semantic-symbol cardinalities for multi-UAV DeepSC-VQA semantic
+offloading to an MEC server. Four contributions follow. We extended
+the conference single-UAV / static-channel formulation to a Dec-POMDP
+with multiple UAVs, mobile users, Poisson task arrival, and
+time-varying air-to-ground fading. We designed \method as a
+centralized-training, decentralized-execution actor with role-aware
+specialized discrete heads and a single Gaussian continuous head, and
+trained it with a piecewise reward whose four branches couple
+communication-resource decisions to LUT-grade semantic-task fidelity.
+We derived an additive policy-gradient decomposition and a monotonic
+improvement bound that lets the standard PPO clipping mechanism apply
+factor-wise. Empirically, \method dominated five baselines on a
+measurement-grade DeepSC-VQA benchmark across joint cost, delay,
+energy, similarity, and success-rate axes, and held the smallest
+degradation slope under multi-UAV scaling, channel and UE-count
+perturbations, adversarial jamming, and large-scale UE generalization.
+
+Three directions extend this work. (i) Heterogeneous UAV fleets where
+different platforms operate at different altitudes and possess
+different sensing modalities; the role-aware actor head pattern is a
+natural fit. (ii) Cross-task and cross-dataset generalization, in
+which the policy is trained on one DeepSC-VQA LUT and evaluated on
+another, possibly online. (iii) Online adaptation via meta-RL or
+in-context learning so that a deployed UAV fleet refines its policy
+under live channel conditions without resetting the base parameters,
+closing the gap between offline-trained semantic encoders and online
+adaptive resource allocation.

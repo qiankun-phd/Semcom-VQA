@@ -1,0 +1,274 @@
+{
+  "params": {
+    "bandwidth_hz": 1000000.0,
+    "p_tx_w": 0.5,
+    "e_vlm_incremental_j": 32.310144895318594,
+    "e_det_mid_j": 0.4275,
+    "f_img_m4": 0.43803418803418803,
+    "e_pred_j": 0.0,
+    "e_pred_note": "sender-side logistic inference, CPU, billed 0 J (declared; W2 itemizes)",
+    "policy": "lambda=0 argmax P(correct|x,s) \u2014 ML_persample"
+  },
+  "per_channel": {
+    "awgn": {
+      "per_snr": {
+        "-5.0": {
+          "n": 936,
+          "acc": 0.656,
+          "f_img": 0.2511,
+          "j_per_answer": 8.941,
+          "answers_per_joule": 0.0734,
+          "acc_m4": 0.6528,
+          "j_m4": 15.277,
+          "j_m1": 34.316,
+          "ratio_vs_m1": 3.838,
+          "ratio_vs_m4": 1.709
+        },
+        "0.0": {
+          "n": 936,
+          "acc": 0.6795,
+          "f_img": 0.2511,
+          "j_per_answer": 8.593,
+          "answers_per_joule": 0.0791,
+          "acc_m4": 0.6741,
+          "j_m4": 14.738,
+          "j_m1": 32.931,
+          "ratio_vs_m1": 3.832,
+          "ratio_vs_m4": 1.715
+        },
+        "5.0": {
+          "n": 936,
+          "acc": 0.6891,
+          "f_img": 0.2532,
+          "j_per_answer": 8.602,
+          "answers_per_joule": 0.0801,
+          "acc_m4": 0.6848,
+          "j_m4": 14.606,
+          "j_m1": 32.691,
+          "ratio_vs_m1": 3.8,
+          "ratio_vs_m4": 1.698
+        },
+        "10.0": {
+          "n": 936,
+          "acc": 0.6902,
+          "f_img": 0.2543,
+          "j_per_answer": 8.614,
+          "answers_per_joule": 0.0801,
+          "acc_m4": 0.6806,
+          "j_m4": 14.558,
+          "j_m1": 32.603,
+          "ratio_vs_m1": 3.785,
+          "ratio_vs_m4": 1.69
+        },
+        "15.0": {
+          "n": 936,
+          "acc": 0.6912,
+          "f_img": 0.2543,
+          "j_per_answer": 8.596,
+          "answers_per_joule": 0.0804,
+          "acc_m4": 0.6763,
+          "j_m4": 14.495,
+          "j_m1": 32.532,
+          "ratio_vs_m1": 3.784,
+          "ratio_vs_m4": 1.686
+        },
+        "20.0": {
+          "n": 936,
+          "acc": 0.6934,
+          "f_img": 0.2543,
+          "j_per_answer": 8.583,
+          "answers_per_joule": 0.0808,
+          "acc_m4": 0.6795,
+          "j_m4": 14.472,
+          "j_m1": 32.479,
+          "ratio_vs_m1": 3.784,
+          "ratio_vs_m4": 1.686
+        }
+      },
+      "pooled": {
+        "n": 5616,
+        "acc": 0.6832,
+        "f_img": 0.253,
+        "j_per_answer": 8.655
+      }
+    },
+    "rayleigh": {
+      "per_snr": {
+        "-5.0": {
+          "n": 936,
+          "acc": 0.6528,
+          "f_img": 0.2511,
+          "j_per_answer": 8.905,
+          "answers_per_joule": 0.0733,
+          "acc_m4": 0.641,
+          "j_m4": 15.215,
+          "j_m1": 34.17,
+          "ratio_vs_m1": 3.837,
+          "ratio_vs_m4": 1.709
+        },
+        "0.0": {
+          "n": 936,
+          "acc": 0.6688,
+          "f_img": 0.2511,
+          "j_per_answer": 8.643,
+          "answers_per_joule": 0.0774,
+          "acc_m4": 0.6624,
+          "j_m4": 14.845,
+          "j_m1": 33.127,
+          "ratio_vs_m1": 3.833,
+          "ratio_vs_m4": 1.718
+        },
+        "5.0": {
+          "n": 936,
+          "acc": 0.6827,
+          "f_img": 0.2532,
+          "j_per_answer": 8.611,
+          "answers_per_joule": 0.0793,
+          "acc_m4": 0.6731,
+          "j_m4": 14.625,
+          "j_m1": 32.726,
+          "ratio_vs_m1": 3.8,
+          "ratio_vs_m4": 1.698
+        },
+        "10.0": {
+          "n": 936,
+          "acc": 0.688,
+          "f_img": 0.2532,
+          "j_per_answer": 8.587,
+          "answers_per_joule": 0.0801,
+          "acc_m4": 0.6763,
+          "j_m4": 14.573,
+          "j_m1": 32.631,
+          "ratio_vs_m1": 3.8,
+          "ratio_vs_m4": 1.697
+        },
+        "15.0": {
+          "n": 936,
+          "acc": 0.6955,
+          "f_img": 0.2543,
+          "j_per_answer": 8.605,
+          "answers_per_joule": 0.0808,
+          "acc_m4": 0.6816,
+          "j_m4": 14.509,
+          "j_m1": 32.565,
+          "ratio_vs_m1": 3.785,
+          "ratio_vs_m4": 1.686
+        },
+        "20.0": {
+          "n": 936,
+          "acc": 0.6944,
+          "f_img": 0.2543,
+          "j_per_answer": 8.588,
+          "answers_per_joule": 0.0809,
+          "acc_m4": 0.6795,
+          "j_m4": 14.481,
+          "j_m1": 32.5,
+          "ratio_vs_m1": 3.784,
+          "ratio_vs_m4": 1.686
+        }
+      },
+      "pooled": {
+        "n": 5616,
+        "acc": 0.6804,
+        "f_img": 0.2528,
+        "j_per_answer": 8.656
+      }
+    },
+    "rician": {
+      "per_snr": {
+        "-5.0": {
+          "n": 936,
+          "acc": 0.6571,
+          "f_img": 0.2511,
+          "j_per_answer": 8.955,
+          "answers_per_joule": 0.0734,
+          "acc_m4": 0.6506,
+          "j_m4": 15.301,
+          "j_m1": 34.372,
+          "ratio_vs_m1": 3.838,
+          "ratio_vs_m4": 1.709
+        },
+        "0.0": {
+          "n": 936,
+          "acc": 0.6731,
+          "f_img": 0.2511,
+          "j_per_answer": 8.61,
+          "answers_per_joule": 0.0782,
+          "acc_m4": 0.6635,
+          "j_m4": 14.772,
+          "j_m1": 32.995,
+          "ratio_vs_m1": 3.832,
+          "ratio_vs_m4": 1.716
+        },
+        "5.0": {
+          "n": 936,
+          "acc": 0.6912,
+          "f_img": 0.2532,
+          "j_per_answer": 8.605,
+          "answers_per_joule": 0.0803,
+          "acc_m4": 0.6848,
+          "j_m4": 14.612,
+          "j_m1": 32.702,
+          "ratio_vs_m1": 3.8,
+          "ratio_vs_m4": 1.698
+        },
+        "10.0": {
+          "n": 936,
+          "acc": 0.6838,
+          "f_img": 0.2671,
+          "j_per_answer": 9.03,
+          "answers_per_joule": 0.0757,
+          "acc_m4": 0.6806,
+          "j_m4": 14.564,
+          "j_m1": 32.614,
+          "ratio_vs_m1": 3.612,
+          "ratio_vs_m4": 1.613
+        },
+        "15.0": {
+          "n": 936,
+          "acc": 0.6848,
+          "f_img": 0.2671,
+          "j_per_answer": 9.011,
+          "answers_per_joule": 0.076,
+          "acc_m4": 0.6763,
+          "j_m4": 14.5,
+          "j_m1": 32.544,
+          "ratio_vs_m1": 3.612,
+          "ratio_vs_m4": 1.609
+        },
+        "20.0": {
+          "n": 936,
+          "acc": 0.6891,
+          "f_img": 0.2671,
+          "j_per_answer": 8.996,
+          "answers_per_joule": 0.0766,
+          "acc_m4": 0.6806,
+          "j_m4": 14.475,
+          "j_m1": 32.487,
+          "ratio_vs_m1": 3.611,
+          "ratio_vs_m4": 1.609
+        }
+      },
+      "pooled": {
+        "n": 5616,
+        "acc": 0.6798,
+        "f_img": 0.2594,
+        "j_per_answer": 8.868
+      }
+    }
+  },
+  "self_check": {
+    "published_lambda0_rician": {
+      "acc": 0.6798,
+      "E_j": 8.868,
+      "f_img": 0.2594
+    },
+    "recomputed": {
+      "n": 5616,
+      "acc": 0.6798,
+      "f_img": 0.2594,
+      "j_per_answer": 8.868
+    },
+    "pass": true
+  }
+}

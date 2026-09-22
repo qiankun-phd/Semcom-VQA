@@ -1,0 +1,93 @@
+% §I --- Introduction (1.25 pages, ~1100 words). Drafted D5.
+\section{Introduction}\label{sec:intro}
+
+The low-altitude economy is rapidly turning unmanned aerial vehicles (UAVs)
+into general-purpose flying compute platforms for sensing, surveillance,
+and emergency response~\cite{wang2025lowalt,kaleem2024emerging}. As these
+platforms ingest dense visual streams from onboard cameras, the scarce
+uplink between the UAV and the ground network becomes the bottleneck: raw
+images and per-pixel features quickly exhaust available bandwidth. Visual
+question answering (VQA) sharpens this trade-off by adding a natural-language
+query that demands cross-modal reasoning over the captured imagery, so the
+question itself --- not the pixels --- determines which content is
+mission-critical~\cite{antol2015vqa,goyal2017vqav2}.
+
+Semantic communication directly addresses this bandwidth--task mismatch by
+transmitting only the task-relevant content of a signal, encoded into a
+compact set of semantic symbols at the source and decoded at the
+receiver~\cite{qin2024semanticnet,qin2024aiempowered}. Recent extensions
+such as DeepSC-VQA train an end-to-end transformer encoder--decoder pair
+that is supervised by VQA accuracy rather than per-symbol fidelity, so the
+communication channel only needs to preserve enough semantics for the
+downstream answer to remain
+correct~\cite{xie2022taskoriented,xie2021deepsc}. When deployed in a
+multi-access edge computing (MEC) network, the UAV uploads a compressed
+semantic feature to the MEC server and the textual query streams from the
+ground users; the server fuses the two and emits an answer over the
+downlink, turning a 4K-image task into a few hundred semantic symbols per
+slot.
+
+Despite a growing body of work on semantic-aware UAV networks, two gaps
+remain. First, prior work treats the UAV's flight trajectory and its
+communication-resource decisions (channel assignment, transmit power,
+semantic-symbol cardinality) as separate optimization problems, even though
+the joint distribution couples through line-of-sight geometry and
+co-channel interference~\cite{zhang2023drlsemantic,hu2025ratesplitting}.
+Second, existing studies almost universally assume a single UAV serving a
+fixed set of stationary ground users over a static channel, leaving open
+how a learned policy degrades under multi-UAV interference, mobile users,
+fast fading, or adversarial jamming~\cite{liu2024jamminguav}. Both gaps
+matter for the realistic low-altitude deployment that motivates this line
+of work.
+
+We close them by formulating multi-UAV semantic offloading for VQA tasks as
+a decentralized partially observable Markov decision process whose joint
+action space couples per-UAV trajectory and transmit power (continuous)
+with per-device channel and semantic-symbol selection (discrete), and by
+training a multi-agent hybrid proximal policy optimization algorithm
+(\method) over this space with a piecewise reward that ties resource
+decisions to semantic-task fidelity. Centralized training over the global
+state stabilizes the gradient against the non-stationarity introduced by
+concurrent hybrid policies, while decentralized execution preserves the
+inference latency that the UAV-side energy budget demands. We additionally
+derive convergence and complexity propositions for the factorized hybrid
+policy under the clipped surrogate objective, and benchmark \method on
+multi-UAV scaling, robustness to channel and user-count perturbations,
+adversarial jamming, and large-scale UE generalization.
+
+\subsection*{Contributions}
+\begin{itemize}
+  \item \textbf{System model.} We extend the DeepSC-VQA semantic offloading
+    framework from a single UAV with stationary users and a static channel
+    to a multi-UAV multi-user MEC network with Poisson task arrival, mobile
+    UEs, and time-varying air-to-ground fading, formulated as a Dec-POMDP
+    with a unified delay--energy joint cost.
+  \item \textbf{Algorithm.} We propose \method, a multi-agent hybrid PPO
+    with centralized training and decentralized execution over a vast
+    hybrid action space coupling trajectory, transmit power, channel, and
+    semantic-symbol selection. A piecewise reward function explicitly
+    couples communication-resource decisions to semantic-task fidelity, and
+    a curriculum on the delay--energy weight stabilizes early training.
+  \item \textbf{Theoretical analysis.} We give a convergence discussion
+    that decomposes the policy gradient additively across the discrete and
+    continuous factors of the hybrid policy and derives a monotonic
+    improvement bound under the clipped surrogate objective, together with
+    a per-iteration computational complexity analysis.
+  \item \textbf{Empirical evaluation.} On a measurement-grade DeepSC-VQA
+    semantic similarity look-up table, \method consistently dominates a
+    parameter-shared MAPPO-hybrid baseline, the single-UAV HPPO from the
+    conference version, a non-learning Greedy LUT heuristic, and the
+    PADDPG and PDQN baselines across the
+    joint cost, delay, energy, similarity, and success-rate axes. The
+    advantage holds across multi-UAV scaling, dynamic UE counts,
+    adversarial jamming, and large-scale UE generalization.
+\end{itemize}
+
+The rest of the paper is organized as follows.
+Section~\ref{sec:related} positions \method against five related lines of
+work; Section~\ref{sec:system} states the system model and dynamics;
+Section~\ref{sec:method} formalizes the Dec-POMDP and presents \method;
+Section~\ref{sec:theory} develops the convergence and complexity analysis;
+Section~\ref{sec:exp} reports empirical results;
+Section~\ref{sec:disc}--\ref{sec:concl} discuss, list limitations, and
+conclude.

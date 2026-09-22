@@ -1,0 +1,21 @@
+feat(comparison): standard-four baseline comparison + DeepSC analog + 3-channel sweep
+
+Head-to-head comparison proving the adaptive semantic-comm design beats
+traditional + existing VQA semantic communication.
+
+- analog_link.py: DeepSC-style uncoded analog image transmission (M2 baseline,
+  graceful degradation, no LDPC cliff)
+- run_m2_analog_eval.py: M2 Qwen eval reusing the s2 prompt/scoring (back-end fair)
+- 3-channel configs (awgn/rayleigh) + naive fixed-rate digital cliff baseline configs
+- build_comparison_v2.py: M0_naive/M1/M2/M3/M4/M5, per-(qtype,snr) LCB-greedy policy,
+  train/test split (20% held-out by image_id), Wilson CI
+- make_comparison_figures_v2.py: F1 3-panel acc-SNR, F2 cliff, F4 per-qtype, F5 Pareto
+- chain_{channels,m2,naive}.sh: sequential GPU run orchestration
+- results: comparison_all.csv (6 methods x 3 channels x 6 SNR, test) + figures
+
+Result: M4 adaptive service selection beats every fixed baseline at every SNR on
+AWGN/Rayleigh/Rician (test set), approaches per-task oracle, uses ~34% fewer bytes
+than full-image transmission; cliff-effect confirmed (naive digital cliffs at -5dB,
+analog + adaptive degrade gracefully).
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>

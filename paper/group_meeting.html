@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>论文一 · 组会 | Ask Before You Transmit (TGCN)</title>
+<style>
+  :root {
+    --bg: #0a1410;
+    --panel: #0f1c18;
+    --panel2: #152620;
+    --text: #ecf7f1;
+    --muted: #9fbeb0;
+    --accent: #34d399;
+    --accent2: #60a5fa;
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --line: rgba(255,255,255,.08);
+    --shadow: 0 12px 40px rgba(0,0,0,.4);
+    --radius: 16px;
+    --font: "SF Pro Display", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background:
+      radial-gradient(1000px 500px at 0% -10%, #14352a 0%, transparent 50%),
+      radial-gradient(800px 400px at 100% 0%, #0f2740 0%, transparent 45%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100%;
+  }
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 10px 18px;
+    background: rgba(10,20,16,.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { font-weight: 700; }
+  .brand span { color: var(--accent); }
+  .meta { color: var(--muted); font-size: 13px; }
+  .navbtns { display: flex; gap: 8px; align-items: center; }
+  button {
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary {
+    background: linear-gradient(135deg, #059669, #0ea5e9);
+    border: none; color: #fff;
+  }
+  .progress { height: 3px; background: rgba(255,255,255,.06); position: sticky; top: 48px; z-index: 49; }
+  .progress > i {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .25s ease;
+  }
+  .deck { max-width: 1120px; margin: 0 auto; padding: 18px 18px 88px; }
+  .slide {
+    display: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 40%), var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 32px 32px;
+    min-height: calc(100vh - 140px);
+    animation: fade .25s ease;
+  }
+  .slide.active { display: block; }
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  .kicker {
+    display: inline-block; color: var(--accent); font-size: 12px; font-weight: 800;
+    letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px;
+  }
+  h1 { font-size: 28px; line-height: 1.28; margin: 0 0 10px; }
+  h2 { font-size: 23px; margin: 0 0 14px; }
+  h3 { font-size: 15px; margin: 16px 0 8px; color: #c8f0dc; }
+  p, li { color: var(--muted); line-height: 1.65; font-size: 15px; }
+  strong { color: var(--text); }
+  .title-en { color: var(--muted); font-size: 14.5px; margin-bottom: 16px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+  @media (max-width: 860px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    h1 { font-size: 22px; }
+    .slide { padding: 18px; min-height: auto; }
+  }
+  .card {
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .card h4 { margin: 0 0 6px; font-size: 14px; color: #fff; }
+  .card p, .card li { font-size: 13.5px; margin: 0; }
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 999px; margin-right: 6px;
+  }
+  .tag.g { background: rgba(52,211,153,.15); color: var(--accent); }
+  .tag.b { background: rgba(96,165,250,.15); color: var(--accent2); }
+  .tag.a { background: rgba(251,191,36,.15); color: var(--warn); }
+  .tag.r { background: rgba(248,113,113,.15); color: var(--danger); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+  th, td {
+    border-bottom: 1px solid var(--line);
+    padding: 8px 7px; text-align: left; vertical-align: top;
+  }
+  th { color: #c8f0dc; font-weight: 600; }
+  td { color: var(--muted); }
+  .mono, code { font-family: var(--mono); font-size: 12.5px; color: #b8e6d0; }
+  .formula {
+    background: #08120f; border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; font-family: var(--mono); font-size: 13px;
+    color: #d4f5e5; overflow-x: auto; margin: 10px 0; white-space: pre-wrap;
+  }
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: rgba(52,211,153,.08);
+    padding: 10px 14px; border-radius: 0 10px 10px 0;
+    margin: 12px 0; color: #d1fae5; font-size: 14px;
+  }
+  .callout.warn { border-left-color: var(--warn); background: rgba(251,191,36,.08); color: #fde68a; }
+  .callout.blue { border-left-color: var(--accent2); background: rgba(96,165,250,.08); color: #bfdbfe; }
+  ul.clean { padding-left: 18px; margin: 8px 0; }
+  ul.clean li { margin: 5px 0; }
+  .big { font-size: 26px; font-weight: 800; color: #fff; line-height: 1.15; }
+  .sub { font-size: 12px; color: var(--muted); }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .chip {
+    border: 1px solid var(--line); background: var(--panel2);
+    border-radius: 999px; padding: 6px 11px; font-size: 12.5px; color: var(--muted);
+  }
+  .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin: 12px 0; }
+  .flow .box {
+    background: var(--panel2); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 12px; min-width: 110px;
+    text-align: center; font-size: 13px; flex: 1;
+  }
+  .flow .arrow { color: var(--accent); font-weight: 800; align-self: center; }
+  .arch {
+    width: 100%; max-height: 280px; object-fit: contain;
+    background: #fff; border-radius: 10px; border: 1px solid var(--line);
+  }
+  .footer-nav {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 18px;
+    background: rgba(10,20,16,.92);
+    border-top: 1px solid var(--line);
+    backdrop-filter: blur(10px);
+  }
+  .hint { color: var(--muted); font-size: 12px; }
+  .toc a {
+    display: block; color: var(--muted); text-decoration: none;
+    padding: 4px 0; font-size: 14px;
+  }
+  .toc a:hover { color: var(--accent); }
+  .toc a b { color: var(--text); margin-right: 6px; }
+  .toc { columns: 2; column-gap: 24px; }
+  .center { text-align: center; }
+  .muted { color: var(--muted); }
+  .metric-grid .card { text-align: center; }
+  @media print {
+    .topbar, .progress, .footer-nav { display: none !important; }
+    .slide { display: block !important; page-break-after: always; min-height: auto; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">论文一组会 · <span>TGCN · paper_semcom</span></div>
+  <div class="meta" id="slideLabel">1 / 15</div>
+  <div class="navbtns">
+    <button type="button" id="btnToc">目录</button>
+    <button type="button" id="btnPrev">← 上一页</button>
+    <button type="button" class="primary" id="btnNext">下一页 →</button>
+  </div>
+</div>
+<div class="progress"><i id="bar"></i></div>
+
+<main class="deck" id="deck">
+
+  <!-- 1 cover -->
+  <section class="slide active" data-title="封面">
+    <div class="kicker">IEEE TGCN · Paper 1 · Semantic-communication effectiveness</div>
+    <h1>Ask Before You Transmit<br/>面向 UAV VQA 的节能证据级语义通信</h1>
+    <p class="title-en">An Energy-Frugal Evidence-Level Semantic Communication System for UAV Visual Question Answering</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>目标期刊 / 作者</h4>
+        <p><strong>IEEE Transactions on Green Communications and Networking (TGCN)</strong><br/>
+        Qiankun Zhang, Yue Liu, Zhijin Qin<br/>
+        仓库：<span class="mono">HPPO-VQA-tgcn/paper_semcom</span></p>
+      </div>
+      <div class="card">
+        <h4>一句话贡献</h4>
+        <p>在真实冻结 VLM 接收机 + 编码无线链路上，证明<strong>题型条件的证据路由</strong>同时提高准确率并降低每答案焦耳：先问问题需要什么证据，再决定是否发射、发射什么、是否跑 VLM。</p>
+      </div>
+    </div>
+    <div class="pill-row">
+      <span class="tag g">Green / Energy</span>
+      <span class="tag b">Semantic Comm</span>
+      <span class="tag b">UAV VQA</span>
+      <span class="tag a">Evidence Routing</span>
+      <span class="tag a">Frozen VLM</span>
+    </div>
+    <p class="muted" style="margin-top:18px;font-size:13px">组会进度汇报 · ←/→ 翻页 · 空格下一页 · F 全屏 · 打印可导出 PDF</p>
+  </section>
+
+  <!-- 2 agenda -->
+  <section class="slide" data-title="议程">
+    <div class="kicker">Agenda · ~15–20 min</div>
+    <h2>汇报议程</h2>
+    <div class="toc" id="toc">
+      <a href="#"><b>01</b> 问题：默认「传图 + 跑 VLM」有多贵</a>
+      <a href="#"><b>02</b> 核心想法：Ask before you transmit</a>
+      <a href="#"><b>03</b> 系统：证据阶梯 s0–s3</a>
+      <a href="#"><b>04</b> 路由：规则 / LCB / 样本预测器</a>
+      <a href="#"><b>05</b> 互补性：哪类题该看 token</a>
+      <a href="#"><b>06</b> 实验规模与基线银行</a>
+      <a href="#"><b>07</b> 准确率主结果</a>
+      <a href="#"><b>08</b> 能量：compute-dominated frontier</a>
+      <a href="#"><b>09</b> 反直觉发现</a>
+      <a href="#"><b>10</b> 理论 / 命题（简述）</a>
+      <a href="#"><b>11</b> 定位：相对 TGCN 绿色语义通信线</a>
+      <a href="#"><b>12</b> 现状、限制与下一步</a>
+      <a href="#"><b>13</b> 讨论问题</a>
+      <a href="#"><b>14</b> 一页总结</a>
+    </div>
+    <div class="callout">
+      汇报主线：<strong>不是再训一个端到端 codec</strong>，而是用<strong>可测任务准确率 + 实测通信与计算焦耳</strong>，说明绿色收益来自「证据节俭」。
+    </div>
+  </section>
+
+  <!-- 3 problem -->
+  <section class="slide" data-title="问题">
+    <div class="kicker">01 · Problem</div>
+    <h2>默认管线为什么浪费</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h4>交互模式</h4>
+        <ul class="clean">
+          <li>UAV 低空感知 + 地面自然语言提问</li>
+          <li>典型答案器：边缘 <strong>Vision–Language Model (VLM)</strong></li>
+          <li>默认：<strong>上传整图 → 跑一遍 VLM</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>代价（测量结论）</h4>
+        <ul class="clean">
+          <li>UAV 电池与空口带宽都紧</li>
+          <li>边缘 VLM 前向是<strong>环路里最耗能的一步</strong></li>
+          <li>在我们测的每个链路上：VLM 焦耳 &gt; 传图焦耳</li>
+          <li>许多问题<strong>根本不需要整图</strong></li>
+        </ul>
+      </div>
+    </div>
+    <h3>现有语义/任务导向通信的两个隐含假设</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4>① 图像（或潜表示）≈ 准确率上界</h4>
+        <p>更便宜表示只被当成「用准确率换时延」；本文表明<strong>对符号推理题，token 比图更准</strong>。</p>
+      </div>
+      <div class="card">
+        <h4>② 发端–收端联合训练</h4>
+        <p>绑定单一推理后端；本文用<strong>任务无关发端 + 冻结商用 VLM</strong>，结果可迁移。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 idea -->
+  <section class="slide" data-title="核心想法">
+    <div class="kicker">02 · Idea</div>
+    <h2>核心问题：这道题到底需要哪一级证据？</h2>
+    <div class="callout blue">
+      在<strong>发射之前</strong>做 level 决策：它同时决定（1）传什么 payload，（2）<strong>要不要跑 VLM 前向</strong>。因此证据路由 = 能量决策。
+    </div>
+    <div class="flow">
+      <div class="box"><strong>问题 q</strong><br/><span class="sub">题型 / 元数据</span></div>
+      <div class="arrow">→</div>
+      <div class="box"><strong>Router</strong><br/><span class="sub">规则 · LCB · 预测器</span></div>
+      <div class="arrow">→</div>
+      <div class="box"><strong>证据 s</strong><br/><span class="sub">s0–s3</span></div>
+      <div class="arrow">→</div>
+      <div class="box"><strong>信道</strong><br/><span class="sub">编码 + 衰落</span></div>
+      <div class="arrow">→</div>
+      <div class="box"><strong>解码</strong><br/><span class="sub">符号规则 或 VLM</span></div>
+    </div>
+    <div class="grid-3">
+      <div class="card metric-grid">
+        <div class="big">2.2×</div>
+        <p>相对速率自适应传图，路由每答案焦耳更低（各 SNR）</p>
+      </div>
+      <div class="card">
+        <div class="big">↑ Acc</div>
+        <p>~0.67 vs ~0.60（各信道）<br/>甚至优于 error-free 传图 ~0.61</p>
+      </div>
+      <div class="card">
+        <div class="big">75–79×</div>
+        <p>固定 token 相对图像的焦耳优势（~33–35× 相对路由）</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 system -->
+  <section class="slide" data-title="系统与证据阶梯">
+    <div class="kicker">03 · System</div>
+    <h2>系统模型与证据阶梯</h2>
+    <div class="grid-2">
+      <div>
+        <img class="arch" src="figures/F12_architecture.png" alt="Architecture"
+             onerror="this.style.display='none'" />
+        <p class="sub" style="margin-top:6px">图：系统架构（F12）。若图未显示，请从 <span class="mono">paper_semcom/</span> 目录打开本 HTML。</p>
+      </div>
+      <div>
+        <table>
+          <tr><th>Level</th><th>内容</th><th>解码 / 算力</th></tr>
+          <tr><td><strong>s₀</strong> cache</td><td>缓存答案，0 B 发射</td><td>不传、几乎不算</td></tr>
+          <tr><td><strong>s₁</strong> token</td><td>检测器符号包 ~0.7–1.2 KB<br/>LDPC 1/2 + BPSK</td><td><strong>符号规则解码</strong><br/>不跑 VLM</td></tr>
+          <tr><td><strong>s₂</strong> image</td><td>速率自适应 JPEG+LDPC<br/>~14–215 KB 交付</td><td><strong>冻结 Qwen2-VL-2B</strong></td></tr>
+          <tr><td><strong>s₃</strong> ROI</td><td>检测引导裁剪（框架支持）</td><td>条件选项 / headroom</td></tr>
+        </table>
+        <div class="callout" style="margin-top:10px">
+          主对比在 <strong>s₁ vs s₂</strong>；s₀/s₃ 是设计与 oracle 空间，不抢主表。
+        </div>
+      </div>
+    </div>
+    <h3>实现栈（发端任务无关）</h3>
+    <p>YOLOv8n（航拍域微调）+ 标准信道编码 · 接收：冻结商用 VLM · <strong>不</strong>联合训练 codec。</p>
+  </section>
+
+  <!-- 6 routing -->
+  <section class="slide" data-title="路由方法">
+    <div class="kicker">04 · Routing</div>
+    <h2>三种发射端选择器（无需 CSI 做 level 决策）</h2>
+    <div class="grid-3">
+      <div class="card">
+        <h4>① Wilson-LCB 校准 LUT</h4>
+        <p>按（题型, SNR…）单元估计准确率下界，取 argmax LCB。<br/>训练折拟合，测试折报告。</p>
+      </div>
+      <div class="card">
+        <h4>② 零参数语义规则</h4>
+        <div class="formula">symbolic → s₁ (token)
+  counting / comparison
+  co-presence / threshold
+perception (presence) → s₂ (image)</div>
+        <p>与 LCB 选择器<strong>统计不可区分</strong>（主集 McNemar p=0.12；AWGN 上 bit 一致）。</p>
+      </div>
+      <div class="card">
+        <h4>③ 逐样本预测器</h4>
+        <p>发送端特征上的 logistic：+0.7–1.1 pt，载荷近乎减半。接收端 VLM 口头置信度反校准（AUC 0.406），不能用来路由。</p>
+      </div>
+    </div>
+    <div class="callout warn">
+      维度消融：题型是<strong>唯一承重</strong>路由维；再叠 SNR/视角/新鲜度/风险，池化准确率变化 ≤ ±0.003。
+    </div>
+  </section>
+
+  <!-- 7 complementarity -->
+  <section class="slide" data-title="证据–问题互补">
+    <div class="kicker">05 · Complementarity</div>
+    <h2>证据–问题互补性（核心现象）</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h4>符号推理题 · 更爱 token</h4>
+        <ul class="clean">
+          <li>counting / comparison / co-presence</li>
+          <li>相对传图：准确率 <strong>+0.11 ~ +0.17</strong></li>
+          <li>token 保留离散计数充分统计</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>感知题 · 更爱 image</h4>
+        <ul class="clean">
+          <li>presence</li>
+          <li>相对 token：图更好（约 <strong>−0.08</strong> 若用 token）</li>
+          <li>需要存在性 / 外观召回</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:12px">
+      <div class="card">
+        <h4>边界类型</h4>
+        <p><strong>threshold</strong>：符号跨数据集变号 → 规则里仍归 symbolic 支，但分析上标为边界。</p>
+      </div>
+      <div class="card">
+        <h4>谁解码 token？</h4>
+        <p>必须<strong>符号解码</strong>。把同样 token 当文本塞给 VLM ≈ <strong>−15 pt</strong>。不是「同一后端吃不同表示」，而是<strong>证据管线互补</strong>。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 scale -->
+  <section class="slide" data-title="实验规模">
+    <div class="kicker">06 · Evaluation</div>
+    <h2>评估规模与基线银行</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h4>主池 + 复现池</h4>
+        <ul class="clean">
+          <li><strong>548</strong> 图 · <strong>936</strong> hold-out 题 · 5 题型 · 6 SNR · 3 信道 → <strong>16,848</strong> 决策</li>
+          <li>第二池 <strong>490</strong> 图 · <strong>710</strong> 题 · Rician-only → <strong>4,260</strong> 决策</li>
+          <li>据我们所知：真实 VLM 接收机在编码链路上最大规模端到端 VQA 准确率评估之一</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>方法银行（统一 channel-use + 焦耳）</h4>
+        <table>
+          <tr><th>方法</th><th>说明</th></tr>
+          <tr><td>Evidence routing</td><td>题型路由 / LCB / 规则</td></tr>
+          <tr><td>Fixed token / image</td><td>固定 s₁ 或 s₂</td></tr>
+          <tr><td>Rate-adaptive image</td><td>自适应 JPEG+LDPC</td></tr>
+          <tr><td>Analog / DJSCC</td><td>模拟与紧凑学习 JSCC</td></tr>
+          <tr><td>Error-free image</td><td>无信道错误上界参照</td></tr>
+          <tr><td>Oracle</td><td>每决策最优 {s₁,s₂}</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="pill-row">
+      <span class="chip">AWGN · Rayleigh · Rician</span>
+      <span class="chip">SNR −5 → 20 dB</span>
+      <span class="chip">统一 complex channel-use</span>
+      <span class="chip">GPU 功率实测（战役负载）</span>
+    </div>
+  </section>
+
+  <!-- 9 accuracy -->
+  <section class="slide" data-title="准确率结果">
+    <div class="kicker">07 · Accuracy</div>
+    <h2>准确率：路由全面优于固定管线</h2>
+    <table>
+      <tr><th>信道</th><th>Evidence routing</th><th>Fixed token</th><th>Rate-adaptive image</th><th>Oracle</th></tr>
+      <tr><td>AWGN</td><td><strong>0.653→0.679</strong></td><td>0.635</td><td>0.575→0.611</td><td>0.756</td></tr>
+      <tr><td>Rayleigh</td><td><strong>0.641→0.679</strong></td><td>0.633</td><td>0.561→0.612</td><td>0.755</td></tr>
+      <tr><td colspan="5" class="sub">范围跨 SNR −5→20 dB；路由在每个 SNR、每信道上均为最佳非 oracle（主表口径）。</td></tr>
+    </table>
+    <div class="grid-3" style="margin-top:12px">
+      <div class="card">
+        <h4>vs 固定基线</h4>
+        <p>配对 McNemar 对 fixed token / image <strong>显著更优</strong>；规则 vs LCB 不可区分。</p>
+      </div>
+      <div class="card">
+        <h4>vs error-free 图</h4>
+        <p>高 SNR 路由 ≈0.68 <strong>仍超过</strong> 无错传图 ≈0.61 → 增益来自<strong>证据选择本身</strong>，不只抗信道。</p>
+      </div>
+      <div class="card">
+        <h4>CSI 敏感性</h4>
+        <p>level 决策不靠 CSI；假定 SNR × 真 SNR 失配矩阵近似平坦——无调度层 CSI 错误峭壁。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 energy -->
+  <section class="slide" data-title="能量结果">
+    <div class="kicker">08 · Energy</div>
+    <h2>能量：计算主导的 Pareto 前沿</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h4>实测 GPU 功率（边缘代理 RTX 4060）</h4>
+        <table>
+          <tr><th>阶段</th><th>功率</th><th>增量焦耳量级</th></tr>
+          <tr><td>Idle</td><td>~52 W</td><td>—</td></tr>
+          <tr><td>YOLOv8n (s₁)</td><td>~59 W</td><td>~0.07 J 量级</td></tr>
+          <tr><td>Qwen2-VL-2B (s₂)</td><td>~108 W</td><td><strong>~32 J</strong> 量级</td></tr>
+        </table>
+        <p style="margin-top:8px">在测试的每个链路上：<strong>VLM 焦耳 &gt; 无线电焦耳</strong> → 最大杠杆是「能不跑 VLM 就不跑」。</p>
+      </div>
+      <div class="card">
+        <h4>每答案能量–准确率</h4>
+        <ul class="clean">
+          <li>类型感知路由相对 rate-adaptive 图：<strong>2.2× 更省焦耳且更准</strong>（各 SNR 比约 2.23–2.25）</li>
+          <li>固定 token：比图便宜 <strong>75–79×</strong>（比路由再便宜 33–35×）</li>
+          <li>能量价格 λ 扫过逐样本预测器 → 在 all-token 与 accuracy-first 之间<strong>可控</strong></li>
+          <li>条件 Pareto 占优命题形式化该效应</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      绿色叙事：效率来自 <strong>evidence frugality</strong>，而不仅是更好的源/信道编码；与现有功率/带宽分配器可组合，而非竞争。
+    </div>
+  </section>
+
+  <!-- 11 counterintuitive -->
+  <section class="slide" data-title="反直觉发现">
+    <div class="kicker">09 · Findings</div>
+    <h2>三个反直觉发现</h2>
+    <div class="grid-3">
+      <div class="card">
+        <h4>① Error-free 仍输路由</h4>
+        <p>无信道错误的全图传输准确率仍低于路由 → 问题在<strong>证据种类</strong>，不在衰落。</p>
+      </div>
+      <div class="card">
+        <h4>② 计算主导</h4>
+        <p>每答案前沿由 VLM 计算主导；发射功率/速率适配是次级杠杆。</p>
+      </div>
+      <div class="card">
+        <h4>③ Less is more</h4>
+        <p>按置信度 top-t 截断 token：threshold 题 <strong>+7.7 pt</strong>——滤假阳性，非单调「越传越多越好」。</p>
+      </div>
+    </div>
+    <h3>其他可汇报细节</h3>
+    <div class="pill-row">
+      <span class="chip">固定码率 token 有 cliff；信息中断自适应更稳</span>
+      <span class="chip">DJSCC 紧凑学习基线纳入银行</span>
+      <span class="chip">第二数据集规则仍与 selector 不可分</span>
+      <span class="chip">跨 VLM 扩展见 future work</span>
+    </div>
+  </section>
+
+  <!-- 12 theory -->
+  <section class="slide" data-title="理论">
+    <div class="kicker">10 · Theory (brief)</div>
+    <h2>理论与命题（组会一分钟版）</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h4>为什么规则有效</h4>
+        <ul class="clean">
+          <li>理想极限下：token 是离散计数问题的充分统计</li>
+          <li>图像保留存在性/外观信息</li>
+          <li>条件引理解释「何时 token 优于 image」的方向性</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>能量–准确率 Pareto</h4>
+        <ul class="clean">
+          <li>条件 Pareto-dominance 命题：类型感知路由在联合焦耳轴上占优固定图像管线</li>
+          <li>实验 margin 实例化该命题（2.2× + 更高准确率）</li>
+          <li>λ 作为每答案能量预算对偶，可与 slot 级资源分配器对接</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout warn">
+      诚实边界：token 有限块长下气口计费略偏乐观（文中已量化上界）；DJSCC 是紧凑对照而非 SOTA codec；s₃ 不进主表。
+    </div>
+  </section>
+
+  <!-- 13 positioning -->
+  <section class="slide" data-title="期刊定位">
+    <div class="kicker">11 · Positioning</div>
+    <h2>在 TGCN 绿色语义通信线中的位置</h2>
+    <div class="card">
+      <h4>Cover letter 口径（3 句）</h4>
+      <ol class="clean">
+        <li>现有 TGCN 绿色语义工作优化<strong>固定语义表示</strong>的能量（功率、带宽、RSMA…）。</li>
+        <li>本文转向测量：任务<strong>究竟需要哪一种表示</strong>，并在真实冻结 VLM + 编码链路上报端到端准确率与<strong>实测通信+计算焦耳</strong>。</li>
+        <li>结论可执行：前沿计算主导 → 题型条件路由在每 SNR 上 2.2× 降焦耳且升准确率，与现有分配器<strong>可组合</strong>。</li>
+      </ol>
+    </div>
+    <div class="grid-2" style="margin-top:12px">
+      <div class="card">
+        <h4>我们卖什么</h4>
+        <p>Evidence-level 路由 · 互补性 · 统一 channel-use+joule 方法学 · 绿色杠杆在「拒跑 VLM」。</p>
+      </div>
+      <div class="card">
+        <h4>我们不卖什么</h4>
+        <p>不是新 SOTA JSCC；不是端到端可微 codec；不是 RL 资源分配主文（那是另一条线）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 status -->
+  <section class="slide" data-title="现状与下一步">
+    <div class="kicker">12 · Status</div>
+    <h2>文稿状态、限制与下一步</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h4>已完成（投稿级核心）</h4>
+        <ul class="clean">
+          <li>全文结构完整（Intro→Conc），TGCN 单栏双倍行距格式</li>
+          <li>大规模测试矩阵 + 能量栈 + 主图/表</li>
+          <li>规则 vs LCB 统计检验、维度消融、截断效应</li>
+          <li>可编译 PDF：<span class="mono">main.pdf</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>文中已写的 future / 限制</h4>
+        <ul class="clean">
+          <li>两则证明完善；第二数据集全信道扩展</li>
+          <li>非 Qwen 接收机扩展；学习符号 codec</li>
+          <li>机上检测器功率实测；与动态资源分离闭环</li>
+          <li>s₃ 条件路由的 per-sample 策略</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout blue">
+      组会可确认：是否按当前 claim（证据路由 + 焦耳）冲 TGCN 初稿，还是补齐跨 VLM / 全信道第二池后再投。
+    </div>
+  </section>
+
+  <!-- 15 discussion -->
+  <section class="slide" data-title="讨论">
+    <div class="kicker">13 · Discussion</div>
+    <h2>希望讨论的问题</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Claim 与贡献表述</h4>
+        <p>1）「最大规模 VLM-over-wireless VQA」表述是否需再收紧？<br/>
+           2）主卖点强调 2.2× 能量还是互补性 + 方法论？</p>
+      </div>
+      <div class="card">
+        <h4>技术边界</h4>
+        <p>3）符号解码是否会被审稿人认为「不算语义通信」？如何预答辩？<br/>
+           4）token 有限块长计费是否需要更强实验？</p>
+      </div>
+      <div class="card">
+        <h4>实验补强优先级</h4>
+        <p>5）跨 VLM vs 第二池全信道 vs 机上功率，哪个先做？<br/>
+           6）DJSCC 是否需要更强对照以免「稻草人」质疑？</p>
+      </div>
+      <div class="card">
+        <h4>与其他工作线关系</h4>
+        <p>7）与 RL 资源分配 / 高保真 JC 环境如何切分叙事？<br/>
+           8）目标投稿时间窗口？</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 summary -->
+  <section class="slide" data-title="总结">
+    <div class="kicker">14 · Summary</div>
+    <h2>一页总结</h2>
+    <div class="grid-4">
+      <div class="card center"><div class="big">Ask</div><p>发射前问：这题要什么证据</p></div>
+      <div class="card center"><div class="big">s₁/s₂</div><p>符号题走 token，感知题走图</p></div>
+      <div class="card center"><div class="big">2.2×</div><p>更省焦耳且更准（vs 自适应图）</p></div>
+      <div class="card center"><div class="big">VLM</div><p>能量杠杆 = 是否跑前向</p></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h4>三句话</h4>
+      <ol class="clean">
+        <li>UAV VQA 的默认「传图+跑 VLM」在通信与计算上双重浪费。</li>
+        <li>存在稳定的证据–问题互补；零参数规则几乎匹配数据校准选择器。</li>
+        <li>在真实冻结 VLM 与编码链路上，题型路由以更低焦耳获得更高准确率——绿色收益来自证据节俭。</li>
+      </ol>
+    </div>
+    <p class="center muted" style="margin-top:26px">谢谢 · 欢迎提问<br/>
+      <span class="mono">HPPO-VQA-tgcn/paper_semcom/group_meeting.html</span>
+    </p>
+  </section>
+
+</main>
+
+<div class="footer-nav">
+  <div class="hint">← → 翻页 · Home/End · F 全屏 · 浏览器打印 → PDF</div>
+  <div class="navbtns">
+    <button type="button" id="btnPrev2">上一页</button>
+    <button type="button" class="primary" id="btnNext2">下一页</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  let i = 0;
+  const label = document.getElementById('slideLabel');
+  const bar = document.getElementById('bar');
+
+  function show(idx) {
+    i = Math.max(0, Math.min(slides.length - 1, idx));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    label.textContent = (i + 1) + ' / ' + slides.length + ' · ' + (slides[i].dataset.title || '');
+    bar.style.width = ((i + 1) / slides.length * 100) + '%';
+    location.hash = 's' + (i + 1);
+  }
+  function next() { show(i + 1); }
+  function prev() { show(i - 1); }
+
+  document.getElementById('btnNext').onclick = next;
+  document.getElementById('btnNext2').onclick = next;
+  document.getElementById('btnPrev').onclick = prev;
+  document.getElementById('btnPrev2').onclick = prev;
+  document.getElementById('btnToc').onclick = function () { show(1); };
+
+  document.querySelectorAll('#toc a').forEach((a, idx) => {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      show(idx + 2);
+    });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); prev();
+    } else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen().catch(()=>{});
+    }
+  });
+
+  const m = location.hash.match(/s(\d+)/);
+  if (m) show(parseInt(m[1], 10) - 1);
+  else show(0);
+})();
+</script>
+</body>
+</html>

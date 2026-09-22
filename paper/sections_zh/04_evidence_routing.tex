@@ -1,0 +1,195 @@
+\section{问题条件下的证据路由}\label{sec:routing}
+
+第~\paperref{sec:system}~节中的两条分支在传输信息和计算需求上均存在差异。
+证据路由在传输之前选择分支，使检测证据足以回答的问题无需调用接收端视觉语言模型（VLM）。
+本节首先介绍无需训练路由器的问题类型规则，然后利用当前检测结果构建逐样本路由器，
+进一步调整分支选择，最后分析证据选择在不降低准确率的情况下减少能耗所需的条件。
+
+\subsection{基于问题类型的证据选择}
+
+计数、数量比较、共现判断和阈值判断均可表示为目标数量的函数。
+检测证据分支向符号解码器提供这些数量信息，从而避免接收端的图像推理。
+存在性问题也可以依据检测结果回答，但没有检测到目标并不意味着场景中不存在该目标。
+图像分支保留了检测器可能遗漏的视觉信息。
+上述差异为按问题类型分配两条分支提供了设计依据。
+
+令 $t(q)$ 表示问题 $q$ 的类型，定义
+$\mathcal T_{\mathrm{sym}}=\{\text{计数、数量比较、共现判断、阈值判断}\}$
+和 $\mathcal T_{\mathrm{pres}}=\{\text{存在性判断}\}$。
+类型规则为
+\begin{equation}
+r(t(q))=
+\begin{cases}
+\mathrm{det}, & t(q)\in\mathcal T_{\mathrm{sym}},\\
+\mathrm{img}, & t(q)\in\mathcal T_{\mathrm{pres}}.
+\end{cases}
+\label{eq:rule}
+\end{equation}
+该规则不使用信道状态信息（CSI），也不需要接收端反馈。
+选择检测证据分支时，无人机运行检测器并传输生成的数据包；
+否则，无人机直接传输图像，无需为路由执行检测。
+因此，该决策也决定是否需要机载检测，其开销已纳入式~\papereqref{eq:energy} 的能耗模型。
+
+式~\eqref{eq:rule} 是一项固定设计规则，并不意味着同一类型的所有问题都由某一分支回答得更准确。
+漏检、误检和图像失真均可能改变单次查询中更合适的证据形式。
+例如，阈值问题的答案取决于检测误差是否使估计数量跨过问题指定的阈值。
+仅依据问题类型的规则无法反映这些样本差异，因此需要进一步引入逐样本路由。
+
+\subsection{逐样本证据路由}
+
+逐样本路由器利用传输前可获得的信息，估计两条分支各自的回答正确性。
+对于每次查询，无人机首先计算 $Z=g(I)$，再构建特征向量 $x$。
+特征向量包含 $18$ 维：问题类型独热编码 $5$ 维、目标类别独热编码 $10$ 维、
+以 dB 表示并除以 $20$ 的预设信噪比、截断至 $60$ 后除以 $60$ 的目标类别检测数量，
+以及该数量是否非零的指示量。
+数量由信道损坏前的原始检测记录 $Z$ 计算，不是接收端恢复的数量。
+输入不包含标准答案、由标注派生的场景属性或接收端输出。
+预设信噪比是发送端输入，选择前不需要接收端 VLM 推理。
+
+对于分支 $s\in\mathcal S=\{\mathrm{det},\mathrm{img}\}$，
+用 $\widehat p_s(x)$ 估计该分支回答正确的概率。
+监督标签为 $y_{i,s}\in\{0,1\}$，来自相同图像、问题和信道条件下两条分支的成对回答记录。
+标签表示答案是否满足实验部分的评分规则，而不是将唯一一条分支标记为正确选择。
+因此，同一样本的两条分支既可以同时回答正确，也可以同时回答错误。
+
+正确性预测器使用二元交叉熵进行拟合。
+对于 $N_{\mathrm{tr}}$ 条训练决策，数据拟合项为
+\begin{equation}
+\mathcal L_{\mathrm{BCE}}
+=-\frac{1}{2N_{\mathrm{tr}}}
+\sum_{i=1}^{N_{\mathrm{tr}}}\sum_{s\in\mathcal S}
+\left[y_{i,s}\log\widehat p_s(x_i)
++(1-y_{i,s})\log(1-\widehat p_s(x_i))\right].
+\label{eq:loss}
+\end{equation}
+本文采用紧凑的多层感知机（MLP）预测器，两个隐藏层分别含 $32$ 和 $16$ 个单元，
+使用 ReLU 激活和 Adam 优化器。
+预测器拟合使用训练图像，早停使用独立验证图像。
+同一图像的全部问题与信噪比回放始终属于同一划分。
+实验设置给出具体划分、仅训练集计数校准和重复运行协议。
+在传输前预测分支性能的思路与图像语义通信中的预测式自适应方法相关\cite{zhang2023padc}；
+本文预测的是答案正确性，而不是图像重建质量。
+
+默认决策选择预测正确率较高的分支：
+\begin{equation}
+\widehat s(x)=\arg\max_{s\in\mathcal S}\widehat p_s(x).
+\label{eq:argmax}
+\end{equation}
+能耗感知扩展沿用上述预测器，并从预测正确率中扣除分支能耗的加权项：
+\begin{equation}
+\widehat s_\lambda(x)=
+\arg\max_{s\in\mathcal S}
+\left[\widehat p_s(x)-\lambda E_\rho(s,\gamma)\right],
+\qquad \lambda\ge0,
+\label{eq:price}
+\end{equation}
+其中，$\lambda$ 的单位为 J$^{-1}$，
+$E_\rho(s,\gamma)$ 为式~\papereqref{eq:energy} 中与选择器对应的能耗。
+当 $\lambda=0$ 时，式~\eqref{eq:price} 退化为式~\eqref{eq:argmax}，
+本文同时报告这一设置和能耗感知工作点。
+当两条分支的预测准确率足够接近时，正能耗价格使决策更倾向于低能耗分支。
+实验使用固定价格网格，并在验证集上选择工作点。
+各分支成本按查询计算，公式中省略其对图像的依赖。
+该机制不施加逐次查询的硬能耗约束，也不保证测试集准确率损失。
+
+算法~\ref{alg:selector} 总结两种路由方式。
+不同于类型规则，逐样本路由对每个查询都执行检测，包括最终选择图像传输的查询。
+尽管这一共同检测开销不影响同一查询中两条分支得分的比较，能耗核算仍须将其计入。
+随后，所选分支按照第~\paperref{sec:system}~节的传输与答案生成模型运行。
+训练使用成对分支结果，但推理时只传输选定的证据。
+实验采用已记录分支结果的离线回放评估该过程，不代表实时控制闭环运行。
+类型级查表方法和线性预测方法作为对比基线，在实验设置中定义。
+
+\begin{algorithm}[t]
+\caption{单次查询的问题条件证据路由}
+\label{alg:selector}
+\begin{algorithmic}[1]
+\REQUIRE 图像 $I$；问题 $q$ 及类型 $t(q)$；
+路由模式 $\rho\in\{\mathrm{rule},\mathrm{MLP}\}$；
+MLP 模式另需目标类别、预设信噪比 $\gamma$、预测器
+$\widehat p_s$ 及能耗价格 $\lambda$（默认为 $0$）
+\IF{$\rho=\mathrm{rule}$}
+  \STATE 按式~\eqref{eq:rule} 计算 $\widehat s\leftarrow r(t(q))$
+\ELSE
+  \STATE 计算 $Z=g(I)$，构建特征 $x$
+  \STATE 预测 $\widehat p_{\mathrm{det}}(x)$ 和 $\widehat p_{\mathrm{img}}(x)$
+  \STATE 按式~\eqref{eq:price} 选择 $\widehat s$
+\ENDIF
+\IF{$\widehat s=\mathrm{det}$}
+  \IF{$\rho=\mathrm{rule}$}
+    \STATE 计算 $Z=g(I)$
+  \ENDIF
+  \STATE 传输 $Z$，接收端根据接收证据 $\widetilde Z$ 回答
+\ELSE
+  \STATE 传输速率自适应编码图像，接收端根据重建图像 $\widehat I$ 回答
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{证据选择分析}
+
+\emph{问题所需的信息。}
+考虑真实答案为 $A_q=N_c(I)$ 的计数问题。
+若检测恢复了真实数量，且传输保留了相关记录，则
+$\widehat N_c(\widetilde Z)=N_c(I)$，从而有
+\begin{equation}
+H\!\left(A_q\mid\widehat N_c(\widetilde Z)\right)=0.
+\end{equation}
+在这些理想条件下，检测证据包含回答该问题所需的全部信息，因此不必传输图像。
+当相关类别的数量均被正确恢复时，同样的结论适用于数量比较、共现判断和阈值判断。
+这一结论讨论的是信息充分性，并不保证实际检测器或有噪信道满足这些条件。
+
+实际检测证据分支受到检测误差以及传输记录损坏或丢失的影响；
+图像分支则受到压缩、信道退化和 VLM 回答误差的影响。
+对于存在性问题，漏检可能使目标未被写入数据包，但图像中仍保留有用的视觉信息。
+这解释了图像传输的一种潜在优势，却不能建立普遍成立的准确率排序。
+分支比较同时取决于误检、漏检、信道条件和实际接收模型。
+因此，实验按问题类型测量两条分支的准确率，而不是仅由检测召回率推断其优劣。
+
+\emph{分支准确率条件下的能耗降低。}
+固定信道条件与计算模型。
+设问题类型 $t\in\mathcal T$ 的概率为 $w_t>0$，
+且 $\sum_{t\in\mathcal T}w_t=1$。
+令 $a_s(t)$ 和 $e_s(t)$ 分别表示分支 $s$ 的期望准确率和每题能耗。
+此处的开销对应仅按类型选择分支的情形，即仅在选择检测证据分支时执行检测。
+确定性类型策略 $\pi:\mathcal T\to\mathcal S$ 的准确率与能耗为
+\begin{equation}
+A(\pi)=\sum_{t\in\mathcal T}w_t a_{\pi(t)}(t),
+\qquad
+E(\pi)=\sum_{t\in\mathcal T}w_t e_{\pi(t)}(t).
+\label{eq:policy}
+\end{equation}
+
+\begin{proposition}[有条件的能耗与准确率优势]\label{prop:pareto}
+令 $\mathcal T=\mathcal T_{\mathrm{sym}}\cup\mathcal T_{\mathrm{pres}}$，
+其中两个集合互不相交且均非空，与式~\eqref{eq:rule} 的划分一致。
+假设对所有 $t$ 均有 $e_{\mathrm{det}}(t)<e_{\mathrm{img}}(t)$，且
+\begin{equation}
+\begin{aligned}
+a_{\mathrm{det}}(t)&\ge a_{\mathrm{img}}(t),
+&&t\in\mathcal T_{\mathrm{sym}},\\
+a_{\mathrm{img}}(t)&>a_{\mathrm{det}}(t),
+&&t\in\mathcal T_{\mathrm{pres}}.
+\end{aligned}
+\label{eq:ordering}
+\end{equation}
+则类型规则 $r$ 在所有确定性类型策略中最大化 $A(\pi)$，
+并在达到该最大准确率的策略中最小化 $E(\pi)$。
+相较于固定图像策略 $\pi_{\mathrm{img}}$，
+有 $A(r)\ge A(\pi_{\mathrm{img}})$ 且 $E(r)<E(\pi_{\mathrm{img}})$。
+\end{proposition}
+
+\emph{证明。}
+式~\eqref{eq:policy} 中的准确率求和可按问题类型分别最大化。
+式~\eqref{eq:ordering} 保证 $r$ 对每一项均选取准确率最大的分支。
+当准确率相同时，检测证据分支的能耗更低。
+最后，$r$ 在一个具有正概率的类型集合上，
+用准确率不低而能耗严格更低的分支替代图像传输。
+由此得到上述结论。\hfill$\square$
+
+该命题给出充分条件，而非式~\eqref{eq:rule} 的一般最优性保证。
+尤其是，准确率条件也必须适用于 $\mathcal T_{\mathrm{sym}}$ 中的阈值问题。
+较小的观测准确率差异并不能证明准确率相等，也不能据此确认上述条件成立。
+实验在所述能耗模型下直接评估类型规则与学习路由器。
+MLP 使用了问题类型之外的信息，且具有不同的计算开销，
+因此不能由该命题推出它在实验中取得的增益。

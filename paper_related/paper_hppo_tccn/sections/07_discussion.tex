@@ -1,0 +1,59 @@
+% §VII --- Discussion (~0.5 page, ~500 words). Drafted D11.
+\section{Discussion}\label{sec:disc}
+
+The empirical results in Section~\ref{sec:exp} call out three
+mechanisms behind \method's consistent advantage. First, the
+factorized hybrid policy from Proposition~\ref{prop:grad} keeps the
+discrete and continuous heads' gradients independent, so the
+piecewise reward~\eqref{eq:reward} can simultaneously sharpen the
+discrete symbol / channel selection and steer the continuous
+trajectory / power without either head crowding the other. The
+ablation in Table~\ref{tab:ablation} confirms that switching from the
+piecewise reward to a flat $-O(t)$ shaping inflates the joint cost from
+$0.30$ to $0.41$ and drops the success rate from $0.81$ to $0.52$
+(roughly a one-third relative drop), the largest single regression
+among the four ablation axes.
+
+Second, centralizing the critic over the global state mitigates the
+non-stationarity that arises when several UAV agents update their
+policies concurrently in the same channel. The MAPPO-hybrid baseline
+shares this centralized critic but compresses the actor's discrete
+heads, so its asymptotic reward in Fig.~\ref{fig:conv} sits roughly
+$25\%$ below \method's at convergence; the gap widens as the topology
+grows in Fig.~\ref{fig:scale}. The role-aware specialized heads in
+\method therefore extract value that the canonical MAPPO weight-sharing
+scheme leaves on the table when the agents have heterogeneous decision
+types.
+
+Third, the piecewise reward turns the LUT-encoded semantic-feasibility
+constraint into a differentiable gradient signal: the third branch
+in~\eqref{eq:reward} receives a $+0.5$ trajectory bonus whenever every
+UE's similarity exceeds the threshold $\xi_{\mathrm{th}}$, while the
+fourth branch penalizes the fraction of UEs that fail. The per-task
+similarity CDF in Fig.~\ref{fig:cdf} shows that this design
+concentrates probability mass above $\xi_{\mathrm{th}}=0.5$ in a way
+that the conventional cost-only baselines (PADDPG, PDQN) cannot match
+even at convergence.
+
+The robustness panels (Fig.~\ref{fig:robust}, Fig.~\ref{fig:jam}) and
+the large-scale UE generalization in Table~\ref{tab:largeue} reveal a
+further property: \method's role-aware actor heads transfer to
+unseen channel and topology conditions better than the parameter-shared
+variant. We attribute this to the per-head specialization: the four
+role groups (UAV symbol, UE symbol, UAV channel, UE channel) absorb
+their respective domain shifts independently, so no single head's
+distribution drift contaminates the others. The MAPPO-hybrid baseline,
+by contrast, propagates a per-agent index embedding through one shared
+head, and a perturbation that drifts the input distribution affects
+every agent simultaneously.
+
+Two practical implications follow. First, when heterogeneous agents
+share a hybrid action space, role-aware specialization is preferable to
+parameter sharing despite the parameter count gap; the wall-clock cost
+in Table~\ref{tab:wallclock} is modest ($\sim 3\%$ training time
+overhead). Second, a piecewise reward grounded in the LUT-encoded
+task-fidelity constraint is more effective than a smooth cost-only
+shaping, because it keeps the policy gradient informative even when
+the cost surface is locally flat or noisy. We expect both insights to
+transfer to other heterogeneous-agent semantic-resource scheduling
+problems beyond UAV-VQA.

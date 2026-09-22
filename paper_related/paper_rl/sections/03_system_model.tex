@@ -1,0 +1,286 @@
+% §III --- System Model. Status: DRAFT.
+\section{BUBBLES-Conformant System Model}\label{sec:system}
+
+We consider $N$ small UAVs operating in a shared low-altitude volume and
+answering a stream of VQA queries through an edge server over an A2G link.
+Rather than invent the airspace, mobility, and conflict models, we anchor
+every parameter to the SESAR JU BUBBLES D2.1
+deliverable~\cite{bubbles2022d21}, double-citing peer-reviewed or regulatory
+sources for load-bearing claims~\cite{weinert2022well,eu2021664}.
+
+\subsection{Airspace, envelope, and demand}
+The operating volume is a $5\times5$\,km area with three flight layers at
+$20$--$120$\,m altitude (BUBBLES Appendix~G). The traffic
+\emph{performance envelope} (Appendix~B) fixes the UAV kinematics: cruise
+speed $5$--$25$\,m/s, climb rate $3$--$5$\,m/s, and airframe size
+$0.5$--$5$\,m. The Appendix-G Table~G-13 operational demand---daily-mean
+$8.17$ concurrent aircraft, peak $20$, $784$ operations/day, mean operation
+duration $15$\,min---defines two operating conditions we evaluate under:
+
+\begin{itemize}
+\item \textbf{peak (\texttt{utm\_conflict})}: $20$ concurrent aircraft,
+dense arrivals; the conflict constraint is genuinely activated (a stress
+test of safety behaviour);
+\item \textbf{nominal}: $8.17$ concurrent aircraft; the default evaluation
+condition, where the airspace is uncongested.
+\end{itemize}
+
+Each aircraft is placed on an \emph{Area4D} operational
+volume~\cite{bubbles2022d21}---a disk of radius $130$\,m matching the
+nominal sensor footprint---on a jittered grid, and its background
+operational intents are generated from that aircraft's own task stream
+through a density gate (activation probabilities $0.30$ nominal /
+$0.12$ peak). \emph{Honesty note}: we therefore do \emph{not} inject an
+independent environmental traffic population; the demand is a
+\emph{fleet-internal} traffic model in which every intent traces to a
+served UAV, and a separate exogenous-traffic layer is left to future work.
+A consequence of the Area4D packing is a scenario-intrinsic baseline
+geometric-conflict rate---it is a property of the demand geometry, not an
+artifact of the scheduling policy.
+
+VQA tasks arrive as a VisDrone-derived query stream~\cite{zhu2021visdrone},
+modelled as an operations-to-queries process in which each active operation
+emits a question stream over its dwell. Each episode serves $20$ queries in
+one-second decision slots (one service decision per slot); under the peak
+preset the queries arrive as a front-loaded burst with a $50\%$
+critical/high risk mix, while nominal arrivals are staggered.
+
+\subsection{A2G link, bandwidth, and interference}\label{subsec:a2g}
+The air-to-ground uplink uses log-distance path loss with an
+elevation-dependent line-of-sight (LoS) term: we adopt the Al-Hourani LoS
+sigmoid~\cite{alhourani2014optimal} with its original urban parameters
+($a{=}9.61$, $b{=}0.16$) and a path-loss exponent of $2.2$--$2.25$,
+cross-checked against 3GPP TR~36.777 aerial
+channel models~\cite{3gpp2020tr36777}. Shadow fading uses
+$\sigma_{\mathrm{SF}}=2$\,dB (36.777 UMa-AV LoS gives
+$4.64\,e^{-0.0066h}\!\approx\!2.6$\,dB at $90$\,m), and small-scale fading is
+Rician with $K{=}6$\,dB, within the $K\!\approx\!2$--$15$\,dB range reported
+for measured A2G links~\cite{khawaja2019survey}. The received SNR is
+quantized to $\{-5,\dots,20\}$\,dB bins.
+
+\emph{Bandwidth and multiple access.} The A2G bandwidth is not a private
+per-aircraft channel: it is a \emph{share of a common spectrum pool}, and
+the continuous resource action allocates a fraction of that pool
+($0.65$--$1.0$\,MHz per served task in our scenario tiers). The main
+training and evaluation loop is \emph{slotted-serial on the uplink}: each
+decision slot serves a single task upload (an implementation fact), so
+concurrent co-channel interference does not accumulate on the main path and
+the noise floor is the aggregate out-of-system interference power constant
+$I_0$. We sweep $I_0$ from $-120$ to $-116$\,dBm as an
+\emph{interference-floor axis} for zero-shot robustness; this is a raised
+noise floor, not a claim of resolved multi-user contention. A partially
+overlapping shared-pool leakage mechanism (concurrent uploads contributing
+weighted co-channel interference) is exercised only in the multi-UAV
+concurrency benchmark of Section~\ref{sec:experiments} and is left as an
+extension of the main serial model. Transmission delay uses a
+capacity-abstraction rate (Shannon spectral efficiency at the operating
+SNR, with an implementation efficiency gap of $\eta\!\approx\!0.75$
+understood but not separately modelled), so quoted uplink times are
+lower bounds on a fielded modem.
+
+\subsection{Tactical-contact separation chain}
+Following BUBBLES §3.3.4 (Block~4), the tactical-contact separation minimum
+is built up from the physical near-mid-air-collision distance by adding
+error and time-window terms:
+\begin{equation}\label{eq:chain}
+\begin{split}
+\dtc = {}&\dnmac + \mathrm{TSE} + \mathrm{SSE} \\
+       &+ V_c\big[(T_1{+}T_2) + T_{\mathrm{res}} + (T_3{+}T_4)\big],
+\end{split}
+\end{equation}
+where $\dnmac$ is the downstream near-collision barrier, TSE/SSE are the
+total/surveillance system errors, $V_c$ is the closing speed, $T_1,T_2,T_3$
+are detection/decision/manoeuvre time windows, and $T_{\mathrm{res}}$ is
+the separation-recovery time. The final term $T_4$ is the sum of three
+normally distributed components---tracking delay, \emph{separation
+communication delay}, and pilot-execution delay (Table~G-2 example:
+communication mean $1.8$\,s / $\sigma\,1.0$, $T_4$ total mean $7.82$\,s /
+$\sigma\,4.24$). Equation~\eqref{eq:chain} is the mechanistic core of our
+safety bridge (Section~\ref{sec:experiments}): communication
+delay~$\uparrow$ $\Rightarrow$ $T_4\uparrow$ $\Rightarrow$
+$V_cT_4\uparrow$ $\Rightarrow$ $\dtc\uparrow$ $\Rightarrow$ airspace
+capacity~$\downarrow$. Communication delay is not exogenous noise; it is an
+additive Gaussian component inside the separation minimum.
+
+A pair of UAVs is in \emph{tactical conflict} only when both a spatial and
+a temporal criterion hold: the closest-point-of-approach (CPA) distance
+falls below $\dtc$ \emph{and} time-to-CPA is below $60$\,s. Critically, CPA
+is extrapolated from the kinematics of the \emph{assigned} UAV (the one
+tasked to serve), not the nearest arbitrary UAV; using the nearest UAV
+would make conflicts almost exogenous to the policy, leaving ``select
+cache'' as the only avoidance action (see Section~\ref{sec:algorithm}).
+
+\subsection{How payload enters $T_4$: an M/G/1 queueing coupling}
+\label{subsec:mg1}
+The separation-communication component of $T_4$ (Table~G-2 mean $1.8$\,s)
+is the tactical loop's own exchange---formulate the resolution, deliver the
+instruction. Our VQA payload does not \emph{replace} that exchange; it
+\emph{contends} with it on the shared RAN. We therefore treat the $1.8$\,s
+as the queue-empty tactical baseline and add the contention as the mean
+waiting time $W$ of a non-preemptive priority M/G/1
+queue~\cite{kleinrock1975queueing}: the separation-relevant (C2-class)
+message is the high-priority class, payload uploads are the low-priority
+class whose service time $S$ is the airtime of the evidence level the
+scheduler chose, and per-class utilisations follow the G-13 demand
+($\rho_{\mathrm{C2}}/\rho_{\mathrm{payload}}=0.10/0.35$ nominal,
+$0.25/0.55$ peak). Then
+\begin{equation}\label{eq:mg1}
+T_4^{\mathrm{comm}} = 1.8\,\mathrm{s} + W,\qquad
+W = W_{\mathrm{M/G/1}}\!\big(S(\text{evidence}),\,\rho\big),
+\end{equation}
+so a heavy upload lengthens the \emph{residual service} a tactical message
+must wait behind, and the evidence choice reaches $\dtc$ through the queue
+rather than by substitution. Because whether C2 shares the payload link is
+contested (Section~\ref{subsec:qos}), we evaluate both a \emph{shared}
+mode (C2 in the pool as the top class) and a \emph{dedicated} mode (C2 on
+its own band; only same-class payload contention remains).
+Table~\ref{tab:wsens} shows $W$ at the $-5$\,dB worst case: a token upload
+($14$\,ms airtime) adds $3$--$8$\,ms of wait---the tactical loop does not
+notice---while an image upload ($3.72$\,s airtime) adds $0.78$--$1.98$\,s,
+a $44$--$110\%$ inflation of the separation-communication mean.
+
+\begin{table}[t]
+\centering
+\caption{M/G/1 wait $W$ (s) added to the $1.8$\,s separation-comm baseline
+at $-5$\,dB Rayleigh, by load and C2 spectrum mode.}
+\label{tab:wsens}
+\footnotesize
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \multicolumn{2}{c}{shared C2} & \multicolumn{2}{c}{dedicated C2} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Evidence & nominal & peak & nominal & peak \\
+\midrule
+$s_1$ token ($S{=}0.014$\,s) & $0.004$ & $0.008$ & $0.003$ & $0.005$ \\
+$s_2$ image ($S{=}3.72$\,s)  & $0.930$ & $1.984$ & $0.783$ & $1.435$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Deadline QoS and the C2 priority class}\label{subsec:qos}
+Each query carries a delay budget $\tau_k$ interpreted as the
+\emph{communication-and-decision window}: the time from question arrival to a
+returned answer usable by the separation service. Flight-repositioning time
+is a \emph{tasking-layer} quantity and is deliberately \emph{not} charged to
+$\tau_k$. BUBBLES gives no hard communication-latency numbers---a
+fit-for-purpose principle citing ED-261 GEN-SUR (D2.1 p.\,62)---so rather
+than assert a deadline we anchor it to the separator-communication delay of
+the tactical chain: Table~G-2 models that delay as $\mathcal{N}(1.8,
+\sigma\,1.0)$\,s, and we set the critical and normal budgets at its
+$+2\sigma$/$+3\sigma$ confidence points, $\tau_{\mathrm{critical}}=3.8$\,s
+and $\tau_{\mathrm{normal}}=4.8$\,s. Treating the separation-relevant
+semantic evidence stream as the highest-priority class within the
+task-data-link QoS is consistent with the C2 key-performance-indicator
+targets of 3GPP TS~22.125~\cite{3gpp2022ts22125} and with EUROCAE ED-282 as
+supporting guidance~\cite{eurocae2020ed282}. We stress the scope red line:
+authenticated command-and-control / control-and-non-payload-communication
+(CNPC) runs on protected aeronautical spectrum (ICAO WRC-12
+$5030$--$5091$\,MHz) and is \emph{outside} this paper; a structural
+precedent for isolating such a flow as a separate QoS flow on the same RAN
+is 3GPP TS~22.125 / TS~23.256~\cite{3gpp2022ts22125,3gpp2022ts23256}.
+
+\subsection{Spec-attainability certificate and the escalation budget}
+\label{subsec:cert}
+Peak overload creates queries that \emph{no} action can serve within spec:
+at a weak link even the best transmission service cannot clear the quality
+threshold inside the deadline. Charging such physically unserveable
+queries to the policy as quality violations would poison both the learning
+signal and the safety accounting, so we make unserveability an explicit,
+certified state.
+
+\begin{definition}[Spec-attainability certificate]\label{def:cert}
+At slot $t$, query $k$ with remaining window $\tilde\tau_k(t)$ and quality
+threshold $\varepsilon_k$ is \emph{spec-attainable},
+$\mathrm{A}_k(t)=1$, iff some transmission service $s\in\{s_1,s_2\}$
+satisfies both
+$\mathrm{LCB}\big(q_s(\gamma_k)\big)\ge\varepsilon_k$ and
+$D^{\mathrm{comm}}_s(\gamma_k)\le\tilde\tau_k(t)$,
+where $q_s$ is the calibrated quality of service $s$ at link state
+$\gamma_k$, LCB its lower confidence bound, and $D^{\mathrm{comm}}_s$ the
+communication-window delay of Section~\ref{subsec:qos}.
+\end{definition}
+
+The certificate is an \emph{environment} property (calibrated quality
+tables plus link physics, independent of the learner), is exposed to the
+policy as a state feature, and is recomputed \emph{every} slot from the
+remaining window---a query whose window has been eaten by deferrals turns
+unattainable mid-episode. It drives a certified \emph{escalation} path for
+the safety-critical class: when a critical/high query ends the episode
+rejected or expired, the certificate decides the verdict. If
+$\mathrm{A}_k=1$ the policy dropped a serveable safety query and is charged
+the full quality violation; if $\mathrm{A}_k=0$ the query is
+\emph{escalated}---handed to a higher-tier service (relay tasking, human
+review) outside this scheduler---carrying no quality cost but consuming a
+budgeted escalation event. Escalation is priced by a dedicated dual channel
+with budget $\delta_{\mathrm{esc}}$ (Section~\ref{sec:problem}).
+
+The budget is \emph{derived, not tuned}: rolling the certificate over the
+scenario arrival mix measures the structurally unserveable fraction of the
+critical load ($0.105$ under peak, $0.000$ under nominal), and
+$\delta_{\mathrm{esc}}$ adds a $0.05$ headroom:
+$\delta_{\mathrm{esc}}^{\mathrm{peak}}=0.155$,
+$\delta_{\mathrm{esc}}^{\mathrm{nominal}}=0.05$. Queries that are not
+escalated form the \emph{admitted set}; all rate constraints in
+Section~\ref{sec:problem} are stated on it. This is the standard
+demanded-versus-achievable split of admission control: the scheduler is
+accountable for what it admits, and the certificate makes the
+un-admittable load visible, budgeted, and auditable rather than silently
+absorbed into violation statistics.
+
+\subsection{TLS anchoring and the conflict budget}
+The target level of safety is a total $\mathrm{TLS}=10^{-6}$ fatal
+accidents per flight hour (FAT/FH), of which the mid-air-collision share is
+$\mathrm{TLS}_{\mathrm{MAC}}=2.5\times10^{-7}$ FAT/FH; collision risk scales
+as $N(N{-}1)$ under the gas-kinetic model, and a severity ladder
+MAC$\leftarrow$NMAC$\leftarrow$IC$\leftarrow$SL$\leftarrow$TC places one
+mitigation barrier at each level. We use this ladder to \emph{derive} a
+per-slot conflict budget rather than assert one: a tactical-contact
+violation sits at the top of the ladder, protected by several downstream
+barriers, so it may occur far more frequently than a MAC. Normalizing that
+admissible frequency by the peak concurrency and the slot window yields a
+per-slot tactical-conflict budget of $\approx\!0.08$, which we use as the
+conflict constraint limit in Section~\ref{sec:problem}.
+\emph{Honesty note}: BUBBLES gives no hard communication
+reliability/latency numbers (a fit-for-purpose principle), so the specific
+normalization constant behind $0.08$ is our engineering design choice
+within the barrier-ladder$+$demand framework, declared as such rather than
+read directly from the deliverable.
+
+\subsection{Separation kernel and validation gate}
+The chain~\eqref{eq:chain}, the TLS anchoring, and the CPA dual criterion
+are implemented in a standalone separation kernel gated by a reproduction
+test against the official numerics: it recomputes BUBBLES Tables~G-4/G-5
+cell-by-cell to within $0.18\%$ (e.g., a total contact distance of
+$370.53\to370.49$\,m for a SAIL~I--II scenario), and a smoke scenario
+injecting an approaching pair lifts the measured conflict rate from $0$ to
+$0.5$, confirming the dual criterion fires; the full suite passes $14/14$
+unit tests. The kernel is a fixed ``consumer'' that receives the measured
+link delay from the semantic layer and returns separation distances and
+conflict flags.
+
+\subsection{Semantic evidence levels}
+The transmitter chooses, per query, one of three evidence levels (a fourth,
+region-of-interest crop, is retained as an optional action but excluded
+from the main comparison); the receiver is a frozen commercial
+vision--language model (Qwen2-VL-2B)~\cite{wang2024qwen2vl}. This taxonomy
+and its per-question complementarity are established in the companion
+paper~\cite{zhang2026askb4tx}; we summarize the transmission cost, since it
+drives both the resource and safety constraints.
+\begin{itemize}
+\item $s_0$ \textbf{cache}: reuse a fresh cached answer; $0$\,B, no
+transmission, and---in the BUBBLES setting---\emph{zero conflict
+exposure}, since no flight/communication action is initiated. A cache entry
+ages fresh$\to$stale$\to$expired and cannot be reused past expiry; its
+effective accuracy is $A_{s_0}=A_{\mathrm{LUT}}(0.85+0.15\,p_{\mathrm{hit}})$.
+\item $s_1$ \textbf{token}: light detector tokens (class/box/confidence),
+$\sim\!0.7$--$1.2$\,KB, framed under LDPC rate-$1/2$ with
+BPSK~\cite{gallager1962ldpc}, costing $N_{s_1}=16\,B_{\mathrm{tok}}$ complex
+channel uses ($\sim\!11$k--$19$k), decoded by a symbolic reader or the VLM.
+\item $s_2$ \textbf{image}: full JPEG at rate-adaptive quality, $\sim\!110$\,KB,
+costing $N_{s_2}=8B_{\mathrm{JPEG}}/\mathrm{SE}(\bar\gamma)$ uses; at $-5$\,dB
+this reaches $3.72$M uses ($\approx\!265\times$ the token cost) and a
+$3.72$\,s uplink, answered by the VLM.
+\end{itemize}
+The two-order-of-magnitude gap between $s_1$ and $s_2$ under weak links is
+what makes evidence selection a scheduling lever with both a
+resource-budget and a flight-safety effect.

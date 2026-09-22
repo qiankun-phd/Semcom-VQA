@@ -1,0 +1,20 @@
+% Chinese counterpart of sections/03_system_model.tex.
+% Compile: latexmk -xelatex -outdir=build system_model_zh.tex
+\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{xr}
+\externaldocument[full-]{build/main_zh}
+\newcommand{\paperref}[1]{\ref{full-#1}}
+\setstretch{1.3}
+\begin{document}
+\setcounter{section}{2}
+% Shared body for standalone and full Chinese manuscripts.
+\input{sections_zh/03_system_model}
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{document}

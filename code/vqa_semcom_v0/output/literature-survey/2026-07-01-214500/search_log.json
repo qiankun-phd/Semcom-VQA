@@ -1,0 +1,21 @@
+{
+  "date": "2026-07-01",
+  "topic": "VQA/task-oriented semantic communication system design and effectiveness evaluation (UAV/low-altitude)",
+  "api_searches": [
+    {"query": "task-oriented semantic communication", "results": 39, "sources": ["arxiv", "semantic_scholar"], "file": "../2026-07-01-search/task-oriented_semantic_communication.json"},
+    {"query": "semantic communication UAV low-altitude", "results": 20, "file": "../2026-07-01-search/semantic_communication_UAV_low-altitude.json"},
+    {"query": "semantic communication resource allocation reinforcement learning", "results": 38, "file": "../2026-07-01-search/semantic_communication_resource_allocation_reinforcement_learning.json"},
+    {"query": "semantic communication visual question answering VQA", "results": 19, "file": "../2026-07-01-search/semantic_communication_visual_question_answering_VQA.json"},
+    {"query": "joint source-channel coding image transmission wireless", "results": 18, "file": "../2026-07-01-search/joint_source-channel_coding_image_transmission_wireless.json"}
+  ],
+  "web_searches": [
+    "visual question answering semantic communication VQA task-oriented 2025 survey",
+    "UAV semantic communication low-altitude economy vision language model edge inference 2025 2026",
+    "semantic-aware resource allocation deep reinforcement learning semantic communication bandwidth power 2025",
+    "semantic communication evaluation methodology cliff effect deep JSCC baseline JPEG LDPC accuracy versus SNR",
+    "adaptive semantic representation selection token image transmission tradeoff wireless VLM agent semantic communication 2026"
+  ],
+  "unique_papers_after_dedup": 130,
+  "relevant_papers": 123,
+  "notes": "DBLP returned HTTP 500 during run; Semantic Scholar intermittently rate-limited (429), retries succeeded. arXiv query 1 initially slow (~3 min) due to API retries."
+}

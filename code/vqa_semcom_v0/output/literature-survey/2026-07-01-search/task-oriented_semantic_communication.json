@@ -1,0 +1,644 @@
+[
+  {
+    "title": "The Task-oriented Queries Benchmark (ToQB)",
+    "authors": [
+      "Keun Soo Yim"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "Task-oriented queries (e.g., one-shot queries to play videos, order food, or call a taxi) are crucial for assessing the quality of virtual assistants, chatbots, and other large language model (LLM)-based services. However, a standard benchmark for task-oriented queries is not yet available, as existing benchmarks in the relevant NLP (Natural Language Processing) fields have primarily focused on task-oriented dialogues. Thus, we present a new methodology for efficiently generating the Task-oriented Queries Benchmark (ToQB) using existing task-oriented dialogue datasets and an LLM service. Our methodology involves formulating the underlying NLP task to summarize the original intent of a speaker in each dialogue, detailing the key steps to perform the devised NLP task using an LLM service, and outlining a framework for automating a major part of the benchmark generation process. Through a case study encompassing three domains (i.e., two single-task domains and one multi-task domain), we demonstrate how to customize the LLM prompts (e.g., omitting system utterances or speaker labels) for those three domains and characterize the generated task-oriented queries. The generated ToQB dataset is made available to the public. We further discuss new domains that can be added to ToQB by community contributors and its practical applications.",
+    "url": "http://arxiv.org/abs/2406.02943v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "The Search for Relevance: A Context-Aware Paradigm Shift in Semantic and Task-Oriented V2X Communications",
+    "authors": [
+      "Luca Lusvarghi",
+      "Javier Gozalvez",
+      "Baldomero Coll-Perales",
+      "Mohammad Irfan Khan",
+      "Miguel Sepulcre",
+      "Seyhan Ucar",
+      "Onur Altintas"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "abstract": "The design of communication systems has traditionally prioritized the reliable and timely delivery of data. However, the scalability challenges faced by the evolution towards a data-driven hyper-connected society and economy demand new communication paradigms that carefully curate the content being transmitted. This paper proposes a joint semantic and task-oriented communication paradigm where connected devices transmit only the information necessary to convey the desired meaning that is relevant to the intended receivers, based on their context. We qualitatively and quantitatively analyze the potential benefits of the proposed semantic and task-oriented communication paradigm in the Vehicle-to-Everything (V2X) domain. The V2X domain offers a unique environment for the development and deployment of semantic and task-oriented V2X communications, as it is rich in contextual information and Connected and Autonomous Vehicles (CAVs) are native semantic devices. The qualitative analysis focuses on a cooperative perception use case and shows how semantic and task-oriented V2X communications can reduce the amount of information transmitted by each vehicle without compromising the situational awareness of its intended receivers. The quantitative analysis numerically demonstrates that semantic and task-oriented V2X communications can achieve a two-fold improvement in communication efficiency which can significantly benefit the scalability of future V2X networks.",
+    "url": "http://arxiv.org/abs/2508.07394v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "TOIB: Task-Oriented Orthogonalised Information Bottleneck for Distributed Semantic Communication",
+    "authors": [
+      "Jiaxiang Wang",
+      "Zhaohui Yang",
+      "Yahao Ding",
+      "Ye Hu",
+      "Mohammad Shikh-Bahaei"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Task-oriented semantic communication emerges as a crucial paradigm for next-generation wireless networks, aiming to efficiently transmit task-relevant information while reducing interference and redundancy across multiple users. Existing information bottleneck (IB)-based frameworks predominantly focus on single-user scenarios, neglecting cross-user semantic interference in distributed semantic communications. To overcome this limitation, we propose a task-oriented orthogonalised information bottleneck (TOIB) approach, explicitly designed for distributed semantic communication systems. By introducing task-conditioned latent variables, TOIB adaptively balances semantic sufficiency, semantic compression, and inter-user semantic orthogonality. Extensive simulations conducted on classification tasks demonstrate that TOIB consistently achieves superior classification accuracy across various signal-to-noise ratio (SNR) regimes compared to traditional IB and deep joint source-channel coding (JSCC) methods. Specifically, the proposed method significantly enhances robustness under harsh low-SNR conditions and effectively suppresses cross-user semantic interference, as validated by cross-decoding accuracy metrics.",
+    "url": "http://arxiv.org/abs/2604.11053v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Importance-Aware Resource Allocation for Collaborative Task-Oriented Semantic Communication",
+    "authors": [
+      "Kaiyi Lei",
+      "Yuanzhe Peng",
+      "Letian Zhang",
+      "Jie Xu"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Task-oriented semantic communication must allocate scarce radio resources to semantic features under fast fading wireless conditions and strict end-to-end latency budgets. Existing solutions are either optimization-heavy, leading to prohibitive computational overhead during online operation, or rely on end-to-end retraining procedures together with slowly varying channel assumptions. We propose iCoTASC (importance-aware Collaborative Task-Oriented Semantic Communication), a hybrid offline-online framework designed for collaborative multi-device semantic communication systems. iCoTASC leverages attribution-based importance to guide per-dimension embedding selection as a practical communication control signal, models diminishing semantic returns of quantization through a data-driven utility function, and precomputes per-transmitter utility lookup tables offline, which together enable lightweight online scheduling via table lookup and low-complexity refinement under time-varying channels. The proposed framework supports real-time, channel-adaptive semantic resource allocation in distributed systems without requiring retraining of the underlying task inference model.",
+    "url": "http://arxiv.org/abs/2606.29052v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic and Task-Oriented V2X Communications: Pushing the Limits of V2X Networks Scalability",
+    "authors": [
+      "Luca Lusvarghi",
+      "Javier Gozalvez",
+      "Mohammad Irfan Khan",
+      "Seyhan Ucar",
+      "Miguel Sepulcre",
+      "Onur Altintas"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Scalable Vehicle-to-Everything (V2X) networks are key to support the large-scale deployment of connected and automated mobility. However, the scalability of V2X networks is currently challenged by the limitations of existing V2X communication paradigms, which prioritize the reliable and timely delivery of the transmitted information over a careful message content selection - an approach that can potentially lead to the transmission of unnecessary information and an inefficient usage of communication resources. Semantic and task-oriented V2X communications have recently been proposed to address these scalability challenges by focusing on the content of the transmitted messages, particularly on its relevance to the intended receivers. In this paper, we numerically demonstrate that semantic and task-oriented V2X communications can substantially improve the scalability of V2X networks, increasing by up to a 4.1x factor the number of supported vehicles under high-density conditions. In addition, we show that semantic and task-oriented V2X communications can also decrease the inter-reception time between consecutive messages by up to 67% and lead to a twofold increase in the probability of successfully delivering all required relevant information to the intended receivers.",
+    "url": "http://arxiv.org/abs/2606.09126v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Language Models as Few-Shot Learner for Task-Oriented Dialogue Systems",
+    "authors": [
+      "Andrea Madotto",
+      "Zihan Liu",
+      "Zhaojiang Lin",
+      "Pascale Fung"
+    ],
+    "year": 2020,
+    "venue": "arXiv",
+    "abstract": "Task-oriented dialogue systems use four connected modules, namely, Natural Language Understanding (NLU), a Dialogue State Tracking (DST), Dialogue Policy (DP) and Natural Language Generation (NLG). A research challenge is to learn each module with the least amount of samples (i.e., few-shots) given the high cost related to the data collection. The most common and effective technique to solve this problem is transfer learning, where large language models, either pre-trained on text or task-specific data, are fine-tuned on the few samples. These methods require fine-tuning steps and a set of parameters for each task. Differently, language models, such as GPT-2 (Radford et al., 2019) and GPT-3 (Brown et al., 2020), allow few-shot learning by priming the model with few examples. In this paper, we evaluate the priming few-shot ability of language models in the NLU, DST, DP and NLG tasks. Importantly, we highlight the current limitations of this approach, and we discuss the possible implication for future work.",
+    "url": "http://arxiv.org/abs/2008.06239v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Graph Based Semantic Encoder Decoder Framework for Task Oriented Communications in Connected Autonomous Vehicles",
+    "authors": [
+      "Soheyb Ribouh",
+      "Phil Polo Ditsia Di Ngoma"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Connected autonomous vehicles (CAVs) require reliable and efficient communication frameworks to support safety critical and task-oriented applications such as collision avoidance, cooperative perception, and traffic risk assessment. Traditional communication paradigms, which focus on transmitting raw bits, often incur excessive bandwidth consumption and fail to preserve the semantic relevance of transmitted information. To bridge this gap, we propose a Graph-Based Semantic Encoder-Decoder (GBSED) architecture tailored for task-oriented communications in CAV networks. The encoder leverages scene graphs to capture spatial and semantic relationships among road entities, combined with a semantic compression algorithm that reduces the size of the extracted graph based representations by up to 99% compared to raw images, while the decoder reconstructs task relevant representations rather than raw data. This design enables a significant reduction in communication overhead while maintaining high semantic fidelity, exceeding 0.9 at SNR levels above 10dB, for downstream vehicular tasks. We evaluate the proposed framework through simulations in autonomous driving scenarios, where the semantic encoder and decoder are integrated into a MIMO OFDM physical layer system. The results demonstrate high prediction success rates for risk assessment, improved robustness under the 3GPP CDL channel, and significant compression gains, confirming that the proposed semantic communication framework is a promising solution for future 6G systems.",
+    "url": "http://arxiv.org/abs/2603.08438v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Deep Semantic Inference over the Air: An Efficient Task-Oriented Communication System",
+    "authors": [
+      "Chenyang Wang",
+      "Roger Olsson",
+      "Stefan Forsström",
+      "Qing He"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "abstract": "Empowered by deep learning, semantic communication marks a paradigm shift from transmitting raw data to conveying task-relevant meaning, enabling more efficient and intelligent wireless systems. In this study, we explore a deep learning-based task-oriented communication framework that jointly considers classification performance, computational latency, and communication cost. We evaluate ResNets-based models on the CIFAR-10 and CIFAR-100 datasets to simulate real-world classification tasks in wireless environments. We partition the model at various points to simulate split inference across a wireless channel. By varying the split location and the size of the transmitted semantic feature vector, we systematically analyze the trade-offs between task accuracy and resource efficiency. Experimental results show that, with appropriate model partitioning and semantic feature compression, the system can retain over 85\\% of baseline accuracy while significantly reducing both computational load and communication overhead.",
+    "url": "http://arxiv.org/abs/2508.12748v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Towards a Joint Task-Oriented and Generative Semantic Communication Framework for 6G Networks",
+    "authors": [
+      "Soheyb Ribouh",
+      "Phil Polo Ditsia Di Ngoma"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Semantic Communication (SC) has emerged as a key enabler for 6G wireless systems by transmitting task-relevant meaning rather than raw data, thereby significantly reducing bandwidth consumption while preserving communication intent. In this work, we propose an end-to-end OFDM-based semantic communication framework that integrates a semantic encoder-decoder pipeline with a neural receiver operating over a 3GPP vehicular channel. The semantic encoder extracts the underlying meaning of a visual scene by transforming it into a graph-based representation consisting of object-level features and relational structure. At the receiver, the reconstructed scene graph is processed by a spatio-temporal graph neural network (ST-GNN)-based module for collision-risk estimation, enabling task-oriented inference. In parallel, a diffusion-based semantic decoder reconstructs the visual scene from the recovered semantics, providing dual functionality: safety prediction and image reconstruction. The proposed framework is evaluated in a MIMO configuration under varying SNR conditions. Experimental results show that it achieves up to 99.1% data compression relative to pixel-domain transmission, outperforming conventional compression-based methods (JPEG and HEVC) while preserving downstream inference performance. Furthermore, the diffusion-based reconstruction attains significantly lower frechet inception distance (FID) scores than existing semantic communication approaches, reflecting superior semantic and perceptual fidelity.",
+    "url": "http://arxiv.org/abs/2606.31426v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Distributed Electromagnetic Neural Networks for Task-Oriented Semantic Communications",
+    "authors": [
+      "Jinbao Li",
+      "Jiancheng An",
+      "Hao Liu",
+      "Lu Gan",
+      "Victor C. M. Leung",
+      "Mehdi Bennis",
+      "Mérouane Debbah"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Semantic communications (SemCom) is a promising paradigm that prioritizes the transmission of task-relevant information, thereby enabling superior communication efficiency over traditional bit-centric systems. However, most existing SemCom systems face critical limitations in computational efficiency and spatial flexibility. To overcome these limitations, we propose a novel unmanned aerial vehicles (UAV)-enabled distributed electromagnetic neural network (EMNN) for a task-oriented SemCom system. Specifically, the proposed distributed EMNN is composed of multiple UAV-mounted stacked intelligent metasurfaces (SIM) and a ground receiving station (GRS), where multiple SIMs collaboratively encode image semantics in the wave domain, and the GRS performs decoding based on the received power distribution. Moreover, we employ a temperature-adaptive gradient optimization algorithm to train the distributed EMNN, which mitigates gradient vanishing and enhances learning stability. Finally, the numerical simulation results demonstrate the effectiveness of distributed EMNN in image recognition task-oriented SemCom, achieving an average $8\\%$ accuracy improvement over the single-SIM baseline across multiple datasets.",
+    "url": "http://arxiv.org/abs/2604.23901v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "From Raw Data to Shared 3D Semantics: Task-Oriented Communication for Multi-Robot Collaboration",
+    "authors": [
+      "Ruibo Xue",
+      "Jiedan Tan",
+      "Fang Liu",
+      "Jingwen Tong",
+      "Taotao Wang",
+      "Shuoyao Wang"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Multi-robot systems (MRS) rely on exchanging raw sensory data to cooperate in complex three-dimensional (3D) environments. However, this strategy often leads to severe communication congestion and high transmission latency, significantly degrading collaboration efficiency. This paper proposes a decentralized task-oriented semantic communication framework for multi-robot collaboration in unknown 3D environments. Each robot locally extracts compact, task-relevant semantics using a lightweight Pixel Difference Network (PiDiNet) with geometric processing. It shares only these semantic updates to build a task-sufficient 3D scene representation that supports cooperative perception, navigation, and object transport. Our numerical results show that the proposed method exhibits a dramatic reduction in communication overhead from $858.6$ Mb to $4.0$ Mb (over $200\\times$ compression gain) while improving collaboration efficiency by shortening task completion from $1,054$ to $281$ steps.",
+    "url": "http://arxiv.org/abs/2602.08624v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "High-Level ETL for Semantic Data Warehouses -- Full Version",
+    "authors": [
+      "Rudra Pratap Deb Nath",
+      "Oscar Romero",
+      "Torben Bach Pedersen",
+      "Katja Hose"
+    ],
+    "year": 2020,
+    "venue": "arXiv",
+    "abstract": "The popularity of the Semantic Web (SW) encourages organizations to organize and publish semantic data using the RDF model. This growth poses new requirements to Business Intelligence (BI) technologies to enable On-Line Analytical Processing (OLAP)-like analysis over semantic data. The incorporation of semantic data into a Data Warehouse (DW) is not supported by the traditional Extract-Transform-Load (ETL) tools because they do not consider semantic issues in the integration process. In this paper, we propose a layer-based integration process and a set of high-level RDF-based ETL constructs required to define, map, extract, process, transform, integrate, update, and load (multidimensional) semantic data. Different to other ETL tools, we automate the ETL data flows by creating metadata at the schema level. Therefore, it relieves ETL developers from the burden of manual mapping at the ETL operation level. We create a prototype, named Semantic ETL Construct (SETLCONSTRUCT), based on the innovative ETL constructs proposed here. To evaluate SETLCONSTRUCT, we create a multidimensional semantic DW by integrating a Danish Business dataset and an EU Subsidy dataset using it and compare it with the previous programmable framework SETLPROG in terms of productivity, development time and performance. The evaluation shows that 1) SETLCONSTRUCT uses 92% fewer Number of Typed Characters (NOTC) than SETLPROG, and SETLAUTO (the extension of SETLCONSTRUCT for generating ETL execution flow automatically) further reduces the Number of Used Concepts (NOUC) by another 25%; 2) using SETLCONSTRUCT, the development time is almost cut in half compared to SETLPROG, and is cut by another 27% using SETLAUTO; 3) SETLCONSTRUCT is scalable and has similar performance compared to SETLPROG.",
+    "url": "http://arxiv.org/abs/2006.07180v1",
+    "doi": "10.3233/SW-210429",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "SComCP: Task-Oriented Semantic Communication for Collaborative Perception",
+    "authors": [
+      "Jipeng Gan",
+      "Yucheng Sheng",
+      "Hua Zhang",
+      "Le Liang",
+      "Hao Ye",
+      "Chongtao Guo",
+      "Shi Jin"
+    ],
+    "year": 2025,
+    "venue": "IEEE Transactions on Vehicular Technology",
+    "abstract": "Reliable detection of surrounding objects is critical for the safe operation of connected automated vehicles (CAVs). However, inherent limitations such as the restricted perception range and occlusion effects compromise the reliability of single-vehicle perception systems in complex traffic environments. Collaborative perception has emerged as a promising approach by fusing sensor data from surrounding CAVs with diverse viewpoints, thereby improving environmental awareness. Although collaborative perception holds great promise, its performance is bottlenecked by wireless communication constraints, as unreliable and bandwidth-limited channels hinder the transmission of sensor data necessary for real-time perception. To address these challenges, this paper proposes SComCP, a novel task-oriented semantic communication framework for collaborative perception. Specifically, SComCP integrates an importance-aware feature selection network that selects and transmits semantic features most relevant to the perception task, significantly reducing communication overhead without sacrificing accuracy. Furthermore, we design a semantic codec network based on a joint source and channel coding (JSCC) architecture, which enables bidirectional transformation between semantic features and noise-tolerant channel symbols, thereby ensuring stable perception under adverse wireless conditions. Extensive experiments demonstrate the effectiveness of the proposed framework. In particular, compared to existing approaches, SComCP can maintain superior perception performance across various channel conditions, especially in low signal-to-noise ratio (SNR) scenarios. In addition, SComCP exhibits strong generalization capability, enabling the framework to maintain high performance across diverse channel conditions, even when trained with a specific channel model.",
+    "url": "https://www.semanticscholar.org/paper/fbb662e61f88a054c4df832de20548fba4e06037",
+    "doi": "10.1109/tvt.2026.3654968",
+    "citation_count": 3,
+    "source": "s2"
+  },
+  {
+    "title": "Spectral Efficiency-Aware Codebook Design for Task-Oriented Semantic Communications",
+    "authors": [
+      "Anbang Zhang",
+      "Shuaishuai Guo",
+      "Chenyuan Feng",
+      "Shuai Liu",
+      "Hongyang Du",
+      "Geyong Min"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "abstract": "Digital task-oriented semantic communication (ToSC) aims to transmit only task-relevant information, significantly reducing communication overhead. Existing ToSC methods typically rely on learned codebooks to encode semantic features and map them to constellation symbols. However, these codebooks are often sparsely activated, resulting in low spectral efficiency and underutilization of channel capacity. This highlights a key challenge: how to design a codebook that not only supports task-specific inference but also approaches the theoretical limits of channel capacity. To address this challenge, we construct a spectral efficiency-aware codebook design framework that explicitly incorporates the codebook activation probability into the optimization process. Beyond maximizing task performance, we introduce the Wasserstein (WS) distance as a regularization metric to minimize the gap between the learned activation distribution and the optimal channel input distribution. Furthermore, we reinterpret WS theory from a generative perspective to align with the semantic nature of ToSC. Combining the above two aspects, we propose a WS-based adaptive hybrid distribution scheme, termed WS-DC, which learns compact, task-driven and channel-aware latent representations. Experimental results demonstrate that WS-DC not only outperforms existing approaches in inference accuracy but also significantly improves codebook efficiency, offering a promising direction toward capacity-approaching semantic communication systems.",
+    "url": "http://arxiv.org/abs/2508.04223v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic Jira - Semantic Expert Finder in the Bug Tracking Tool Jira",
+    "authors": [
+      "Velten Heyn",
+      "Adrian Paschke"
+    ],
+    "year": 2013,
+    "venue": "arXiv",
+    "abstract": "The semantic expert recommender extension for the Jira bug tracking system semantically searches for similar tickets in Jira and recommends experts and links to existing organizational (Wiki) knowledge for each ticket. This helps to avoid redundant work and supports the search and collaboration with experts in the project management and maintenance phase based on semantically enriched tickets in Jira.",
+    "url": "http://arxiv.org/abs/1312.5150v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "AceWiki: A Natural and Expressive Semantic Wiki",
+    "authors": [
+      "Tobias Kuhn"
+    ],
+    "year": 2008,
+    "venue": "arXiv",
+    "abstract": "  We present AceWiki, a prototype of a new kind of semantic wiki using the controlled natural language Attempto Controlled English (ACE) for representing its content. ACE is a subset of English with a restricted grammar and a formal semantics. The use of ACE has two important advantages over existing semantic wikis. First, we can improve the usability and achieve a shallow learning curve. Second, ACE is more expressive than the formal languages of existing semantic wikis. Our evaluation shows that people who are not familiar with the formal foundations of the Semantic Web are able to deal with AceWiki after a very short learning phase and without the help of an expert.",
+    "url": "http://arxiv.org/abs/0807.4618v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Less Signals, More Understanding: Channel-Capacity Codebook Design for Digital Task-Oriented Semantic Communication",
+    "authors": [
+      "Anbang Zhang",
+      "Shuaishuai Guo",
+      "Chenyuan Feng",
+      "Hongyang Du",
+      "Haojin Li",
+      "Chen Sun",
+      "Haijun Zhang"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "abstract": "Discrete representation has emerged as a powerful tool in task-oriented semantic communication (ToSC), offering compact, interpretable, and efficient representations well-suited for low-power edge intelligence scenarios. Its inherent digital nature aligns seamlessly with hardware-friendly deployment and robust storage/transmission protocols. However, despite its strengths, current ToSC frameworks often decouple semantic-aware discrete mapping from the underlying channel characteristics and task demands. This mismatch leads to suboptimal communication performance, degraded task utility, and limited generalization under variable wireless conditions. Moreover, conventional designs frequently overlook channel-awareness in codebook construction, restricting the effectiveness of semantic symbol selection under constrained resources. To address these limitations, this paper proposes a channel-aware discrete semantic coding framework tailored for low-power edge networks. Leveraging a Wasserstein-regularized objective, our approach aligns discrete code activations with optimal input distributions, thereby improving semantic fidelity, robustness, and task accuracy. Extensive experiments on the inference tasks across diverse signal-to-noise ratio (SNR) regimes show that our method achieves notable gains in accuracy and communication efficiency. This work provides new insights into integrating discrete semantics and channel optimization, paving the way for the widespread adoption of semantic communication in future digital infrastructures.",
+    "url": "http://arxiv.org/abs/2508.04291v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "ChronoSC: Task-Oriented Semantic Communication via Temporal-to-Color Encoding",
+    "authors": [
+      "Phuc H. Nguyen",
+      "Trung T. Nguyen",
+      "Quy N. Duong",
+      "Van-Dinh Nguyen"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Semantic communication (SC) aims to reduce transmission overhead by conveying task-relevant information rather than raw data. However, existing SC approaches for video largely focus on pixel-level reconstruction or rely on complex spatiotemporal pipelines, leading to excessive bandwidth usage and latency that are unsuitable for low-resource deployments. In this paper, we propose ChronoSC, a task-oriented semantic communication framework for Video Question Answering (VideoQA). ChronoSC introduces Chrono-Color Stacking, a lightweight and lossless projection scheme that encodes temporal video dynamics into a single static image, enabling extreme temporal compression before transmission. This compact semantic representation is transmitted using a lightweight Deep Joint Source-Channel Coding (DeepJSCC) transceiver and explicitly reconstructed at the receiver. Unlike latent-space methods, explicit visual reconstruction enables the direct reuse of pre-trained vision-language models; specifically, a pre-trained BLIP model is employed to infer answers from noisy, reconstructed chrono-images. Experiments on the CLEVRER dataset show that ChronoSC achieves up to 192 times bandwidth reduction compared to raw video transmission while maintaining high VideoQA accuracy.",
+    "url": "http://arxiv.org/abs/2605.16388v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic Web Technology for Agent Communication Protocols",
+    "authors": [
+      "Idoia Berges",
+      "Jesús Bermúdez",
+      "Alfredo Goñi",
+      "Arantza Illarramendi"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "One relevant aspect in the development of the Semantic Web framework is the achievement of a real inter-agents communication capability at the semantic level. The agents should be able to communicate and understand each other using standard communication protocols freely, that is, without needing a laborious a priori preparation, before the communication takes place. For that setting we present in this paper a proposal that promotes to describe standard communication protocols using Semantic Web technology (specifically, OWL-DL and SWRL). Those protocols are constituted by communication acts. In our proposal those communication acts are described as terms that belong to a communication acts ontology, that we have developed, called CommOnt. The intended semantics associated to the communication acts in the ontology is expressed through social commitments that are formalized as fluents in the Event Calculus. In summary, OWL-DL reasoners and rule engines help in our proposal for reasoning about protocols. We define some comparison relationships (dealing with notions of equivalence and specialization) between protocols used by agents from different systems.",
+    "url": "http://arxiv.org/abs/2401.11841v1",
+    "doi": "10.1007/978-3-540-68234-9_4",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic integration process of business components to support information system designers",
+    "authors": [
+      "Hicham Elasri",
+      "Abderrahim Sekkaki"
+    ],
+    "year": 2013,
+    "venue": "arXiv",
+    "abstract": "The present work is inscribed within the intersection of two scientific thematic: the engineering by reuse of components and ontologies alignment. The integration of Business Components (BC) is a research problem that has been identified in the field of engineering by reuse. Our proposal aims to provide assistance to designers of information systems in the integration phase. It is a process guided by domain ontology to provide semantic integration of BC. This process allows the detection and resolution of semantic conflicts naming type encountered in the process of integration of BC.",
+    "url": "http://arxiv.org/abs/1302.1393v1",
+    "doi": "10.5121/ijwest.2013.4104",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Task-Oriented Semantic Communication in Large Multimodal Models-Based Vehicle Networks",
+    "authors": [
+      "Baoxia Du",
+      "Hongyang Du",
+      "D. Niyato",
+      "Ruidong Li"
+    ],
+    "year": 2025,
+    "venue": "IEEE Transactions on Mobile Computing",
+    "abstract": "Task-oriented semantic communication has emerged as a fundamental approach for enhancing performance in various communication scenarios. While recent advances in Generative Artificial Intelligence (GenAI), such as Large Language Models (LLMs), have been applied to semantic communication designs, the potential of Large Multimodal Models (LMMs) remains largely unexplored. In this paper, we investigate an LMM-based vehicle AI assistant using a Large Language and Vision Assistant (LLaVA) and propose a task-oriented semantic communication framework to facilitate efficient interaction between users and cloud servers. To reduce computational demands and shorten response time, we optimize LLaVA's image slicing to selectively focus on areas of utmost interest to users. Additionally, we assess the importance of image patches by combining objective and subjective user attention, adjusting energy usage for transmitting semantic information. This strategy optimizes resource utilization, ensuring precise transmission of critical information. We construct a Visual Question Answering (VQA) dataset for traffic scenarios to evaluate effectiveness. Experimental results show that our semantic communication framework significantly increases accuracy in answering questions under the same channel conditions, performing particularly well in environments with poor Signal-to-Noise Ratios (SNR). Accuracy can be improved by 13.4% at an SNR of 12 dB and 33.1% at 10 dB, respectively.",
+    "url": "https://www.semanticscholar.org/paper/12b8cf50aa5942155543f949da633c7f521a708a",
+    "doi": "10.1109/TMC.2025.3564543",
+    "citation_count": 19,
+    "source": "s2"
+  },
+  {
+    "title": "DRL-Driven Dynamic Resource Allocation for Task-Oriented Semantic Communication",
+    "authors": [
+      "Haijun Zhang",
+      "Hongyu Wang",
+      "Yabo Li",
+      "Keping Long",
+      "A. Nallanathan"
+    ],
+    "year": 2023,
+    "venue": "IEEE Transactions on Communications",
+    "abstract": "Semantic communication has been regarded as a promising technology to serve upcoming intelligent applications. However, few studies have addressed the problem of resource allocation in semantic communication networks. Most resource allocation mechanisms act fairly to all original data, ignoring the meaning behind the transmitted bits. In this paper, a dynamic resource allocation scheme for the task-oriented semantic communication network (TOSCN) based on deep reinforcement learning (DRL) is proposed, which allows data with richer semantic information to preferentially occupy limited communication resources. This paper aims to design a deep deterministic policy gradient (DDPG) agent at the micro base station to maximize the long-term transmission efficiency of tasks. Firstly, the relationship between semantic information and task performance is investigated. Subsequently, a novel wireless resource allocation model for TOSCN is proposed by taking the image classification task as an example. Then, a joint optimization problem of the semantic compression ratio, transmit power, and bandwidth of each user is formulated. The agent is trained in an interactive learning environment to obtain a decent trade-off between the amount of data delivered to the receiver and the accuracy of intelligent tasks. Simulation results demonstrate that the proposed scheme achieves significant advantages in relieving communication pressure and improving task performance in resource-constrained wireless networks.",
+    "url": "https://www.semanticscholar.org/paper/bd5648c4700a4c75c2fb80fc939229f08f9902f9",
+    "doi": "10.1109/TCOMM.2023.3274145",
+    "citation_count": 165,
+    "source": "s2"
+  },
+  {
+    "title": "Channel-Aware Deep Joint Source-Channel Coding for Multi-Task Oriented Semantic Communication",
+    "authors": [
+      "Biqi Wang",
+      "Run Gu",
+      "Wei Xu",
+      "Feng Jiang",
+      "Mengyu Li",
+      "Shen Wang"
+    ],
+    "year": 2025,
+    "venue": "IEEE Wireless Communications Letters",
+    "abstract": "Existing deep learning (DL)-based semantic communication generally employs deep neural networks (DNNs) for semantic extraction at a fixed dimension and incorporates channel state information (CSI) to facilitate semantic transmission. However, the optimal dimension of the semantic information to transmit varies with wireless channel conditions, trading off between channel uses and performance depending on the channel condition. To strike the balance, this letter proposes a channel-aware deep joint source-channel coding (CA-DJSCC) for multi-task oriented semantic communication. Specifically, we formulate an optimization problem to characterize the intricate and hard-to-quantify relationship between the channel condition and the optimal dimension. To achieve the channel-adaptive dimension, we develop a joint source and channel encoder, pruning elements based on semantic importance. Correspondingly, we also design a joint source and channel decoder, introducing a reference signal to enhance the multi-task performance. Simulation results demonstrate that the CA-DJSCC achieves superior performance in terms of both image reconstruction and classification tasks, with over 44.1% reduction in average channel uses compared to typical baselines.",
+    "url": "https://www.semanticscholar.org/paper/c720353e6bf95fa3ad4156a87aa80fc63c6d36c7",
+    "doi": "10.1109/LWC.2025.3548084",
+    "citation_count": 12,
+    "source": "s2"
+  },
+  {
+    "title": "Task-Oriented Semantic Communication over Rate Splitting Enabled Wireless Control Systems for URLLC Services",
+    "authors": [
+      "Cheng Zeng",
+      "Jun-Bo Wang",
+      "Ming Xiao",
+      "Changfeng Ding",
+      "Yijian Chen",
+      "Hongkang Yu",
+      "Jiangzhou Wang"
+    ],
+    "year": 2024,
+    "venue": "IEEE Transactions on Communications",
+    "abstract": "Due to long-term reliability, wireless control systems (WCSs) have attracted significant interest recently. However, mission-critical control requires stringent ultra-reliability and low-latency communication (URLLC) with massive data delivery, which are major challenges for conventional wireless networks. This paper investigates downlink URLLC in WCS, where the semantic communication is adopted at the control center to extract task-oriented semantic information from original large-sized data. To efficiency, the control center utilizes the rate splitting policy to deliver semantic information through private messages, while the semantic knowledge is transmitted through one common message. We aim to maximize the weighted sum semantic information transmission rate by jointly optimizing the semantic information extraction, delivery duration, rate splitting, and transmit beamforming, subject to several practical constraints, including recovery accuracy, quality of service requirements, communication latency and computation delay. By the problem decomposition, two sub-problems are obtained, where the closed-form solution for the semantic information extraction is derived at each step. Due to the complexity of the multivariable coupling in the channel dispersion, we propose fractional transformation methods for rate splitting design. Numerical results confirm that the RSMA and semantic communication design can complement each other for multiplexing gains enhancement and latency reduction to achieve overloaded connections.",
+    "url": "https://www.semanticscholar.org/paper/306cb5000a33caf3e2eb637e5a1b8465ef72f280",
+    "doi": "10.1109/TCOMM.2023.3325901",
+    "citation_count": 44,
+    "source": "s2"
+  },
+  {
+    "title": "Task-Oriented Semantic Communication for Stereo-Vision 3D Object Detection",
+    "authors": [
+      "Zijian Cao",
+      "Hua Zhang",
+      "Le Liang",
+      "Haotian Wang",
+      "Shi Jin",
+      "Geoffrey Ye Li"
+    ],
+    "year": 2025,
+    "venue": "IEEE Transactions on Communications",
+    "abstract": "With the development of computer vision, 3D object detection has become increasingly important in many real-world applications. Limited by the computing power of sensor-side hardware, the detection task is sometimes deployed on remote computing devices or the cloud to execute complex algorithms, which brings massive data transmission overhead. In response, this paper proposes an optical flow-driven semantic communication framework for the stereo-vision 3D object detection task. The proposed framework fully exploits the dependence of stereo-vision 3D detection on semantic information in images and prioritizes the transmission of this semantic information to reduce total transmission data sizes while ensuring the detection accuracy. Specifically, we develop an optical flow-driven module to jointly extract and recover semantics from the left and right images to reduce the loss of the left-right photometric alignment semantic information and improve the accuracy of depth inference. Then, we design a 2D semantic extraction module to identify and extract semantic meaning around the objects to enhance the transmission of semantic information in the key areas. Finally, a fusion network is used to fuse the recovered semantics, and reconstruct the stereo-vision images for 3D detection. Simulation results show that the proposed method improves the detection accuracy by nearly 70% and outperforms the traditional method, especially for the low signal-to-noise ratio regime.",
+    "url": "https://www.semanticscholar.org/paper/28b8e0d4a26cba4a168ee51bdfedc1b609411405",
+    "doi": "10.1109/TCOMM.2025.3545687",
+    "citation_count": 13,
+    "source": "s2"
+  },
+  {
+    "title": "Lightweight Task-Oriented Semantic Communication Empowered by Large-Scale AI Models",
+    "authors": [
+      "Chuanhong Liu",
+      "Caili Guo",
+      "Yang Yang",
+      "Mingzhe Chen",
+      "Tony Q. S. Quek"
+    ],
+    "year": 2025,
+    "venue": "IEEE Transactions on Vehicular Technology",
+    "abstract": "Recent studies have focused on leveraging large-scale artificial intelligence (LAI) models to improve semantic representation and compression capabilities. However, the substantial computational demands of LAI models pose significant challenges for real-time communication scenarios. To address this, this paper proposes utilizing knowledge distillation (KD) techniques to extract and condense knowledge from LAI models, effectively reducing model complexity and computation latency. Nevertheless, the inherent complexity of LAI models leads to prolonged inference times during distillation, while their lack of channel awareness compromises the distillation performance. These limitations make standard KD methods unsuitable for task-oriented semantic communication scenarios. To address these issues, we propose a fast distillation method featuring a pre-stored compression mechanism that eliminates the need for repetitive inference, significantly improving efficiency. Furthermore, a channel adaptive module is incorporated to dynamically adjust the transmitted semantic information based on varying channel conditions, enhancing communication reliability and adaptability. In addition, an information bottleneck-based loss function is derived to guide the fast distillation process. Simulation results verify that the proposed scheme outperform baselines in term of task accuracy, model size, computation latency, and training data requirements.",
+    "url": "https://www.semanticscholar.org/paper/b2ce7165366787000c98bc50919d953fa71cc6b7",
+    "doi": "10.1109/TVT.2025.3563635",
+    "citation_count": 7,
+    "source": "s2"
+  },
+  {
+    "title": "A Hybrid Federated Learning Framework for Task-Oriented Semantic Communication",
+    "authors": [
+      "Haofeng Sun",
+      "Wanli Ni",
+      "Hui Tian",
+      "Jingheng Zheng",
+      "Gaofeng Nie",
+      "Dusist Niyato"
+    ],
+    "year": 2025,
+    "venue": "IEEE Internet of Things Journal",
+    "abstract": "In existing deep learning-based semantic communication systems, centralized training of semantic models brings a risk of privacy leakage, whereas distributed training imposes a huge computational burden on user equipments (UEs). To address these challenges, we propose a hybrid federated learning (Hybrid-FL) framework to alleviate the computational burden on UEs while protecting the user privacy. Specifically, each UE uploads local gradients and semantic symbols to the base station for the collaborative training of global and local semantic models. Furthermore, we propose a joint communication and computation scheme for supporting the model aggregation and semantics transmission. To gain deep insights, we expose the joint impact of communication and computation on the convergence behavior of Hybrid-FL by deriving an upper bound. Then, we formulate a mixed-integer nonlinear programming problem to improve the convergence performance of Hybrid-FL, which is then effectively solved by using our proposed algorithm that developed based on alternating and matching theory. Experimental results demonstrate that Hybrid-FL outperforms conventional FL by achieving a 20% accuracy gain and a 80% latency reduction.",
+    "url": "https://www.semanticscholar.org/paper/4fe410388a12e11cda46e556c9fc73690890e153",
+    "doi": "10.1109/JIOT.2025.3553504",
+    "citation_count": 10,
+    "source": "s2"
+  },
+  {
+    "title": "A Multi-Task Oriented Semantic Communication Framework for Autonomous Vehicles",
+    "authors": [
+      "Eslam Eldeeb",
+      "Mohammad Shehab",
+      "Hirley Alves"
+    ],
+    "year": 2024,
+    "venue": "IEEE Wireless Communications Letters",
+    "abstract": "Task-oriented semantic communication is an emerging technology that transmits only the relevant semantics of a message instead of the whole message to achieve a specific task. It reduces latency, compresses the data, and is more robust in low SNR scenarios. This letter presents a multi-task-oriented semantic communication framework for connected and autonomous vehicles (CAVs). We propose a convolutional autoencoder (CAE) that performs the semantic encoding of the road traffic signs. These encoded images are then transmitted from one CAV to another CAV through satellite in challenging weather conditions where visibility is impaired. In addition, we propose task-oriented semantic decoders for image reconstruction and classification tasks. Simulation results show that the proposed framework outperforms the conventional schemes, such as QAM-16, regarding the reconstructed image’s similarity and the classification’s accuracy. In addition, it can save up to 89% of the bandwidth by sending fewer bits.",
+    "url": "https://www.semanticscholar.org/paper/c3ebd0357efce1e2e333b2c291fbd1c82c9816b9",
+    "doi": "10.1109/LWC.2024.3472211",
+    "citation_count": 22,
+    "source": "s2"
+  },
+  {
+    "title": "Task-Oriented Semantic Communication with Large Language Model Enabled Knowledge Base",
+    "authors": [
+      "Wuxia Hu",
+      "Caili Guo",
+      "Zhiyu Zhu",
+      "Yang Yang",
+      "Chunyan Feng"
+    ],
+    "year": 2025,
+    "venue": "ICC 2025 - IEEE International Conference on Communications",
+    "abstract": "Large Language Models (LLMs) have the potential to greatly enhance the performance of task-oriented semantic communication (TOSC) through their extensive knowledge. However, hallucinations from LLMs may cause semantic noise, thus degrading task performance. To address this issue, we propose a TOSC scheme with an LLM-enabled knowledge base (TOSCLKB). In the considered system, the transmitter transmits the features of the source over a wireless channel to accomplish downstream tasks at the receiver. Meanwhile, the transmitter utilizes the LLM-enabled Knowledge Base (KB) to provide additional data for downstream tasks. To effectively exploit the extensive knowledge of LLMs while mitigate its hallucination, a cross-domain fusion codec framework with a hallucination filtering phase and a cross-domain fusion phase is proposed. In particular, the first phase filters out data irrelevant to the source generated by the LLM-enabled KB based on semantic similarity. Then, a cross-domain fusion phase is proposed which fuses source data with LLM-generated data based on their semantic importance, thereby enhancing task performance. Experiment results on the text-based person retrieval task demonstrate that the proposed TOSC-LKB can achieve up to 26.7 % and 7.1 % performance gains without introducing additional time overhead compared to DeepSC and TOSC-LKB without LLMs.",
+    "url": "https://www.semanticscholar.org/paper/8a81f2f51d867fb2870440eafbf140ad831de45d",
+    "doi": "10.1109/ICC52391.2025.11161828",
+    "citation_count": 4,
+    "source": "s2"
+  },
+  {
+    "title": "Task-Oriented Semantic Communication With Adaptive Semantic Reconstruction Network",
+    "authors": [
+      "Zhu Jin",
+      "Tiecheng Song",
+      "Wen-Kang Jia",
+      "Wenbin Zou",
+      "Xiaoqin Song"
+    ],
+    "year": 2025,
+    "venue": "IEEE Internet of Things Journal",
+    "abstract": "In recent years, semantic communication has garnered significant attention for its potential to address challenges in traditional communication systems. However, in complex communication environments, semantic communication still faces challenges, such as semantic information loss, low transmission efficiency, and poor adaptability. This article proposes a novel semantic communication with adaptive semantic reconstruction (SCASR) scheme to enhance transmission efficiency and adaptability in complex communication environments. First, a compression mechanism based on semantic importance is designed to achieve flexible and efficient semantic compression. Then, we develop an adaptive semantic reconstruction network to predict and reconstruct lost semantic information. Finally, we integrate an attention mechanism into the reconstruction network, dynamically adjusting parameter weights based on signal-to-noise ratio (SNR), semantic compression rate (SCR), and packet loss rate (PLR) to improve reconstruction quality and adaptability. To evaluate the efficiency of SCASR, we conduct extensive simulation experiments on semantic segmentation tasks using the Cityscapes dataset. Results demonstrate that SCASR outperforms existing semantic communication and traditional schemes, offering higher mean Intersection over Union (mIoU), and enhanced semantic transmission benefit (STB).",
+    "url": "https://www.semanticscholar.org/paper/7ce8decc29c3208a5f08a680fbe9e77238c1d73f",
+    "doi": "10.1109/JIOT.2025.3579582",
+    "citation_count": 7,
+    "source": "s2"
+  },
+  {
+    "title": "Task-Oriented Semantic Communication With Importance-Aware Rate Control",
+    "authors": [
+      "Zhiye Sun",
+      "Shuai Ma",
+      "Shiyin Li"
+    ],
+    "year": 2025,
+    "venue": "IEEE Communications Letters",
+    "abstract": "Semantic communication is recognized for its high compression efficiency and robust resistance to noise. However, utilizing a fixed transmission rate in environments with dynamic signal-to-noise ratios (SNR) often results in inefficient use of communication resources. To address this challenge, this letter proposes an importance-aware rate control semantic communication (IRCSC) scheme, which dynamically adjusts transmission rates in response to both channel conditions and semantic importance. The scheme employs a contribution-based importance analyzer to rank semantic importance. Additionaly, a novel metric, the semantic transmission integrity index (STII), is proposed to quantify the amount of correctly transmitted information and to correlate it with inference performance. Simulations indicate that, with low computational complexity, IRCSC guarantees a controllable trade-off between performance and rate, delivering higher compression efficiency and improved task performance in high-SNR scenarios.",
+    "url": "https://www.semanticscholar.org/paper/7423f819cd3d443c17d06744b9d8b0337763a6d0",
+    "doi": "10.1109/LCOMM.2025.3566092",
+    "citation_count": 7,
+    "source": "s2"
+  },
+  {
+    "title": "Deep Reinforcement Learning- and Information Bottleneck-Enabled Task-Oriented Semantic Communication",
+    "authors": [
+      "Tantan Zhao",
+      "Fan Li",
+      "Hongyang Du",
+      "Li Sun"
+    ],
+    "year": 2025,
+    "venue": "IEEE Journal on Selected Areas in Communications",
+    "abstract": "Task-oriented semantic communication offers a promising solution for providing real-time computer vision services. However, existing research on semantic communication ignores the connection between the key performance indicators (KPIs) used to measure semantic encoding-decoding networks (i.e., inference accuracy) and wireless semantic communication networks (i.e., transmission latency). Therefore, the designed semantic communication schemes are difficult to simultaneously meet the requirements of low latency and high accuracy of emerging intelligent applications. In this paper, by deeply exploring the relationship and interdependencies between the two kinds of KPIs, we propose a real-time and efficient task-oriented end-to-end semantic communication scheme enabled by deep reinforcement learning (DRL) and information bottleneck to improve both inference and communication efficiency. Specifically, we initially use information bottleneck theory to model the optimal tradeoff between inference accuracy and communication latency, which is subsequently reformulated by variational inference to be differentiable and tractable. Then, we introduce DRL to address the non-differentiability of dynamic stochastic fading channels and channel mismatch between the training phase and deployment phase, enabling accurate selection of the most task-relevant semantic feature dimensions for transmission under dynamic fading channels. Finally, extensive experiments show that our proposed scheme achieves better performance in latency and accuracy than comparison methods.",
+    "url": "https://www.semanticscholar.org/paper/21fd9d0fc98b4156c40e560ac7a2c2295bc3e209",
+    "doi": "10.1109/JSAC.2025.3623199",
+    "citation_count": 3,
+    "source": "s2"
+  },
+  {
+    "title": "On the Utility-Informativeness-Security Trade-Off in Discrete Task-Oriented Semantic Communication",
+    "authors": [
+      "Anbang Zhang",
+      "Yanhu Wang",
+      "Shuaishuai Guo"
+    ],
+    "year": 2024,
+    "venue": "IEEE Communications Letters",
+    "abstract": "Task-oriented semantic communication (ToSC) has been applied to edge inference tasks with limited communication and computing resources. By encoding the task-related features into a finite-size codebook and transmitting the index of the codebook, ToSC can be compatible with existing discrete communication systems. In such discrete ToSC systems, the codebook shared by the transmitter and receiver contains the information of original data and affects the task inference performance, which may also be obtained by adversaries. Thus, there exists an inherent utility-informativeness-security (UIS) trade-off problem in ToSC systems. This letter introduces a novel framework, named UIS-ToSC, which leverages the vector quantized variational information bottleneck (VQ-VIB) scheme for the trade-off issue. Furthermore, we exploit adversarial learning (AL) to train the system against information leakage. Comprehensive experiments demonstrate that the proposed scheme can efficiently reduce communication overhead and maintain information security with little influence on task-inference utility.",
+    "url": "https://www.semanticscholar.org/paper/de9ccbb033cfe6e369244c0e1b9f6af2e9c99dd8",
+    "doi": "10.1109/LCOMM.2024.3382838",
+    "citation_count": 18,
+    "source": "s2"
+  },
+  {
+    "title": "Toward Intelligent Resource Allocation on Task-Oriented Semantic Communication",
+    "authors": [
+      "Haijun Zhang",
+      "Hongyu Wang",
+      "Yabo Li",
+      "Keping Long",
+      "Victor C. M. Leung"
+    ],
+    "year": 2023,
+    "venue": "IEEE wireless communications",
+    "abstract": "Task-oriented semantic communication (TOSC) has significant advantages in reducing the amount of data transmission and alleviating the scarcity of spectrum resources. Unlike traditional communication, the resource allocation in semantic communication is tightly linked to target intelligent tasks and specific interaction requirements. In this article, the intelligent resource allocation in a task-oriented manner is investigated. To further improve spectrum utilization and energy sustainability, a communication network combining energy harvesting (EH), cognitive radio (CR), and non-orthogonal multiple access (NOMA) is considered. This article proposes a semantic-aware resource allocation scheme in the EH-CR-NOMA scenario, where the quality of experience (QoE) is adopted as the evaluation metric. To achieve the preferential occupation of resources by data with richer semantic information, a joint optimization problem of the transmit power, time slot division factor, and semantic compression ratio of the semantic communication user is formulated. With the goal of maximizing the long-term QoE of TOSC, a two-tier deep reinforcement learning framework is designed to solve the semantic-aware resource allocation problem. By striking a trade-off between semantic rate and semantic fidelity, the proposed scheme can better satisfy user intentions.",
+    "url": "https://www.semanticscholar.org/paper/d036ad3238cb335e1ecb91405bf0ea422f1650ef",
+    "doi": "10.1109/MWC.008.2200504",
+    "citation_count": 52,
+    "source": "s2"
+  },
+  {
+    "title": "Importance-Aware Source-Channel Coding for Multi-Modal Task-Oriented Semantic Communication",
+    "authors": [
+      "Yi Ma",
+      "Chunmei Xu",
+      "Zhenyu Liu",
+      "Siqi Zhang",
+      "Rahim Tafazolli"
+    ],
+    "year": 2025,
+    "venue": "2025 IEEE International Conference on Machine Learning for Communication and Networking (ICMLCN)",
+    "abstract": "This paper explores the concept of information importance in multi-modal task-oriented semantic communication systems, emphasizing the need for high accuracy and efficiency to fulfill task-specific objectives. At the transmitter, generative AI (GenAI) is employed to partition visual data objects into semantic segments, each representing distinct, task-relevant information. These segments are subsequently encoded into tokens, enabling precise and adaptive transmission control. Building on this framework, we present importance-aware source and channel coding strategies that dynamically adjust to varying levels of significance at the segment, token, and bit levels. The proposed strategies prioritize high fidelity for essential information while permitting controlled distortion for less critical elements, optimizing overall resource utilization. Furthermore, we address the source-channel coding challenge in semantic multiuser systems, particularly in multicast scenarios, where segment importance varies among receivers. To tackle these challenges, we propose solutions such as rate-splitting coded progressive transmission, ensuring flexibility and robustness in task-specific semantic communication.",
+    "url": "https://www.semanticscholar.org/paper/97bba0d8d59498730722f5075a1ebe41a272f778",
+    "doi": "10.1109/ICMLCN64995.2025.11140558",
+    "citation_count": 2,
+    "source": "s2"
+  },
+  {
+    "title": "Semantic Viruses: How to Destroy a Task Oriented Semantic Communication Network",
+    "authors": [
+      "Heng Zhu",
+      "Feifei Song",
+      "Kun Zhu"
+    ],
+    "year": 2025,
+    "venue": "IEEE Wireless Communications and Networking Conference",
+    "abstract": "Semantic communication has gained significant attention for its potential to address the limitations of traditional communication systems. However, most current research focuses on architectural design, neglecting the critical issue of communication security. In this paper, we reveal the security vulnerabilities in existing semantic communication systems. First, we introduce a knowledge base-assisted task-oriented image semantic communication network. Next, we design two types of semantic viruses that target the knowledge base: a static adversarial semantic virus and a dynamic diffusion semantic virus. The adversarial semantic virus generates a fixed-strength attack, while the diffusion semantic virus attack follows a Gaussian distribution. Finally, for multi-task scenarios, we propose a unified multi-task diffusion semantic virus capable of switching between task-specific viruses using different task embeddings. Experiments on semantic segmentation and image recognition tasks demonstrate that the proposed method effectively degrades task performance at the receiver.",
+    "url": "https://www.semanticscholar.org/paper/8a7b90c7d45156860beb1699a6438ed7ff50068b",
+    "doi": "10.1109/WCNC61545.2025.10978577",
+    "citation_count": 2,
+    "source": "s2"
+  },
+  {
+    "title": "Task-oriented semantic communication with foundation models",
+    "authors": [
+      "Mingkai Chen",
+      "Minghao Liu",
+      "Z. Zhe",
+      "Zhiping Xu",
+      "Wang Lei"
+    ],
+    "year": 2024,
+    "venue": "China Communications",
+    "abstract": "In the future development direction of the sixth generation (6G) mobile communication, several communication models are proposed to face the growing challenges of the task. The rapid development of artificial intelligence (AI) foundation models provides significant support for efficient and intelligent communication interactions. In this paper, we propose an innovative semantic communication paradigm called task-oriented semantic communication system with foundation models. First, we segment the image by using task prompts based on the segment anything model (SAM) and contrastive language-image pretraining (CLIP). Meanwhile, we adopt Bezier curve to enhance the mask to improve the segmentation accuracy. Second, we have differentiated semantic compression and transmission approaches for segmented content. Third, we fuse different semantic information based on the conditional diffusion model to generate high-quality images that satisfy the users' specific task requirements. Finally, the experimental results show that the proposed system compresses the semantic information effectively and improves the robustness of semantic communication.",
+    "url": "https://www.semanticscholar.org/paper/08ce0d65de8134ef120f1cf18bcfa843e3e2fd87",
+    "doi": "10.23919/JCC.fa.2024-0024.202407",
+    "citation_count": 12,
+    "source": "s2"
+  },
+  {
+    "title": "Task-Oriented Semantic Communication Based on Semantic Triplets",
+    "authors": [
+      "Chuanhong Liu",
+      "Caili Guo",
+      "Siyi Wang",
+      "Yuze Li",
+      "Dingxing Hu"
+    ],
+    "year": 2023,
+    "venue": "IEEE Wireless Communications and Networking Conference",
+    "abstract": "Task-oriented semantic communication has received growing interests, which can significantly reduce the amount of transmitted data without affecting task performance. In this paper, a novel semantic communication system based on semantic triplets (SCST) is proposed, in which the semantics is represented via the explainable semantic triplets. Specifically, we propose a semantic extraction method to convert the transmitted texts into semantic triplets, which can be further compressed via the designed semantic filtering method. The semantic triplets then will be encoded and transmitted via the wireless channel to complete intelligent tasks at the receiver. Moreover, we then apply the SCST to sentiment analysis task and question-answering task to verify the effectiveness, where the semantic encoder and decoder are designed respectively considering the final task. The experiment results show that the proposed SCST can obtain at least 43.5% and 52% accuracy gains, compared to the baselines using traditional communication method.",
+    "url": "https://www.semanticscholar.org/paper/860afd13f998687b7ddaa37e27282bd28872dd68",
+    "doi": "10.1109/WCNC55385.2023.10118916",
+    "citation_count": 19,
+    "source": "s2"
+  },
+  {
+    "title": "Multi-task oriented semantic communication model for deep images",
+    "authors": [
+      "Tianze Gao",
+      "Ning Li",
+      "Peng Liu",
+      "Zeyu Zhou"
+    ],
+    "year": 2025,
+    "venue": "Other Conferences",
+    "abstract": "Semantic communication technology is an innovative means of information communication that improves the bandwidth effect by transmitting semantic information about the data. In this paper, a unified image semantic transfer mechanism based on deep learning technique capable of performing multiple downstream tasks is proposed. It is also possible to use the common semantic information of each target to achieve the task of combining the target with different objects. Furthermore, a novel semantic feature extractor is proposed, the results of the simulation demonstrate that the suggested approach outperforms the focused on tasks picture semantic communication system in terms of efficiency and cost.",
+    "url": "https://www.semanticscholar.org/paper/146a3df24cf2c50d0e67e38159fda0c6ab3ed676",
+    "doi": "10.1117/12.3054385",
+    "citation_count": 1,
+    "source": "s2"
+  }
+]

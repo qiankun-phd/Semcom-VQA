@@ -1,0 +1,223 @@
+% System definition and accounting; evaluation details are in Section V.
+\section{System Model}\label{sec:system}
+
+\subsection{Network and Query Model}
+A UAV captures an aerial image, and an edge server answers a question
+about the observed scene. The UAV selects either structured detection
+evidence or an image for transmission. The edge server then applies
+the corresponding decoder, as shown in Fig.~\ref{fig:arch}. The
+objective is to answer the question with low communication and
+computation energy, rather than to maximize image reconstruction quality.
+
+Let $I$ denote the source image and $q$ the question. We consider five
+structured question types: presence, counting, comparison, co-presence,
+and threshold. The model assumes that the question and its type are
+available before evidence selection. Query delivery and parsing are
+outside the communication and computation budget considered here.
+The type rule uses only the question type. Other selectors may also
+use an assumed SNR bin or features extracted from the image, as
+specified in Section~\ref{sec:routing}.
+
+Each image--question pair is treated as a separate transaction, with
+no amortization of detection or transmission across questions. The
+evaluation uses aerial images and recorded inference outcomes; it
+does not include video scheduling or a live UAV control loop.
+
+\begin{figure*}[!t]\centering
+\fbox{\parbox{0.89\linewidth}{\centering
+Image and question $\longrightarrow$ sender-side evidence selection\\[5pt]
+\begin{tabular}{ccl}
+Detection records & $\longrightarrow$ wireless link $\longrightarrow$ & Symbolic decoder\\[3pt]
+JPEG image & $\longrightarrow$ wireless link $\longrightarrow$ & Frozen VLM
+\end{tabular}\\[5pt]
+One selected payload and one receiver answering path per query}}
+\caption{Evidence-level routing jointly selects the transmitted
+representation and receiver computation. The type rule decides
+before detection; the per-sample router first extracts detector
+features. Neither policy requires an initial receiver VLM pass.}\label{fig:arch}
+\end{figure*}
+
+\subsection{Evidence Representation and Answer Generation}
+\label{subsec:levels}\label{subsec:answering}
+The detection-evidence branch uses an onboard
+YOLOv8n detector~\cite{jocher2023yolov8} to extract
+\begin{equation}
+Z=g(I)=\{(c_j,b_j,p_j)\}_{j=1}^{J},
+\end{equation}
+where $J$ is the number of detected objects, and $c_j$, $b_j$, and
+$p_j$ are the class label, bounding box, and confidence of object $j$.
+These records form a symbolic packet. The receiver applies
+question-specific count and logical operations to the received
+evidence $\tilde Z$. No neural inference is required at the receiver
+on this branch; neural detection is performed on the UAV.
+
+The image branch transmits a JPEG representation of $I$. The
+reconstructed image $\hat I$ and question $q$ are passed to a frozen
+Qwen2-VL-2B model~\cite{wang2024qwen2vl}. The model generates the
+answer by greedy decoding. Thus, evidence selection changes both the
+transmitted representation and the computation used to answer the
+question. Writing $s\in\mathcal{S}=\{\mathrm{det},\mathrm{img}\}$ for
+the selected branch, the answer is
+\begin{equation}\label{eq:answer}
+\hat A_q=
+\begin{cases}
+D_{\mathrm{sym}}(\tilde Z,q), & s=\mathrm{det},\\[2pt]
+D_{\mathrm{VLM}}(\hat I,q), & s=\mathrm{img},
+\end{cases}
+\end{equation}
+where $D_{\mathrm{sym}}$ and $D_{\mathrm{VLM}}$ denote the symbolic
+decoder and the VLM, respectively. Detector training, count
+calibration, and answer scoring are described in
+Section~\ref{subsec:setup}.
+
+\subsection{Channel and Transmission Model}\label{subsec:phy}
+\label{subsec:channels}
+The uplink is represented by a normalized flat-fading channel,
+\begin{equation}\label{eq:link}
+y=hx+n,\qquad n\sim\mathcal{CN}(0,\sigma_n^2),
+\end{equation}
+with $\mathbb{E}[|x|^2]=1$ and $\mathbb{E}[|h|^2]=1$.
+The average received SNR is $\gamma=1/\sigma_n^2$, and the
+instantaneous SNR is $\gamma|h|^2$. We consider AWGN ($h=1$),
+Rayleigh ($h\sim\mathcal{CN}(0,1)$), and Rician fading. For Rician
+fading,
+\begin{equation}
+h=\sqrt{\frac{K}{K+1}}h_{\mathrm{LoS}}
+ +\sqrt{\frac{1}{K+1}}h_{\mathrm{NLoS}},
+\end{equation}
+where $|h_{\mathrm{LoS}}|=1$,
+$h_{\mathrm{NLoS}}\sim\mathcal{CN}(0,1)$, and $K$ is the linear
+line-of-sight to scattered-power ratio. These models represent
+different propagation conditions relevant to air-to-ground
+links~\cite{khawaja2019survey}. Distance and path loss are absorbed
+into the received SNR; UAV geometry and trajectory are not optimized.
+
+\emph{Detection-evidence transmission.}\label{subsec:detphy}
+Let $L_{\mathrm{det}}$ denote the packet length in bits. Its nominal
+airtime uses rate-$1/2$ low-density parity-check (LDPC)
+coding~\cite{gallager1962ldpc} and binary phase-shift keying (BPSK).
+The main evaluation approximates evidence loss through
+\begin{equation}\label{eq:outage}
+P_{\mathrm{out}}(\gamma)
+=\Pr\!\left[\log_2(1+\gamma|h|^2)
+ <\frac{L_{\mathrm{det}}}{B\tau}\right],
+\end{equation}
+where $B$ is the bandwidth and $\tau$ is a reference transmission
+window. This is an information-outage abstraction, not the measured
+frame error rate (FER) of a compact LDPC packet. Its single fading
+gain does not describe coding across multiple independent fading
+blocks~\cite{tse2005fundamentals}.
+
+The evidence impairment model allows records to be dropped or
+corrupted, with equal probabilities conditional on a loss event.
+Surviving records form $\tilde Z$ for symbolic decoding. This is an
+application-level corruption model, not a model of residual errors
+after packet integrity checks. The resulting answer accuracy is
+conditional on this impairment assumption.
+
+\emph{Image transmission.}\label{subsec:imgphy}
+The rate-adaptive image branch uses the ergodic spectral efficiency
+\begin{equation}\label{eq:se}
+\mathrm{SE}(\gamma)
+=\mathbb{E}_{h}[\log_2(1+\gamma|h|^2)]
+\end{equation}
+as an idealized rate for airtime accounting~\cite{tse2005fundamentals}.
+The image traces use channel-dependent JPEG quality and resolution.
+Let $L_{\mathrm{img}}(I,\gamma)$ be the compressed payload length
+in bits before receiver-side decoding and file storage. The codec
+reduces JPEG quality and, if needed, image resolution to meet the
+reference transmission window. A received image saved again as a
+JPEG is not used to estimate the transmitted payload.
+The accounting uses the recorded reconstruction $\hat I$ for answer
+evaluation and does not establish that a finite-length LDPC code
+achieves \eqref{eq:se}. On an outage, the model returns a gray
+image and charges the full reference window; no successful source
+encoding length is recorded for that event.
+
+\emph{Airtime.}\label{subsec:accounting}
+With one complex channel use per $1/B$ seconds, the compact-packet
+and ideal-rate accounting conventions give
+\begin{equation}\label{eq:uses}
+\begin{aligned}
+T_s(\gamma)&=\frac{u_s(\gamma)}{B},\\
+u_{\mathrm{det}}&=2L_{\mathrm{det}},\qquad
+u_{\mathrm{img}}(\gamma)=
+\frac{L_{\mathrm{img}}(I,\gamma)}{\mathrm{SE}(\gamma)}.
+\end{aligned}
+\end{equation}
+Dependence on the source image is suppressed in $T_s$ and $u_s$ for
+brevity. The image expression applies to non-outage transmissions; on outage,
+$T_{\mathrm{img}}=\tau$. The energy tables use these conventions.
+The nominal compact-packet airtime is not jointly coupled to the
+outage-based reliability in \eqref{eq:outage}; a joint finite-length
+reliability and airtime evaluation is needed to establish that
+operating point. We therefore distinguish modeled airtime from a
+validated link-level latency guarantee.
+
+\subsection{Energy and Latency Models}\label{subsec:energyacct}
+We account for communication and computation energy per question,
+following the joint accounting approach of~\cite{dai2025pscom}.
+Let $\rho$ denote the selector, and let $d_\rho(s)$ indicate whether
+the detector runs for the selected branch. Type-based selectors run
+the detector only when sending detection evidence. Per-sample
+selectors need detector features before making a choice, so their
+detector runs for every query. The platform-specific costs are
+\begin{equation}\label{eq:energy}
+\begin{aligned}
+E_\rho^{\mathrm{UAV}}(s,\gamma)
+ &=\frac{P_{\mathrm{tx}}}{\eta}T_s(\gamma)
+   +d_\rho(s)E_{\mathrm{det}}\\
+ &\quad+E_{\mathrm{route},\rho}+E_{\mathrm{enc}}(s),\\
+E^{\mathrm{edge}}(s)
+ &=\begin{cases}
+ E_{\mathrm{sym}}, & s=\mathrm{det},\\
+ E_{\mathrm{VLM}}, & s=\mathrm{img},
+ \end{cases}\\
+E_\rho(s,\gamma)
+ &=E_\rho^{\mathrm{UAV}}(s,\gamma)+E^{\mathrm{edge}}(s).
+\end{aligned}
+\end{equation}
+Here $P_{\mathrm{tx}}$ is radiated power, $\eta$ is power-amplifier
+efficiency, and $E_{\mathrm{enc}}$ covers source encoding beyond
+detector execution. $E_{\mathrm{det}}$, $E_{\mathrm{route},\rho}$,
+$E_{\mathrm{sym}}$, and $E_{\mathrm{VLM}}$ denote detector, routing,
+symbolic-decoding, and VLM-inference energy. The reference account
+uses $\eta=1$. The efficiency term permits amplifier losses to be
+included as in~\cite{cui2005energy}, but the reported comparisons
+use the reference efficiency. Transmit power and the link budget
+are not jointly optimized.
+
+VLM energy is measured on an RTX~4060 edge-server proxy. Onboard
+detector energy is modeled using a Jetson-class power and latency
+range, with a separate desktop measurement as a cross-check.
+Routing, symbolic decoding, and image source encoding are assigned
+zero energy in the reported account; these are exclusions, not
+measurements of zero consumption. Omitting image encoding reduces
+the charged cost of the image branch. It does not bound all omitted
+system costs. Numerical settings are given in
+Section~\ref{subsec:energy-exp}.
+
+For sequential execution, the corresponding per-question latency is
+\begin{equation}\label{eq:latency}
+\begin{aligned}
+T_\rho^{\mathrm{total}}(s,\gamma)
+ &=d_\rho(s)T_{\mathrm{det}}^{\mathrm{cmp}}
+   +T_{\mathrm{route},\rho}^{\mathrm{cmp}}
+   +T_{\mathrm{enc}}^{\mathrm{cmp}}(s)\\
+ &\quad+T_s(\gamma)+T_{\mathrm{ans}}^{\mathrm{cmp}}(s),
+\end{aligned}
+\end{equation}
+where the superscript $\mathrm{cmp}$ distinguishes processing time
+from airtime. Answer processing is symbolic decoding or VLM
+inference, according to the selected branch. Queueing and inter-query
+overlap are not modeled. If transmission occupies the full reference
+window, end-to-end latency also includes processing time and therefore
+exceeds $\tau$.
+
+The main account uses over-idle inference energy for an unbatched,
+dedicated edge server.
+Flight, image acquisition, control signaling, and radio circuitry
+outside the amplifier model are excluded. Total accounted energy
+includes both platforms, but UAV battery savings depend on the net
+change in $E_\rho^{\mathrm{UAV}}$, including onboard computation.
+Avoided edge inference does not directly extend UAV battery life.

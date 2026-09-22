@@ -1,0 +1,188 @@
+\section{系统模型}\label{sec:system}
+
+\subsection{网络与查询模型}
+无人机采集空中图像，边缘服务器回答有关所观测场景的问题。
+无人机选择传输结构化检测证据或图像，边缘服务器随后调用对应的解码器。
+系统目标是以较低的通信与计算能耗回答问题，而不是最大化图像重建质量。
+
+令 $I$ 表示源图像，$q$ 表示问题。
+本文考虑存在性判断、计数、数量比较、共现判断和阈值判断五类结构化问题。
+模型假设在选择证据之前，问题及其类型已经可用。
+查询传递与问题解析不计入本文考虑的通信与计算预算。
+类型规则仅使用问题类型；其他选择器还可使用预设的信噪比分区或从图像提取的特征，
+具体方法见第~\paperref{sec:routing}~节。
+
+每个图像与问题的组合被视为一次独立事务，不在多个问题之间摊销检测或传输开销。
+评估使用空中图像及已记录的推理结果，不包含视频调度或实时无人机控制闭环。
+图~\ref{fig:arch} 展示两条分支及其接收端处理流程。
+
+\begin{figure}[htbp]\centering
+\fbox{\parbox{0.92\linewidth}{\centering
+图像与问题 $\longrightarrow$ 发送端证据选择\\[5pt]
+\begin{tabular}{ccl}
+检测记录 & $\longrightarrow$ 无线链路 $\longrightarrow$ & 符号解码器\\[3pt]
+JPEG 图像 & $\longrightarrow$ 无线链路 $\longrightarrow$ & 冻结的 VLM
+\end{tabular}\\[5pt]
+每次查询仅传输一种载荷，并执行对应的接收端回答流程}}
+\caption{证据级路由联合选择传输表示与接收端计算。类型规则在执行检测前决策；
+逐样本路由先提取检测特征。两者均不需要接收端先执行一次 VLM 推理。}
+\label{fig:arch}
+\end{figure}
+
+\subsection{证据表示与答案生成}
+检测证据分支使用机载 YOLOv8n 检测器\cite{jocher2023yolov8}提取
+\begin{equation}
+Z=g(I)=\{(c_j,b_j,p_j)\}_{j=1}^{J},
+\end{equation}
+其中，$J$ 为检测到的目标数量，$c_j$、$b_j$ 和 $p_j$
+分别为第 $j$ 个目标的类别标签、边界框和置信度。
+这些记录组成符号数据包。
+接收端针对问题类型，对接收到的证据 $\tilde Z$ 执行计数和逻辑运算。
+该分支的接收端无需神经网络推理；神经网络检测在无人机上执行。
+
+图像分支传输源图像 $I$ 的 JPEG 表示。
+接收端将重建图像 $\hat I$ 与问题 $q$ 输入冻结的
+Qwen2-VL-2B 模型\cite{wang2024qwen2vl}，通过贪心解码生成答案。
+因此，证据选择同时改变传输表示和回答问题所需的计算。
+用 $s\in\mathcal{S}=\{\mathrm{det},\mathrm{img}\}$ 表示选择的分支，
+其中 $\mathrm{det}$ 和 $\mathrm{img}$ 分别指检测证据与图像，则答案为
+\begin{equation}
+\hat A_q=
+\begin{cases}
+D_{\mathrm{sym}}(\tilde Z,q), & s=\mathrm{det},\\[2pt]
+D_{\mathrm{VLM}}(\hat I,q), & s=\mathrm{img},
+\end{cases}
+\end{equation}
+其中，$D_{\mathrm{sym}}$ 和 $D_{\mathrm{VLM}}$ 分别表示符号解码器与 VLM。
+检测器训练、计数校准及答案评分规则见第~\paperref{subsec:setup}~节。
+
+\subsection{信道与传输模型}\label{subsec:phy}
+上行链路采用归一化平坦衰落信道模型：
+\begin{equation}
+y=hx+n,\qquad n\sim\mathcal{CN}(0,\sigma_n^2),
+\end{equation}
+其中 $\mathbb{E}[|x|^2]=1$，$\mathbb{E}[|h|^2]=1$。
+平均接收信噪比为 $\gamma=1/\sigma_n^2$，瞬时信噪比为 $\gamma|h|^2$。
+本文考虑 AWGN 信道（$h=1$）、Rayleigh 衰落信道
+（$h\sim\mathcal{CN}(0,1)$）和 Rician 衰落信道。
+对于 Rician 衰落，
+\begin{equation}
+h=\sqrt{\frac{K}{K+1}}h_{\mathrm{LoS}}
+ +\sqrt{\frac{1}{K+1}}h_{\mathrm{NLoS}},
+\end{equation}
+其中 $|h_{\mathrm{LoS}}|=1$，
+$h_{\mathrm{NLoS}}\sim\mathcal{CN}(0,1)$，
+$K$ 为直射分量与散射分量功率之比的线性值。
+这些模型用于表示与空地链路相关的不同传播条件\cite{khawaja2019survey}。
+距离与路径损耗的影响包含在接收信噪比中，本文不优化无人机的几何位置或轨迹。
+
+\paragraph{检测证据传输}
+令 $L_{\mathrm{det}}$ 表示检测证据数据包的比特长度。
+其标称空口时间按照码率为 $1/2$ 的低密度奇偶校验编码
+（LDPC）\cite{gallager1962ldpc}与二进制相移键控（BPSK）计算。
+主评估通过下式近似证据丢失概率：
+\begin{equation}
+P_{\mathrm{out}}(\gamma)
+=\Pr\!\left[\log_2(1+\gamma|h|^2)
+ <\frac{L_{\mathrm{det}}}{B\tau}\right],
+\end{equation}
+其中，$B$ 为带宽，$\tau$ 为参考传输窗口。
+这是基于信息中断的近似，而不是紧凑 LDPC 数据包的实测帧错误率。
+公式中的单个衰落增益不描述跨多个独立衰落块的编码\cite{tse2005fundamentals}。
+
+证据损坏模型允许目标记录被丢弃或破坏，在发生损失事件的条件下，两种情况等概率出现。
+剩余记录构成 $\tilde Z$，用于符号解码。
+这是应用层证据损坏模型，并不模拟数据包完整性校验之后的残余错误。
+由此得到的回答准确率依赖于这一损坏假设。
+
+\paragraph{图像传输}
+自适应图像分支采用遍历频谱效率
+\begin{equation}
+\mathrm{SE}(\gamma)
+=\mathbb{E}_{h}[\log_2(1+\gamma|h|^2)]
+\end{equation}
+作为空口时间核算的理想化速率\cite{tse2005fundamentals}。
+图像评估记录使用随信道条件变化的 JPEG 质量与分辨率。
+令 $L_{\mathrm{img}}(I,\gamma)$ 表示接收端解码和存储之前的压缩载荷比特长度。
+编码器先降低 JPEG 质量，再按需降低分辨率，以满足参考传输窗口。
+接收端重新保存的 JPEG 文件大小不用于估计发送载荷。
+答案评估使用记录的重建图像 $\hat I$；这一核算不证明有限码长 LDPC 编码达到遍历频谱效率。
+发生中断时，模型返回灰色图像，并计入完整参考窗口；该事件没有成功编码的载荷长度记录。
+
+\paragraph{空口时间}
+假设每次复信道使用占用 $1/B$ 秒，
+紧凑数据包与理想化速率的核算方式给出
+\begin{equation}
+\begin{aligned}
+T_s(\gamma)&=\frac{u_s(\gamma)}{B},\\
+u_{\mathrm{det}}&=2L_{\mathrm{det}},\qquad
+u_{\mathrm{img}}(\gamma)=
+\frac{L_{\mathrm{img}}(I,\gamma)}{\mathrm{SE}(\gamma)}.
+\end{aligned}
+\end{equation}
+为简化记号，$T_s$ 和 $u_s$ 省略了对源图像的依赖。
+图像公式适用于非中断传输，中断时令 $T_{\mathrm{img}}=\tau$。
+主能耗表采用上述核算方式。
+标称紧凑数据包空口时间尚未与基于中断的可靠性联合起来；
+确认该运行点需要联合评估有限码长下的可靠性与空口时间。
+因此，本文区分模型计算的空口时间与经过验证的链路时延保证。
+
+\subsection{能耗与时延模型}\label{subsec:energyacct}
+本文按照联合核算通信与计算开销的思路\cite{dai2025pscom}，
+计算每个问题的能耗。
+令 $\rho$ 表示选择器，$d_\rho(s)$ 表示所选分支是否需要运行检测器。
+基于类型的选择器仅在传输检测证据时运行检测器；
+逐样本选择器需要先获取检测特征，因此对每个问题都运行检测器。
+两端的能耗分别为
+\begin{equation}\label{eq:energy}
+\begin{aligned}
+E_\rho^{\mathrm{UAV}}(s,\gamma)
+ &=\frac{P_{\mathrm{tx}}}{\eta}T_s(\gamma)
+   +d_\rho(s)E_{\mathrm{det}}\\
+ &\quad+E_{\mathrm{route},\rho}+E_{\mathrm{enc}}(s),\\
+E^{\mathrm{edge}}(s)
+ &=\begin{cases}
+ E_{\mathrm{sym}}, & s=\mathrm{det},\\
+ E_{\mathrm{VLM}}, & s=\mathrm{img},
+ \end{cases}\\
+E_\rho(s,\gamma)
+ &=E_\rho^{\mathrm{UAV}}(s,\gamma)+E^{\mathrm{edge}}(s).
+\end{aligned}
+\end{equation}
+其中，$P_{\mathrm{tx}}$ 为辐射功率，$\eta$ 为功率放大器效率，
+$E_{\mathrm{enc}}$ 表示检测器执行以外的信源编码能耗。
+$E_{\mathrm{det}}$、$E_{\mathrm{route},\rho}$、
+$E_{\mathrm{sym}}$ 和 $E_{\mathrm{VLM}}$
+分别表示检测、路由、符号解码和 VLM 推理能耗。
+参考核算采用 $\eta=1$。
+式中的效率项可按文献中的功放模型计入放大器损耗\cite{cui2005energy}，
+但本文报告的比较均使用参考效率，不对发射功率与链路预算进行联合优化。
+
+VLM 能耗在用作边缘服务器代理的 RTX 4060 上测量。
+机载检测能耗根据 Jetson 级设备的功率与时延范围建模，
+另以桌面设备测量进行交叉检查。
+报告的核算将路由、符号解码和图像信源编码能耗设为零；
+这表示相关开销被忽略，而不表示它们的实际耗电量为零。
+忽略图像编码会降低图像分支的计入能耗，但不能据此界定全部未计入的系统开销。
+数值设置见第~\paperref{subsec:energy-exp}~节。
+
+对于串行执行，相应的逐问题时延为
+\begin{equation}
+\begin{aligned}
+T_\rho^{\mathrm{total}}(s,\gamma)
+ &=d_\rho(s)T_{\mathrm{det}}^{\mathrm{cmp}}
+   +T_{\mathrm{route},\rho}^{\mathrm{cmp}}
+   +T_{\mathrm{enc}}^{\mathrm{cmp}}(s)\\
+ &\quad+T_s(\gamma)+T_{\mathrm{ans}}^{\mathrm{cmp}}(s),
+\end{aligned}
+\end{equation}
+上标 $\mathrm{cmp}$ 用于区分处理时间与空口时间。
+答案处理对应所选分支的符号解码或 VLM 推理。
+模型不包含排队或不同查询之间的执行重叠。
+若传输占满参考窗口，端到端时延还需计入处理时间，因此超过 $\tau$。
+
+主核算采用专用边缘服务器在无批处理推理下的高于空闲功耗部分。
+飞行、图像采集、控制信令以及功放模型以外的射频电路开销均未计入。
+总计入能耗包含无人机与边缘服务器两端，
+但无人机电池节省取决于 $E_\rho^{\mathrm{UAV}}$ 的净变化，包括机载计算。
+避免边缘推理并不直接延长无人机电池续航。

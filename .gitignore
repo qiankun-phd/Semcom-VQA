@@ -1,0 +1,39 @@
+# Local-only. The GitHub repo is public.
+docs/LOCAL_HOSTS.md
+
+# Lab DI-engine fork and remote launchers (hostnames, third-party tree)
+code/hppo-uav/
+
+# Experiment dumps, weights, images, and third-party datasets
+paper/outputs/
+paper/build/
+paper/tmp/
+paper/sections/build/
+
+# Build, cache, and editor files
+build/
+tmp/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+.claude/
+**/.claude/
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+
+# Slides, reviewer file, compiled PDF bundles, unrelated page
+*.pptx
+reviews/
+pdfs/
+yingpeng-bicycle.html
+
+# Third-party deliverable, not our manuscript
+code/vqa_semcom_v0/BUBBLES_D2.1_Concept Formulation_Ed.04.00.00.pdf

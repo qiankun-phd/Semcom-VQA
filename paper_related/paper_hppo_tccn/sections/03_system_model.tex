@@ -1,0 +1,199 @@
+% §III --- System Model (~2 pages, ~1800 words). Drafted D6.
+% All formulas track ``UavNetEnv.environments.py'' bit-exactly (the ground
+% truth for the empirical results). Conference symbols are reused; new
+% multi-UAV / dynamic terms are introduced where indicated.
+\section{System Model}\label{sec:system}
+
+We model a UAV-assisted multi-user MEC network in which a fleet of UAVs
+collects visual streams from onboard cameras, encodes them into compact
+DeepSC-VQA semantic features, and offloads the features through a base
+station to an MEC server that performs cross-modal fusion with the
+text queries streamed from the ground users. Time is slotted into
+$T_s$ discrete slots of duration $S$, indexed by
+$t\in\mathcal{T}=\{1,\dots,T_s\}$. Conference-version notation
+\cite{xie2022taskoriented,liu2024jamminguav} is preserved; the
+multi-UAV / dynamic-channel additions are introduced as needed.
+
+\subsection{Network Model}\label{subsec:network}
+The cell of radius $R_{\mathrm{cell}}$ contains a single base station
+co-located with the MEC server at $d_{\mathrm{BS}}=(x_{\mathrm{BS}},
+y_{\mathrm{BS}}, H_{\mathrm{BS}})$, $M$ UAVs indexed by
+$\mathcal{U}=\{1,\dots,M\}$, and $N$ ground users indexed by
+$\mathcal{N}=\{1,\dots,N\}$. We write $\mathcal{I}=\mathcal{U}\cup
+\mathcal{N}$ for the set of all transmitting devices and use $|i|=M+N$.
+UAV $m\in\mathcal{U}$ has position $d_m(t)=(x_m(t),y_m(t),H_U)$ at slot
+$t$ with the altitude $H_U$ kept constant; UE $n\in\mathcal{N}$ has
+position $d_n(t)=(x_n(t),y_n(t),H_n)$. The trajectory of every UAV is
+constrained inside the cell to ensure reliable connectivity. UAV $m$
+extracts visual semantic features from aerial imagery, while UE $n$
+generates a textual query about the same scene; both feature streams are
+forwarded through the BS to the MEC server, which fuses them and emits
+the answer over a coordination control channel. Logical control signals
+for task request and status feedback share a separate dedicated channel
+and are not modeled in the resource allocation problem.
+
+UEs form clusters with mobility within the cell. The number of UEs that
+each UAV serves is decided online by a closest-UAV association rule:
+\begin{equation}
+\ell(n,t) \;=\; \arg\min_{m\in\mathcal{U}} \|d_m(t)-d_n(t)\|_2,
+\qquad n\in\mathcal{N},
+\label{eq:assoc}
+\end{equation}
+where $\ell(n,t)\in\mathcal{U}$ denotes the index of UAV that serves UE
+$n$ at slot $t$. The association is recomputed at every slot.
+
+\subsection{Channel Model}\label{subsec:channel}
+The wireless channel between every device $i\in\mathcal{I}$ and the BS
+follows a statistical air-to-ground propagation model
+\cite{alhourani2014lap} that combines a line-of-sight (LoS) and a
+non-line-of-sight (NLoS) component. The LoS probability is a logistic
+function of the elevation angle $\theta_{t,i}$:
+\begin{equation}
+P^{\mathrm{LoS}}_{t,i}
+\;=\; \frac{1}{1+\omega_{1}\exp\!\left\{-\omega_{2}(\theta_{t,i}-\omega_{1})\right\}},
+\label{eq:plos}
+\end{equation}
+with environment-dependent constants $(\omega_{1},\omega_{2})$, and the
+complementary NLoS probability $P^{\mathrm{NLoS}}_{t,i}=1-
+P^{\mathrm{LoS}}_{t,i}$. Combining the path-loss exponents
+$(\eta_{\mathrm{LoS}},\eta_{\mathrm{NLoS}})$ with a free-space term in
+$f_c$, the large-scale channel gain in dB is
+\begin{equation}
+h^{\mathrm{ls}}_{t,i}
+\;=\; \big(\eta_{\mathrm{LoS}}-\eta_{\mathrm{NLoS}}\big)P^{\mathrm{LoS}}_{t,i}
+       + \eta_{\mathrm{NLoS}}
+       + 20\log_{10}\!\frac{4\pi f_c\, d_{t,i}}{c} + \kappa_0,
+\label{eq:hls}
+\end{equation}
+where $d_{t,i}=\|d_i(t)-d_{\mathrm{BS}}\|_2$, $c$ is the speed of
+light, and $\kappa_0$ is a fixed offset ($25$~dB in our setup). Unlike
+the conference single-UAV / static-channel formulation
+\cite{liu2024jamminguav}, the journal extension adds a Rayleigh
+small-scale fading component that is resampled every $K_{\mathrm{f}}$
+slots. Let $|\mathbf{g}_{t,i}|^2$ denote the per-slot Rayleigh power
+averaged over $N_r$ receive antennas; the effective per-device dB gain
+becomes $h_{t,i}=h^{\mathrm{ls}}_{t,i}-10\log_{10}|\mathbf{g}_{t,i}|^2$.
+With orthogonal in-band sharing, the uplink SNR of device $i$ at slot
+$t$ on its assigned channel $b_i(t)\in\mathcal{C}=\{0,1\}$ is
+\begin{equation}
+\gamma_{t,i} \;=\; p_{t,i}\,h_{t,i}\big/(B_{t,i}\,N_{0}),
+\label{eq:snr}
+\end{equation}
+where $p_{t,i}$ is the transmit power, $B_{t,i}=B_c/n_{t,b_i(t)}$ is the
+effective bandwidth allocated to $i$ when $n_{t,b_i(t)}=
+|\{j\in\mathcal{I}:b_j(t)=b_i(t)\}|$ devices share channel $b_i(t)$,
+and $N_0$ is the noise power spectral density.
+
+\subsection{Semantic Transmission Modeling}\label{subsec:sem}
+Following the task-oriented multi-user semantic communication framework
+of \cite{xie2022taskoriented}, the semantic similarity at slot $t$
+between UAV $\ell(n,t)$ and UE $n$ is
+\begin{equation}
+\xi^{(\ell(n,t),n)}_{t}
+\;=\; f\!\big(\gamma_{t,\ell(n,t)},\,\gamma_{t,n};\,K_{t,\ell(n,t)},K_{t,n}\big),
+\label{eq:simlut}
+\end{equation}
+where $K_{t,i}$ denotes the cardinality of the semantic-symbol set used
+by device $i$. The mapping $f(\cdot)$ is implemented through a look-up
+table (LUT) trained offline on the DeepSC-VQA model
+\cite{xie2022taskoriented} and stored in the env package; the LUT
+discretizes both SNR axes onto $[-10\!:\!5\!:\!20]$~dB bins. We write
+$R_{t,i}$ for the resulting semantic transmission rate of node $i$:
+\begin{equation}
+R_{t,i} \;=\; \xi^{(\ell(n,t),n)}_t
+       \,\frac{B_{t,i}}{K_{t,i}}\,\mathcal{H}_{i},
+\label{eq:semrate}
+\end{equation}
+where $\mathcal{H}_{i}\in\{\mathcal{H}_{\mathrm{img}},\mathcal{H}_{\mathrm{txt}}\}$
+is the semantic entropy of the image or text feature carried by device
+$i$. Equation~\eqref{eq:semrate} provides a dimensionally consistent
+metric (semantic units per second) for evaluating end-to-end information
+delivery in the semantic domain.
+
+\subsection{Task Arrival and UE Mobility}\label{subsec:dynamics}
+The conference formulation assumed a fixed per-UE task workload and
+stationary UEs, but realistic deployments inject \emph{both} traffic
+randomness and topology drift. We capture both with two independent
+processes that are switched on by the policy in dynamic-mode evaluation
+(Section~\ref{sec:exp}).
+
+\paragraph{Poisson task arrival.} At every slot, each UE $n$ samples a
+new image-task count and a new text-task count from
+$Q^{\mathrm{img}}_{n}(t),Q^{\mathrm{txt}}_{n}(t)\sim
+\mathrm{Poisson}(\bar{\lambda})$, independently across slots and across
+UEs. The semantic-symbol payload of UE $n$ at slot $t$ is therefore
+$Q^{\mathrm{img}}_{n}(t)\,\mathcal{H}_{\mathrm{img}}+
+Q^{\mathrm{txt}}_{n}(t)\,\mathcal{H}_{\mathrm{txt}}$, scaled by the
+device-side task size constants. Conference behavior is recovered by
+freezing the per-UE counts at the values sampled at the episode
+beginning.
+
+\paragraph{Slow random walk.} Each UE performs an independent bounded
+2-D random walk in the horizontal plane: at slot $t$ the UE displacement
+is $\Delta d_{n}(t)=(v_{n}(t)\cos\phi_{n}(t),v_{n}(t)\sin\phi_{n}(t))$
+with speed $v_{n}(t)\sim\mathcal{U}[0,v_{\max}]$ and direction
+$\phi_{n}(t)\sim\mathcal{U}[0,2\pi)$. Positions are clipped back into
+the cell, and the dynamic-mode flag $v_{\max}>0$ controls activation.
+
+\subsection{Delay and Energy Consumption Model}\label{subsec:cost}
+The total task delay at slot $t$ is the sum of the semantic
+transmission delay $T^{\mathrm{tr}}(t)$ to the MEC server and the
+computation delay $T^{\mathrm{cmp}}_{\mathrm{MEC}}(t)$ for VQA
+inference. With $T_{\mathrm{avail}}(t)=(T_s-t+1)S$ as the residual time
+budget at slot $t$, the per-UAV transmission delay aggregates contributions
+from the UEs it currently serves:
+\begin{equation}
+T^{\mathrm{tr}}_{\!U,m}(t)
+\;=\; \frac{\sum_{n:\ell(n,t)=m} Q^{\mathrm{img}}_{n}(t)\mathcal{H}_{\mathrm{img}}}
+            {R_{t,m}},
+\quad m\in\mathcal{U},
+\label{eq:tu}
+\end{equation}
+and the per-UE transmission delay is
+$T^{\mathrm{tr}}_{\!n}(t)=
+\big(Q^{\mathrm{txt}}_{n}(t)\mathcal{H}_{\mathrm{txt}}\big)/R_{t,n}$.
+Because UAV and UE uplinks proceed in parallel over orthogonal
+channels, the effective per-slot transmission delay is
+\begin{equation}
+T^{\mathrm{tr}}(t) \;=\;
+\min\!\Big\{\,
+   \max\!\big(\max_{m}T^{\mathrm{tr}}_{\!U,m}(t),\,
+              \max_{n}T^{\mathrm{tr}}_{\!n}(t)\big),\,
+   T_{\mathrm{avail}}(t)\Big\}.
+\label{eq:ttotal}
+\end{equation}
+The MEC server processes the aggregated semantic data at constant
+throughput $f_{\mathrm{MEC}}$, giving
+$T^{\mathrm{cmp}}_{\mathrm{MEC}}(t)=\mathcal{A}_{\mathrm{MEC}}/
+f_{\mathrm{MEC}}$ where $\mathcal{A}_{\mathrm{MEC}}=
+\sum_{n}\!Q^{\mathrm{img}}_{n}(t)\mathcal{H}_{\mathrm{img}}+
+\sum_{n}\!Q^{\mathrm{txt}}_{n}(t)\mathcal{H}_{\mathrm{txt}}$. Total
+slot delay is $T^{\mathrm{tot}}(t)=T^{\mathrm{tr}}(t)+
+T^{\mathrm{cmp}}_{\mathrm{MEC}}(t)$, subject to the scheduling
+constraint $T^{\mathrm{tot}}(t)\le T_{\mathrm{avail}}(t)$.
+
+The system energy consumption at slot $t$ aggregates UAV mobility,
+hover-stage transmission, and per-UE transmission. The mobility energy of
+UAV $m$ is $E^{\mathrm{mob}}_{U,m}(t)=P_{\mathrm{fly}}\,t\,S+
+P_{\mathrm{hov}}\,T^{\mathrm{tr}}_{\!U,m}(t)$ where
+$P_{\mathrm{fly}}$ and $P_{\mathrm{hov}}$ are the propulsion and hover
+power. The transmission energy is
+$E^{\mathrm{tr}}_{i}(t)=P_{i}(t)T^{\mathrm{tr}}_{i}(t)$ for every
+device. Letting $E^{\max}$ denote the maximum admissible per-slot
+energy under worst-case full-load operation, the joint system
+consumption index is
+\begin{equation}
+O(t) \;=\; \alpha\,\widetilde{T}(t)
+       + (1-\alpha)\,\widetilde{E}(t),
+\quad
+\widetilde{T}(t)=\frac{T^{\mathrm{tot}}(t)}{T_{\mathrm{avail}}(t)},
+\;\;
+\widetilde{E}(t)=\frac{E^{\mathrm{sys}}(t)}{E^{\max}},
+\label{eq:cost}
+\end{equation}
+both normalized to $[0,1]$. The trade-off coefficient $\alpha\in[0,1]$
+encodes mission preferences (e.g., a delay-critical mission selects a
+larger $\alpha$); we treat $\alpha$ as an external knob and study the
+sensitivity of the learned policy to its choice in
+Section~\ref{sec:exp:sens}. The full optimization problem and Dec-POMDP
+casting follow in Section~\ref{sec:method}.

@@ -1,0 +1,18 @@
+% Chinese counterpart of sections/01_introduction.tex.
+% Compile: latexmk -xelatex -outdir=build introduction_zh.tex
+\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{xr}
+\externaldocument[full-]{build/main_zh}
+\newcommand{\paperref}[1]{\ref{full-#1}}
+\setstretch{1.3}
+\begin{document}
+% Shared body for standalone and full Chinese manuscripts.
+\input{sections_zh/01_introduction}
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{document}

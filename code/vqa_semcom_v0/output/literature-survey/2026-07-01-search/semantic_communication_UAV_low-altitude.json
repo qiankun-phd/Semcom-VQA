@@ -1,0 +1,335 @@
+[
+  {
+    "title": "Integrated Sensing and Communication for Low-Altitude Security",
+    "authors": [
+      "Ruixing Ren"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "The dense concentration of low-altitude, slow-speed, and small-size targets in the complex low-altitude environment poses significant security challenges, including failures in continuous wide-area sensing and ambiguous target intent, which existing regulatory frameworks struggle to address. Integrated sensing and communication (ISAC), a hallmark of next-generation mobile communication, offers a transformative approach to low-altitude security governance. By leveraging existing cellular infrastructure and spectrum resources, ISAC enables the construction of a seamless wide-area sensing network, supports intelligent feature extraction and intent inference, facilitates real-time collaborative decision-making, and establishes a dynamic trust authentication framework. This article systematically reviews the technical system, analyzes the security challenges, forecasts the enabling value of ISAC, and discusses the resulting open problems and challenges, thereby laying a foundation for future research and industrial implementation.",
+    "url": "http://arxiv.org/abs/2601.13810v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic Web Technology for Agent Communication Protocols",
+    "authors": [
+      "Idoia Berges",
+      "Jesús Bermúdez",
+      "Alfredo Goñi",
+      "Arantza Illarramendi"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "One relevant aspect in the development of the Semantic Web framework is the achievement of a real inter-agents communication capability at the semantic level. The agents should be able to communicate and understand each other using standard communication protocols freely, that is, without needing a laborious a priori preparation, before the communication takes place. For that setting we present in this paper a proposal that promotes to describe standard communication protocols using Semantic Web technology (specifically, OWL-DL and SWRL). Those protocols are constituted by communication acts. In our proposal those communication acts are described as terms that belong to a communication acts ontology, that we have developed, called CommOnt. The intended semantics associated to the communication acts in the ontology is expressed through social commitments that are formalized as fluents in the Event Calculus. In summary, OWL-DL reasoners and rule engines help in our proposal for reasoning about protocols. We define some comparison relationships (dealing with notions of equivalence and specialization) between protocols used by agents from different systems.",
+    "url": "http://arxiv.org/abs/2401.11841v1",
+    "doi": "10.1007/978-3-540-68234-9_4",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Trajectory and Transmit Power Optimization for IRS-Assisted UAV Communication under Malicious Jamming",
+    "authors": [
+      "Zhi Ji",
+      "Wendong Yang",
+      "Xinrong Guan",
+      "Xiao Zhao",
+      "Guoxin Li",
+      "Qingqing Wu"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "abstract": "In this letter, we investigate an unmanned aerial vehicle (UAV) communication system, where an intelligent reflecting surface (IRS) is deployed to assist in the transmission from a ground node (GN) to the UAV in the presence of a jammer. We aim to maximize the average rate of the UAV communication by jointly optimizing the GN's transmit power, the IRS's passive beamforming and the UAV's trajectory. However, the formulated problem is difficult to solve due to the non-convex objective function and the coupled optimization variables. Thus, to tackle it, we propose an alternating optimization (AO) based algorithm by exploiting the successive convex approximation (SCA) and semidefinite relaxation (SDR) techniques. Simulation results show that the proposed algorithm can significantly improve the average rate compared with the benchmark algorithms. Moreover, it also shows that when the jamming power is large and the number of IRS elements is relatively small, deploying the IRS near the jammer outperforms deploying it near the GN, and vice versa.",
+    "url": "http://arxiv.org/abs/2201.05271v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "IRS-Aided Energy Efficient UAV Communication",
+    "authors": [
+      "Hyesang Cho",
+      "Junil Choi"
+    ],
+    "year": 2021,
+    "venue": "arXiv",
+    "abstract": "Unmanned aerial vehicles (UAVs) have steadily gained attention to overcome the harsh propagation loss and blockage issue of millimeter-wave communication. However, UAV communication systems suffer from energy consumption, which limits the flying time of UAVs. In this paper, we propose several UAV energy consumption minimization techniques through the aid of multiple intelligent reflecting surfaces (IRSs). In specific, we introduce a tractable model to effectively capture the characteristics of multiple IRSs and multiple user equipments (UEs). Then, we derive a closed form expression for the UE achievable rate, resulting in tractable optimization problems. Accordingly, we effectively solve the optimization problems by adopting the successive convex approximation technique. To compensate for the high complexity of the optimization problems, we propose a low complexity algorithm that has marginal performance loss. In the numerical results, we show that the proposed algorithms can save UAV energy consumption significantly compared to the benchmark with no IRSs, justifying that exploiting the IRSs is indeed favorable to UAV energy consumption minimization.",
+    "url": "http://arxiv.org/abs/2108.02406v2",
+    "doi": "10.23919/JCN.2022.000038.",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "A Theory of Semantic Communication",
+    "authors": [
+      "Yulin Shao",
+      "Qi Cao",
+      "Deniz Gunduz"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "abstract": "Semantic communication is an emerging research area that has gained a wide range of attention recently. Despite this growing interest, there remains a notable absence of a comprehensive and widely-accepted framework for characterizing semantic communication. This paper introduces a new conceptualization of semantic communication and formulates two fundamental problems, which we term language exploitation and language design. Our contention is that the challenge of language design can be effectively situated within the broader framework of joint source-channel coding theory, underpinned by a comprehensive end-to-end distortion metric. To tackle the language exploitation problem, we put forth three approaches: semantic encoding, semantic decoding, and a synergistic combination of both in the form of combined semantic encoding and decoding. Furthermore, we establish the semantic distortion-cost region as a critical framework for assessing the language exploitation problem. For each of the three proposed approaches, the achievable distortion-cost region is characterized. Overall, this paper aims to shed light on the intricate dynamics of semantic communication, paving the way for a deeper understanding of this evolving field.",
+    "url": "http://arxiv.org/abs/2212.01485v4",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Robust Trajectory and Communication Design in IRS-Assisted UAV Communication under Malicious Jamming",
+    "authors": [
+      "Zhi Ji",
+      "Xinrong Guan",
+      "Jia Tu",
+      "Qingqing Wu",
+      "Wendong Yang"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "abstract": "In this paper, we study an unmanned aerial vehicle (UAV) communication system, where a ground node (GN) communicate with a UAV assisted by intelligent reflecting surface (IRS) in the presence of a jammer with imperfect location information. We aim to improve the achievable average rate via the joint robust design of UAV trajectory, IRS passive beamforming and GN's power allocation. However, the formulated optimization problem is challenging to solve due to its non-convexity and coupled variables. To overcome the difficulty, we propose an alternating optimization (AO) based algorithm to solve it sub-optimally by leveraging semidefinite relaxation (SDR), successive convex approximation (SCA), and S-procedure methods. Simulation results show that by deploying the IRS near the GN, our proposed algorithm always improves the uplink achievable average rate significantly compared with the benchmark algorithms, while deploying the IRS nearby the jammer is effective only when the jammer's location is perfectly known.",
+    "url": "http://arxiv.org/abs/2201.09528v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Fundamental Tradeoffs in Communication and Trajectory Design for UAV-Enabled Wireless Network",
+    "authors": [
+      "Qingqing Wu",
+      "Liang Liu",
+      "Rui Zhang"
+    ],
+    "year": 2018,
+    "venue": "arXiv",
+    "abstract": "The use of unmanned aerial vehicles (UAVs) as aerial communication platforms is of high practical value for future wireless systems such as 5G, especially for swift and on-demand deployment in temporary events and emergency situations. Compared to traditional terrestrial base stations (BSs) in cellular network, UAV-mounted aerial BSs possess stronger line-of-sight (LoS) links with the ground users due to their high altitude as well as high and flexible mobility in three-dimensional (3D) space, which can be exploited to enhance the communication performance. On the other hand, unlike terrestrial BSs that have reliable power supply, aerial BSs in practice have limited on-board energy, but require significant propulsion energy to stay airborne and support high mobility. Motivated by the above new considerations, this article aims to revisit some fundamental tradeoffs in UAV-enabled communication and trajectory design. Specifically, it is shown that communication throughput, delay, and (propulsion) energy consumption can be traded off among each other by adopting different UAV trajectory designs, which sheds new light on their traditional tradeoffs in terrestrial communication. Promising directions for future research are also discussed.",
+    "url": "http://arxiv.org/abs/1805.07038v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Enabling UAV Cellular with Millimeter-Wave Communication: Potentials and Approaches",
+    "authors": [
+      "Zhenyu Xiao",
+      "Pengfei Xia",
+      "Xiang-Gen Xia"
+    ],
+    "year": 2016,
+    "venue": "arXiv",
+    "abstract": "To support high data rate urgent or ad hoc communications, we consider mmWave UAV cellular networks and the associated challenges and solutions. To enable fast beamforming training and tracking, we first investigate a hierarchical structure of beamforming codebooks and design of hierarchical codebooks with different beam widths via the sub-array techniques. We next examine the Doppler effect as a result of UAV movement and find that the Doppler effect may not be catastrophic when high gain directional transmission is used. We further explore the use of millimeter wave spatial division multiple access and demonstrate its clear advantage in improving the cellular network capacity. We also explore different ways of dealing with signal blockage and point out that possible adaptive UAV cruising algorithms would be necessary to counteract signal blockage. Finally, we identify a close relationship between UAV positioning and directional millimeter wave user discovery, where update of the former may directly impact the latter and vice versa.",
+    "url": "http://arxiv.org/abs/1602.03654v1",
+    "doi": "10.1109/MCOM.2016.7470937",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Low-altitude Multi-UAV-assisted Data Collection and Semantic Forwarding for Post-Disaster Relief",
+    "authors": [
+      "Xiaoya Zheng",
+      "Geng Sun",
+      "Jiahui Li",
+      "Jiacheng Wang",
+      "Weijie Yuan",
+      "Qingqing Wu",
+      "Dusit Niyato",
+      "Abbas Jamalipour"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "The low-altitude economy (LAE) is an emerging economic paradigm which fosters integrated development across multiple fields. As a pivotal component of the LAE, low-altitude uncrewed aerial vehicles (UAVs) can restore communication by serving as aerial relays between the post-disaster areas and remote base stations (BSs). However, conventional approaches face challenges from vulnerable long-distance links between the UAVs and remote BSs, and data bottlenecks arising from massive data volumes and limited onboard UAV resources. In this work, we investigate a low-altitude multi-UAV-assisted data collection and semantic forwarding network, in which multiple UAVs collect data from ground users, form clusters, perform intra-cluster data aggregation with semantic extraction, and then cooperate as virtual antenna array (VAAs) to transmit the extracted semantic information to a remote BS via collaborative beamforming (CB). We formulate a data collection and semantic forwarding multi-objective optimization problem (DCSFMOP) that jointly maximizes both the user and semantic transmission rates while minimizing UAV energy consumption. The formulated DCSFMOP is a mixed-integer nonlinear programming (MINLP) problem that is inherently NP-hard and characterized by dynamically varying decision variable dimensionality. To address these challenges, we propose a large language model-enabled alternating optimization approach (LLM-AOA), which effectively handles the complex search space and variable dimensionality by optimizing different subsets of decision variables through tailored optimization strategies. Simulation results demonstrate that LLM-AOA outperforms AOA by approximately 26.8\\% and 22.9\\% in transmission rate and semantic rate, respectively.",
+    "url": "http://arxiv.org/abs/2601.16146v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Advancing Experimental Platforms for UAV Communications: Insights from AERPAW'S Digital Twin",
+    "authors": [
+      "Joshua Moore",
+      "Aly Sabri Abdalla",
+      "Charles Ueltschey",
+      "Anıl Gürses",
+      "Özgür Özdemir",
+      "Mihail L. Sichitiu",
+      "İsmail Güvenç",
+      "Vuk Marojevic"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "The rapid evolution of 5G and beyond has advanced space-air-terrestrial networks, with unmanned aerial vehicles (UAVs) offering enhanced coverage, flexible configurations, and cost efficiency. However, deploying UAV-based systems presents challenges including varying propagation conditions and hardware limitations. While simulators and theoretical models have been developed, real-world experimentation is critically important to validate the research. Digital twins, virtual replicas of physical systems, enable emulation that bridge theory and practice. This paper presents our experimental results from AERPAW's digital twin, showcasing its ability to simulate UAV communication scenarios and providing insights into system performance and reliability.",
+    "url": "http://arxiv.org/abs/2410.09648v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Prototype-Based Low Altitude UAV Semantic Segmentation",
+    "authors": [
+      "Da Zhang",
+      "Gao Junyu",
+      "Zhao Zhiyuan"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Semantic segmentation of low-altitude UAV imagery presents unique challenges due to extreme scale variations, complex object boundaries, and limited computational resources on edge devices. Existing transformer-based segmentation methods achieve remarkable performance but incur high computational overhead, while lightweight approaches struggle to capture fine-grained details in high-resolution aerial scenes. To address these limitations, we propose PBSeg, an efficient prototype-based segmentation framework tailored for UAV applications. PBSeg introduces a novel prototype-based cross-attention (PBCA) that exploits feature redundancy to reduce computational complexity while maintaining segmentation quality. The framework incorporates an efficient multi-scale feature extraction module that combines deformable convolutions (DConv) with context-aware modulation (CAM) to capture both local details and global semantics. Experiments on two challenging UAV datasets demonstrate the effectiveness of the proposed approach. PBSeg achieves 71.86\\% mIoU on UAVid and 80.92\\% mIoU on UDD6, establishing competitive performance while maintaining computational efficiency. Code is available at https://github.com/zhangda1018/PBSeg.",
+    "url": "http://arxiv.org/abs/2604.01550v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic Communications with Discrete-time Analog Transmission: A PAPR Perspective",
+    "authors": [
+      "Yulin Shao",
+      "Deniz Gunduz"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "abstract": "Recent progress in deep learning (DL)-based joint source-channel coding (DeepJSCC) has led to a new paradigm of semantic communications. Two salient features of DeepJSCC-based semantic communications are the exploitation of semantic-aware features directly from the source signal, and the discrete-time analog transmission (DTAT) of these features. Compared with traditional digital communications, semantic communications with DeepJSCC provide superior reconstruction performance at the receiver and graceful degradation with diminishing channel quality, but also exhibit a large peak-to-average power ratio (PAPR) in the transmitted signal. An open question has been whether the gains of DeepJSCC come from the additional freedom brought by the high-PAPR continuous-amplitude signal. In this paper, we address this question by exploring three PAPR reduction techniques in the application of image transmission. We confirm that the superior image reconstruction performance of DeepJSCC-based semantic communications can be retained while the transmitted PAPR is suppressed to an acceptable level. This observation is an important step towards the implementation of DeepJSCC in practical semantic communication systems.",
+    "url": "http://arxiv.org/abs/2208.08342v3",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Rotatable Antenna System Empowered Low-Altitude Economy: Opportunities and Challenges",
+    "authors": [
+      "Shuaijun Li",
+      "Jie Tang",
+      "Beixiong Zheng",
+      "Lipeng Zhu",
+      "Cui Yang",
+      "Nan Zhao",
+      "Xiu Yin Zhang",
+      "Kai-Kit Wong"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "abstract": "Low-altitude economy (LAE) is an emerging technological paradigm that enables continuous airspace coverage at multiple altitudes by providing highly reliable data connectivity for numerous low-altitude applications. However, existing networks cannot sufficiently support LAE development, as current base stations (BSs) are primarily designed for terrestrial users and lack the capability to provide continuous coverage at low altitudes. To overcome these challenges, rotatable antenna system (RAS) is introduced in LAE, enabling flexible beamforming by dynamically adjusting the boresight of directional antennas to extend low-altitude coverage and enhance the stability of data transmission. In this article, we first provide an overview of RAS-empowered LAE applications, including low-altitude communication, sensing, control, and computation. Then, we present two practical RAS deployment strategies for LAE scenarios, namely RAS-aided multi-BS and multi-unmanned aerial vehicle (UAV) cooperative coverages, as well as provide detailed discussions on their system architectures and performance benefits. Additionally, key design issues of RAS in LAE are discussed, including channel modeling and estimation, cellular access and interference cancellation, as well as RAS configuration and boresight optimization. Finally, we demonstrate the performance gains of RAS in LAE networks through experimental and simulation results.",
+    "url": "http://arxiv.org/abs/2511.00562v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Exploiting NOMA for Multi-Beam UAV Communication in Cellular Uplink",
+    "authors": [
+      "Liang Liu",
+      "Shuowen Zhang",
+      "Rui Zhang"
+    ],
+    "year": 2018,
+    "venue": "arXiv",
+    "abstract": "Unmanned aerial vehicles (UAVs) are expected to be an important new class of users in the fifth generation (5G) and beyond 5G cellular networks. In particular, there are emerging UAV applications such as aerial photograph and data relaying that require high-speed communications between the UAVs and the ground base stations (GBSs). Due to the high UAV altitude, the strong line-of-sight (LoS) links generally dominate the channels between the UAVs and GBSs, which brings both opportunities and challenges in the design of future wireless networks supporting both terrestrial and aerial users. Although each UAV can associate with more GBSs for communication as compared to terrestrial users thanks to the LoS-dominant channels, it also causes/suffers more severe interference to/from the terrestrial communications in the uplink/downlink. This paper studies the uplink communication from a multi-antenna UAV to a set of GBSs within its signal coverage by considering a practical yet challenging scenario when the number of antennas at the UAV is smaller than that of co-channel GBSs. To achieve high-rate transmission yet avoid interfering with any of the existing terrestrial communications at the co-channel GBSs, we propose a novel multi-beam transmission strategy by exploiting the non-orthogonal multiple access (NOMA) technique. Specifically, the UAV sends each data stream to a selected subset of the GBSs, which can decode the UAV's signals and then cancel them before decoding the messages of their served terrestrial users, and in the meanwhile nulls its interference at the other GBSs via zero-forcing (ZF) beamforming. To draw essential insight, we first characterize in closed-form the degrees-of-freedom (DoF) under the proposed strategy. Then, we propose an efficient algorithm to maximize the UAV's transmit rate subject to the interference avoidance constraints for protecting the terrestrial users.",
+    "url": "http://arxiv.org/abs/1810.10839v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Sensing for Reliable UAV Communication: Robust Trajectory and Resource Optimization in Low-Altitude Networks",
+    "authors": [
+      "Yifan Jiang",
+      "Qingqing Wu",
+      "Hongxun Hui",
+      "Wen Chen",
+      "Wei Feng",
+      "Shanpu Shen"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "In low-altitude wireless networks, sensing-aided communication has emerged as a promising integrated sensing and communication (ISAC) paradigm for unmanned aerial vehicle (UAV) tracking and communication. This paper investigates reliable sensing-aided communication for multiple cellular-connected UAVs under mobility uncertainties. Specifically, we maximize the minimum outage capacity among UAVs by jointly optimizing their real-time predicted positions, as well as the base station (BS) transmit power and bandwidth allocations. To address the non-convex and intractable maximum tolerable outage probability (OP) constraints, two robust optimization schemes are proposed based on a continuous confidence ellipse (CE) and discretized inverse-whitened sectors (IWSs), respectively. For the CE-based scheme, an efficient algorithm is proposed to optimize the predicted UAV positions individually via block successive convex approximation, followed by convex resource allocation. For the IWS-based scheme, an IWS-based OP approximation is proposed to facilitate the robust optimization, based on which a low-complexity IWS selection method is proposed to decouple the optimization variables. Then, a similar sequential optimization algorithm is proposed based on the projected gradient descent approach. The two algorithms are further unified into a common trajectory-resource optimization framework, revealing a low-complexity structure for robust UAV trajectory and resource management. Simulation results validate the effectiveness of our proposed OP approximation, demonstrate the significant outage capacity improvement of the proposed robust optimization schemes over benchmark schemes, and illustrate the superiority of the IWS-based scheme over the CE-based scheme.",
+    "url": "http://arxiv.org/abs/2606.31447v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "UAV Control and Communication Enabled Low-Altitude Economy: Challenges, Resilient Architecture and Co-design Strategies",
+    "authors": [
+      "Tianhao Liang",
+      "Nanchi Su",
+      "Yuqi Ping",
+      "Guangyu Lei",
+      "Xinglin Chen",
+      "Longyu Zhou",
+      "Tingting Zhang",
+      "Qinyu Zhang",
+      "Tony Q. S. Quek"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "The emerging low-altitude economy has catalyzed the large-scale deployment of unmanned aerial vehicles (UAVs), driving a paradigm shift in environment monitoring, logistics, and emergency response. However, operating within these environments presents notable challenges as pervasive coverage holes, unpredictable interference, and spectrum scarcity. To this end, this article present a communication and control co-design framework to enable a resilient architecture for cellular-connected UAVs. Specifically, we first characterize typical service applications and their stringent performance requirements, followed by a comprehensive analysis of the unique challenges. To bridge the gap between volatile wireless links and rigid flight stability, a three layered architecture is proposed, integrating pre-flight strategic planning, in-flight adaptive action, and system-level resource orchestration. Furthermore, we detail the key enabling technologies for communication and control co-design. Preliminary case studies are proposed to validate that the co-design framework significantly improve the resilience of cellular-connected UAV systems, providing a robust foundation for the evolution of intelligent low-altitude networks.",
+    "url": "http://arxiv.org/abs/2604.04044v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "SkyShield: Occupancy as a Safety Interface for Low-Altitude UAV Autonomy",
+    "authors": [
+      "Jie Gao",
+      "Jie Ma",
+      "Kaihui Lin",
+      "Kai Ye",
+      "Miaohui Zhang",
+      "Pingyang Dai",
+      "Liujuan Cao"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "For low-altitude Unmanned Aerial Vehicle (UAV) autonomy, 3D spatial understanding is not merely a perception objective, but the safety interface between human instructions and physical flight. In human-scale urban airspace below 20 meters, thin geometry, occlusions, vegetation, and urban clutter define whether an aerial agent can safely enter the space ahead. However, existing UAV datasets mainly provide 2D annotations or 3D boxes, while driving-oriented occupancy benchmarks assume stable ground-level sensor rigs. Both miss the defining regime of low-altitude flight: a front-facing monocular camera observing occupied and free space from a moving aerial body with frame-wise changing 6-DoF pose and camera extrinsics. To bridge this gap, we introduce SkyShield, to the best of our knowledge the first front-view monocular semantic occupancy benchmark for urban UAV flight below 20 meters. Built on CARLA, SkyShield contains 36K front-view UAV samples across diverse urban scenes and weather conditions, pairing each image with frame-wise 6-DoF UAV pose, frame-wise dynamic camera geometry, UAV states, and front-frustum semantic occupancy labels. We further propose KAR-mIoU, a UAV-centric and dynamics-aware metric that re-weights voxel-level evaluation by kinematic reachability and time-to-collision, revealing safety-critical risks hidden by conventional mIoU. To tackle this challenging new setting, we provide SkyOcc, a geometry-first monocular baseline that integrates frame-wise UAV attitude into projection, fuses temporal occupancy features, and applies safety-prior optimization to preserve sparse collision-critical structures. Together, SkyShield, KAR-mIoU, and SkyOcc establish occupancy as a safety interface for low-altitude aerial autonomy. Code and dataset will be released publicly.",
+    "url": "http://arxiv.org/abs/2606.00747v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "A Novel Stripe-based RIS Optimization for UAV Communications and Sensing in Low-Altitude Wireless Networks",
+    "authors": [
+      "Burak Ahmet Celebi",
+      "Sefa Kayraklik",
+      "Onur Salan",
+      "Ibrahim Hokelek",
+      "Ali Emre Pusane",
+      "Ali Gorcin"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Low-altitude wireless networks (LAWN) envision a reconfigurable 3D network capable of supporting mission-critical aerial operations. This paper presents a reconfigurable intelligent surface (RIS)-assisted LAWN to establish a reliable communication with an unmanned aerial vehicle (UAV) across varying wireless channel conditions and signal blockages. A low complexity stripe-based RIS phase shift optimization framework is proposed to simultaneously enhance communication reliability and provide passive sensing capability for UAV tracking under 3D mobility. Unlike high-complexity optimization approaches, the proposed method leverages the inherent structural phase-gradient of the RIS adjacent elements to significantly reduce the search space for calculating and updating the RIS configuration as the UAV moves. The analysis and simulation results demonstrate that the proposed framework outperforms conventional benchmarks in convergence speed and computational efficiency, while maintaining robust, high signal-to-noise-ratio (SNR) connectivity even in the presence of phase estimation errors and low SNR regimes. In addition, the measurement experiments using a real RIS prototype in an outdoor campus environment are performed to demonstrate the practical viability of the proposed approach.",
+    "url": "http://arxiv.org/abs/2606.07026v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Capacity Characterization of UAV-Enabled Two-User Broadcast Channel",
+    "authors": [
+      "Qingqing Wu",
+      "Jie Xu",
+      "Rui Zhang"
+    ],
+    "year": 2018,
+    "venue": "arXiv",
+    "abstract": "Although prior works have exploited the UAV's mobility to enhance the wireless communication performance under different setups, the fundamental capacity limits of UAV-enabled/aided multiuser communication systems have not yet been characterized. To fill this gap, we consider in this paper a UAV-enabled two-user broadcast channel (BC), where a UAV flying at a constant altitude is deployed to send independent information to two users at different fixed locations on the ground. We aim to characterize the capacity region of this new type of BC over a given UAV flight duration, by jointly optimizing the UAV's trajectory and transmit power/rate allocations over time, subject to the UAV's maximum speed and maximum transmit power constraints. First, to draw essential insights, we consider two special cases with asymptotically large/low UAV flight duration/speed, respectively. For the former case, it is shown that a simple hover-fly-hover (HFH) UAV trajectory with time division multiple access (TDMA) based orthogonal multiuser transmission is capacity-achieving, while in the latter case, the UAV should hover at a fixed location that is nearer to the user with larger achievable rate and in general superposition coding (SC) based non-orthogonal transmission with interference cancellation at the receiver of the nearer user is required. Next, we consider the general case with finite UAV speed and flight duration. We show that the optimal UAV trajectory should follow a general HFH structure, i.e., the UAV successively hovers at a pair of initial and final locations above the line segment of the two users each with a certain amount of time and flies unidirectionally between them at the maximum speed, and SC is generally needed.",
+    "url": "http://arxiv.org/abs/1801.00443v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Joint Trajectory and Communication Design for Multi-UAV Enabled Wireless Networks",
+    "authors": [
+      "Qingqing Wu",
+      "Yong Zeng",
+      "Rui Zhang"
+    ],
+    "year": 2017,
+    "venue": "arXiv",
+    "abstract": "Unmanned aerial vehicles (UAVs) have attracted significant interest recently in assisting wireless communication due to their high maneuverability, flexible deployment, and low cost. This paper considers a multi-UAV enabled wireless communication system, where multiple UAV-mounted aerial base stations (BSs) are employed to serve a group of users on the ground. To achieve fair performance among users, we maximize the minimum throughput over all ground users in the downlink communication by optimizing the multiuser communication scheduling and association jointly with the UAVs' trajectory and power control. The formulated problem is a mixed integer non-convex optimization problem that is challenging to solve. As such, we propose an efficient iterative algorithm for solving it by applying the block coordinate descent and successive convex optimization techniques. Specifically, the user scheduling and association, UAV trajectory, and transmit power are alternately optimized in each iteration. In particular, for the non-convex UAV trajectory and transmit power optimization problems, two approximate convex optimization problems are solved, respectively. We further show that the proposed algorithm is guaranteed to converge to at least a locally optimal solution. To speed up the algorithm convergence and achieve good throughput, a low-complexity and systematic initialization scheme is also proposed for the UAV trajectory design based on the simple circular trajectory and the circle packing scheme. Extensive simulation results are provided to demonstrate the significant throughput gains of the proposed design as compared to other benchmark schemes.",
+    "url": "http://arxiv.org/abs/1705.02723v3",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  }
+]

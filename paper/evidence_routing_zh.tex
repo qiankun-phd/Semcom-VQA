@@ -1,0 +1,22 @@
+% Chinese counterpart of sections/04_evidence_routing.tex.
+% Compile: latexmk -xelatex -outdir=build evidence_routing_zh.tex
+\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{algorithm,algorithmic}
+\usepackage{setspace,cite,url}
+\usepackage{xr}
+\externaldocument[full-]{build/main_zh}
+\newcommand{\paperref}[1]{\ref{full-#1}}
+\newcommand{\papereqref}[1]{\eqref{full-#1}}
+\setstretch{1.3}
+\newtheorem{proposition}{命题}
+\floatname{algorithm}{算法}
+\begin{document}
+\setcounter{section}{3}
+% Shared body for standalone and full Chinese manuscripts.
+\input{sections_zh/04_evidence_routing}
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{document}

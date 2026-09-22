@@ -1,0 +1,126 @@
+% §II --- Related Work (1.5 pages, ~1400 words; methodology-organized).
+% Drafted D5--D6. Five buckets + a closing differentiator paragraph. Every
+% \cite key resolves to a programmatically verified entry in refs.bib.
+\section{Related Work}\label{sec:related}
+
+\subsection{Semantic and Task-Oriented Communication}\label{subsec:rw:sem}
+One line of work casts the wireless channel as a task-relevance bottleneck
+and trains an end-to-end neural encoder--decoder pair that is supervised by
+the downstream task rather than per-symbol fidelity. The DeepSC family
+established this paradigm for sentence reconstruction
+\cite{xie2021deepsc} and was later extended to image and multi-user
+text--image fusion via task-oriented multi-user semantic
+communications~\cite{xie2022taskoriented}. Subsequent surveys position
+semantic communication within future cognitive networks and AI-empowered
+6G~\cite{qin2024aiempowered,qin2024semanticnet}. A second line studies
+how to allocate wireless resources \emph{given} a learned semantic encoder.
+QoE-driven multi-task allocation~\cite{yan2024qoesc} and joint resource
+optimization with task offloading~\cite{ji2024semawaretask} use convex
+relaxations and Lagrangian decomposition; rate-splitting under
+URLLC~\cite{zeng2024urllc} adds a user-priority layer; and a recent
+extension to MEC servers couples semantic transmission with computation
+offloading via decomposition-based methods~\cite{zheng2025jointsem}. These
+methods all assume the semantic encoder--decoder pair is fixed and that
+the symbol cardinality is either continuous or chosen offline; we instead
+treat the per-device symbol cardinality as a discrete decision variable
+inside a closed-loop reinforcement learning agent.
+
+\subsection{UAV-Assisted MEC and Resource Allocation}\label{subsec:rw:uavmec}
+A complementary line targets UAV-assisted MEC systems, where the UAV's
+flight trajectory becomes a continuous decision variable coupled with
+ground-side resource allocation. Position surveys
+\cite{wang2025lowalt,kaleem2024emerging,mozaffari2019tutorial} catalog
+deployment, placement, and integrated technologies for low-altitude
+economy networks; deployment-algorithm work~\cite{zhao2018deployment}
+quantifies on-demand coverage trade-offs. Within
+DRL-based methods, \cite{zhang2023drlsemantic} jointly tunes
+compression ratios, transmit power, and bandwidth with a deep
+deterministic policy gradient agent under offline-trained semantic
+encoders, while \cite{hu2025ratesplitting} adds rate-splitting to
+multi-modal collaborative UAV networks. UAV control under semantic
+constraints is studied for command transmission~\cite{xu2023uavctrl} and
+energy-efficient AoI minimization~\cite{long2025aoiunav}. Robustness to
+on-channel jamming with intelligent resource management is the focus of
+\cite{liu2024jamminguav}. The classical air-to-ground LoS/NLoS path-loss
+model~\cite{alhourani2014lap} underpins the channel layer in all the
+above. Most prior work assumes a single UAV serving stationary users over
+a static channel; ours scales the UAV count and explicitly handles task
+arrival, mobility, and time-varying fading inside the policy.
+
+\subsection{Hybrid-Action Reinforcement Learning}\label{subsec:rw:hybridrl}
+Hybrid action spaces couple a discrete component (e.g., a class of
+sub-actions) with a continuous component (e.g., a parameter vector). Two
+canonical algorithm families address this. Building on DQN~\cite{mnih2015dqn} and DDPG~\cite{lillicrap2016ddpg},
+parameterized DQN (PDQN)~\cite{xiong2018pdqn} and its multi-pass
+refinement (MP-DQN)~\cite{bester2019mpdqn} estimate per-class
+action-value functions over continuous parameters; parameterized DDPG
+(PADDPG)~\cite{hausknecht2016paddpg} pairs an actor over the joint
+hybrid output with a centralized critic. PPO~\cite{schulman2017ppo} and its
+trust-region predecessor~\cite{schulman2015trpo} remain the workhorse
+on-policy methods, while soft actor-critic~\cite{haarnoja2018sac} offers
+an entropy-regularized off-policy alternative. A natural extension to
+hybrid action spaces splits the actor into a discrete head and a continuous
+head and clips the surrogate objective per
+factor~\cite{xiong2018pdqn,hu2025ratesplitting}. We follow this hybrid PPO
+template, but generalize it to a Dec-POMDP with multiple cooperating UAV
+agents.
+
+\subsection{Multi-Agent Reinforcement Learning for Wireless and UAV
+Networks}\label{subsec:rw:marl}
+For cooperative multi-agent settings, centralized training and
+decentralized execution (CTDE) is the dominant paradigm. Multi-agent
+DDPG~\cite{lowe2017maddpg} provides per-agent actors with a centralized
+critic over the joint observation-action; counterfactual multi-agent
+policy gradients~\cite{foerster2018coma} disentangle each agent's
+contribution to the joint advantage; and value decomposition methods such
+as VDN~\cite{sunehag2018vdn} and QMIX~\cite{rashid2018qmix} factorize
+the joint value function under additivity or monotonicity constraints. On the policy-gradient side,
+MAPPO~\cite{yu2022mappo} demonstrates that vanilla PPO with parameter
+sharing across agents is a remarkably strong cooperative baseline, and
+HAPPO~\cite{kuba2022happo} extends the trust-region monotonic-improvement
+guarantee to heterogeneous agents via sequential per-agent updates. Our
+\method falls into the MAPPO family but operates over a hybrid action
+space that mixes per-UAV trajectory + power decisions with per-device
+channel + symbol decisions, and explicitly preserves role-aware actor
+heads (one specialized head per UAV / UE / channel slot) instead of the
+fully shared MAPPO actor.
+
+\subsection{Robust and Adversarial Reinforcement
+Learning}\label{subsec:rw:robust}
+Two complementary literatures study how RL policies degrade under
+distribution shift. Adversarial training methods learn jointly with a
+disturbance agent to harden the policy against worst-case
+perturbations~\cite{pinto2017robustrl}, action-robust formulations
+inject perturbations directly into the action
+channel~\cite{tessler2019actionrobust}, and worst-case continuous-control
+methods explicitly account for model misspecification at training
+time~\cite{mankowitz2020worstcase}; intelligent resource management
+under jamming attacks demonstrates that this hardening transfers to
+wireless settings~\cite{liu2024jamminguav}. Where prior work either
+assumes the perturbation is co-trained or that the channel model is
+known, our experiments instead measure how a policy trained on a fixed
+nominal channel model degrades under (i) post-hoc dB-level channel
+perturbations, (ii) UE-count generalization, and (iii) constant-power
+adversarial jamming. This separation lets a learned policy be evaluated
+without retraining and matches realistic deployment conditions.
+
+\subsection{Position Relative to Prior Work}\label{subsec:rw:position}
+\method differs from the five lines above on three axes. First, prior
+DRL-based UAV-MEC work
+\cite{zhang2023drlsemantic,hu2025ratesplitting,liu2024jamminguav} treats
+trajectory and resource allocation either separately or with a fixed
+single-UAV scope; we lift the formulation to a Dec-POMDP with
+multi-UAV trajectories, dynamic task arrival, mobile users, and
+time-varying air-to-ground fading. Second, hybrid PPO has so far been
+restricted to single-agent
+settings~\cite{xiong2018pdqn,bester2019mpdqn,hausknecht2016paddpg}; we
+introduce \method as the multi-agent CTDE counterpart with role-aware
+heads, parameter-shared per-agent index embeddings as the MAPPO-hybrid
+baseline, and a piecewise reward that explicitly couples the discrete
+semantic-symbol decision to LUT-grade DeepSC-VQA fidelity. Third, while
+robustness in semantic communication has been studied in
+isolation~\cite{liu2024jamminguav,pinto2017robustrl}, no prior work
+benchmarks a hybrid-action multi-UAV agent across multi-UAV scaling,
+channel and UE-count perturbations, adversarial jamming, and large-scale
+UE generalization in a single experimental panel; \S\ref{sec:exp}
+provides this benchmark.

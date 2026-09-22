@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UAV-VQA 语义通信系统 — 详细实现方案</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#161c26; --panel2:#1d2530; --ink:#e6edf3; --muted:#9aa7b4;
+    --acc:#4ea1ff; --acc2:#5ad19a; --warn:#ffb454; --bad:#ff6b6b; --line:#2a3340;
+    --code:#0b0f14;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft Yahei",sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 22px 80px}
+  header.hero{border:1px solid var(--line);border-radius:14px;padding:26px 28px;
+    background:linear-gradient(135deg,#16202e,#11161d);margin-bottom:26px}
+  h1{font-size:26px;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:13.5px}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+    color:var(--acc);border-radius:999px;padding:2px 10px;font-size:12px;margin:4px 6px 0 0}
+  h2{font-size:20px;margin:34px 0 12px;padding-left:11px;border-left:4px solid var(--acc)}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--acc2)}
+  p{margin:9px 0}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+  th{background:var(--panel2);color:var(--acc)}
+  tr:nth-child(even) td{background:#131922}
+  code,pre{font-family:"SF Mono",Menlo,Consolas,monospace}
+  code{background:var(--code);color:#9fe6c4;padding:1px 6px;border-radius:5px;font-size:12.8px}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+    overflow:auto;font-size:12.6px;color:#cfe3ff}
+  .formula{background:#0d1622;border-left:3px solid var(--acc2)}
+  .good{color:var(--acc2)} .warn{color:var(--warn)} .bad{color:var(--bad)} .mut{color:var(--muted)}
+  ul{margin:8px 0 8px 2px;padding-left:20px} li{margin:4px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .kbd{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:12px}
+  .toc a{color:var(--acc);text-decoration:none;margin-right:14px;font-size:13px;white-space:nowrap}
+  .note{border-left:3px solid var(--warn);background:#1d1a12;padding:10px 14px;border-radius:8px;margin:12px 0}
+  svg{width:100%;height:auto;display:block}
+  .legend span{display:inline-flex;align-items:center;font-size:12px;margin-right:14px;color:var(--muted)}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>UAV-VQA 语义通信系统 · 详细实现方案</h1>
+  <div class="sub">目标导向的无人机视觉问答语义通信 + 强化学习资源分配</div>
+  <div style="margin-top:10px">
+    <span class="pill">v2.0 链路自适应信道</span>
+    <span class="pill">服务器 lab-s1</span>
+    <span class="pill">分支 codex/lut-semantic-utility-upgrade</span>
+    <span class="pill">2026-06-28</span>
+  </div>
+  <div class="toc" style="margin-top:14px">
+    <a href="#ov">1 总览</a><a href="#flow">2 数据流</a><a href="#svc">3 服务等级</a>
+    <a href="#lut">4 语义LUT</a><a href="#chan">5 信道模型</a><a href="#det">6 检测器</a>
+    <a href="#vlm">7 VLM</a><a href="#rl">8 RL</a><a href="#pilot">9 Pilot结果</a>
+    <a href="#map">10 代码映射</a><a href="#pos">11 文献定位</a>
+  </div>
+</header>
+
+<h2 id="ov">1. 系统总览</h2>
+<div class="card">
+<p>无人机拍摄低空图像，针对每个视觉问题（VQA task），在多个<b>语义服务等级</b>之间选择以何种形式把信息传到边缘节点；边缘用视觉语言模型 <b>Qwen2-VL</b> 作答；一个<b>强化学习控制器</b>在通信/计算/缓存资源约束下决策"传什么、传多少、给多少资源"，最大化任务成功率。</p>
+<p class="good"><b>核心思想：</b>通信目标不是 bit/像素级保真，而是 <b>VQA 答案正确率</b>。低 SNR / 简单问题用轻量语义证据（detector token），高 SNR / 复杂问题才付代价传图像。</p>
+<div class="grid">
+  <div><b>① 语义质量模型 (LUT)</b><br><span class="mut">把"某条件下某服务能达到的正确率"建成可查询函数，供 RL 在线决策，不必每步真跑 VLM。</span></div>
+  <div><b>② 通信信道模型</b><br><span class="mut">SNR 经链路自适应 → 可达速率 → 字节预算 → 图像质量，决定语义证据退化程度。</span></div>
+  <div><b>③ RL 资源分配</b><br><span class="mut">two-timescale PPO + Lyapunov 队列，决策服务等级、带宽/功率/算力、UAV 机动。</span></div>
+  <div><b>④ 接收端</b><br><span class="mut">真实 VLM (Qwen2-VL-2B) 作 answer reasoner，比 logic-based 更 AI-native。</span></div>
+</div>
+</div>
+
+<h2 id="flow">2. 端到端数据流</h2>
+<div class="card">
+<svg viewBox="0 0 960 300" xmlns="http://www.w3.org/2000/svg" font-family="monospace" font-size="12">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4ea1ff"/>
+    </marker>
+  </defs>
+  <!-- UAV -->
+  <rect x="10" y="40" width="270" height="150" rx="10" fill="#161c26" stroke="#5ad19a"/>
+  <text x="24" y="62" fill="#5ad19a" font-size="13">UAV 发射端</text>
+  <text x="24" y="86" fill="#e6edf3">低空图像 (VisDrone)</text>
+  <text x="24" y="108" fill="#e6edf3">→ YOLOv8n 检测 (类/框/置信)</text>
+  <text x="24" y="130" fill="#e6edf3">→ 语义提取/排序 (s0–s3)</text>
+  <text x="24" y="152" fill="#e6edf3">→ 源编码+信道编码+调制</text>
+  <text x="24" y="178" fill="#9aa7b4" font-size="11">cache / token / image / ROI</text>
+  <!-- channel -->
+  <rect x="350" y="40" width="250" height="150" rx="10" fill="#161c26" stroke="#ffb454"/>
+  <text x="364" y="62" fill="#ffb454" font-size="13">衰落信道</text>
+  <text x="364" y="88" fill="#e6edf3">Rician / Rayleigh</text>
+  <text x="364" y="112" fill="#e6edf3">链路自适应:</text>
+  <text x="364" y="134" fill="#cfe3ff">R = B·log2(1+SNR|h|²)</text>
+  <text x="364" y="156" fill="#e6edf3">字节预算 → 图像质量</text>
+  <text x="364" y="178" fill="#9aa7b4" font-size="11">深衰落 → Shannon outage</text>
+  <!-- edge -->
+  <rect x="670" y="40" width="280" height="150" rx="10" fill="#161c26" stroke="#4ea1ff"/>
+  <text x="684" y="62" fill="#4ea1ff" font-size="13">边缘 / BS 接收端</text>
+  <text x="684" y="88" fill="#e6edf3">反序列化 → 证据/图像</text>
+  <text x="684" y="112" fill="#e6edf3">→ Qwen2-VL 读(问题+证据)</text>
+  <text x="684" y="136" fill="#e6edf3">→ 答案 (yes/no | 整数)</text>
+  <text x="684" y="160" fill="#e6edf3">→ 与 GT 比对 → 正确率</text>
+  <!-- arrows -->
+  <line x1="282" y1="115" x2="346" y2="115" stroke="#4ea1ff" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="602" y1="115" x2="666" y2="115" stroke="#4ea1ff" stroke-width="2" marker-end="url(#arr)"/>
+  <!-- RL controller -->
+  <rect x="120" y="225" width="720" height="56" rx="10" fill="#1d2530" stroke="#4ea1ff" stroke-dasharray="5 4"/>
+  <text x="480" y="248" fill="#4ea1ff" text-anchor="middle" font-size="13">RL 控制器 (two-timescale PPO + Lyapunov)</text>
+  <text x="480" y="269" fill="#9aa7b4" text-anchor="middle" font-size="11">服务等级 + 带宽/功率/算力 + UAV 机动 — 按 LUT 效用 &amp; 队列欠账决策</text>
+  <line x1="480" y1="223" x2="480" y2="192" stroke="#4ea1ff" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4 3"/>
+</svg>
+</div>
+
+<h2 id="svc">3. 语义服务等级 (s0–s3)</h2>
+<table>
+<tr><th>等级</th><th>名称</th><th>传输内容</th><th>Payload</th><th>用途</th></tr>
+<tr><td>s0</td><td>cache</td><td>不传新证据，用历史缓存答案</td><td>0</td><td>新鲜缓存命中最省</td></tr>
+<tr><td>s1</td><td class="good">semantic token</td><td>YOLO 检测压成结构化证据（类计数+top-12框+聚合统计）</td><td>~150–256B</td><td>鲁棒、低带宽，counting 强</td></tr>
+<tr><td>s2</td><td class="warn">image</td><td>退化后整图传给 Qwen</td><td>数十~数百KB</td><td>高保真，presence/复杂问题强</td></tr>
+<tr><td>s3</td><td>ROI</td><td>detector 引导裁剪图</td><td>中等</td><td>折中（同 image 退化）</td></tr>
+</table>
+<h3>s1 语义 token 真实内容</h3>
+<p class="mut">来自 <code>build_detector_lightweight_evidence</code>（<code>detector/visdrone_yolo.py:246</code>），作为"已传输证据"喂给 Qwen 并约束"只用这些 token"：</p>
+<pre>detector_target_count / detector_total_count
+detector_counts_by_class      # 例: car:14, pedestrian:8
+target_mean_confidence / target_top_confidence
+target_box_area_sum / all_box_area_sum / density_hint
+top_target_boxes: 按置信度排序前12个 (类别, x, y, w, h, conf)</pre>
+
+<h2 id="lut">4. 语义质量模型 (LUT)</h2>
+<div class="card">
+<pre class="formula">A_k = LUT[ question_type, service_level, snr_bin, view_quality_bin, freshness_bin, risk_level ]
+取值 = accuracy 的置信下界 LCB (Wilson 二项区间)</pre>
+<ul>
+<li><b>离线构造</b>：枚举各条件格，用真实 Qwen/detector 跑经验正确率(1/0) → 聚合 mean / ci_low / lcb / uncertainty / payload。文件 <code>scripts/run_v1_detector_eval.py</code>、<code>semantic/utility.py</code>。</li>
+<li><b>SNR 单调校准</b>：<code>calibrate_snr_monotonicity</code> 强制正确率随 SNR 单调不降。</li>
+<li><b>在线接口</b>：<code>U_sem(...)</code> 查表（缺格最近邻回退 <code>_nearest_snr_cell</code>）；RL 用 <code>get_service_candidates(obs)</code> 拿每个候选服务的 <code>accuracy_lcb / semantic_feasible / deadline_feasible / joint_feasible</code>。</li>
+<li><b>演进</b>：V0 规则 → V1 mock → 真实 Qwen → detector 证据 → V1.6/1.7/1.8 校准 → <b>V1.9 SNR 校准</b>。当前 <code>outputs/lut/v1_9_semantic_utility_with_ci.csv</code>（648 格，16 万样本）。</li>
+</ul>
+<div class="note"><b>参数化效用模型（探索）</b>：<code>parametric_utility.py</code> 用贝叶斯逻辑回归(IRLS+Laplace+过散度+残差方差)拟合 LUT。<span class="bad">诚实负结果</span>：完整低噪声网格上离散表点精度仍更优（表=记忆）；参数化价值在<b>校准不确定性 + 离格插值 + 压缩</b>（LCB coverage≈0.95），不在点精度。</div>
+</div>
+
+<h2 id="chan">5. 通信信道模型 (v2.0 链路自适应)</h2>
+<div class="card">
+<p><b>物理依据：</b>真实通信传图像用链路自适应(AMC)+ARQ，把工作点维持在阈值以上 → 图像近乎无损；<b>SNR 决定可达速率</b>，速率在带宽/时延预算下决定<b>能传多少字节</b>(压缩质量)。误码可见损坏只是深衰落 outage 的例外。</p>
+<pre class="formula">可达速率   R(SNR) = B · E[ log2(1 + SNR·|h|²) ]
+字节预算   budget = R · τ / 8          (τ = 每图传输时隙)
+图像编码   在 budget 内搜最高 JPEG 质量/分辨率 → 真实 cv2 编解码 → 喂 Qwen
+深衰落中断 P_out = P( log2(1+SNR·|h|²) < r_min ),  r_min=(min_payload·8/τ)/B</pre>
+<p class="good"><b>token 路 (s1) 全 SNR 鲁棒</b>：payload ~256B → r_min≈0.0068 b/s/Hz → outage≈0（-5dB 仅 0.16%）→ token 几乎不丢，精度由 detector 决定，与 SNR 无关。<span class="mut">这正是语义通信的核心优势。</span></p>
+<h3>字节预算梯度 (τ=0.3s, B=1MHz, Rician K6；满质量图 ~892KB)</h3>
+<table>
+<tr><th>SNR</th><th>-5dB</th><th>0dB</th><th>5dB</th><th>10dB</th><th>15dB</th><th>20dB</th></tr>
+<tr><td>谱效 b/s/Hz</td><td>0.38</td><td>0.94</td><td>1.91</td><td>3.23</td><td>4.75</td><td>6.35</td></tr>
+<tr><td>预算 KB</td><td>14.0</td><td>34.4</td><td>69.9</td><td>118</td><td>174</td><td>233</td></tr>
+<tr><td>p_outage</td><td>0.014</td><td>0.003</td><td>0.001</td><td>3e-4</td><td>1e-4</td><td>1e-4</td></tr>
+</table>
+<p class="mut">实现：<code>degradation/digital_link.py</code>（ergodic_spectral_efficiency / rate_budget_bytes / outage_probability / _fit_jpeg_to_budget / transmit_image_rate_adaptive）。路由 <code>vlm.channel_model=ldpc_fading</code> + <code>fading_link.channel_mode=rate_adaptive</code>（备选 ldpc_erasure：真实 pyldpc 标定 FER+分块擦除）。配置 <code>configs/v2_0_ldpc_channel.yaml</code>。</p>
+</div>
+
+<h2 id="det">6. 目标检测器</h2>
+<div class="card">
+<p>YOLOv8n（ultralytics 8.4.78），VisDrone-DET 训练 50 epoch / imgsz 640；train 6471 / val 548，11 类。</p>
+<table>
+<tr><th>指标</th><th>总 mAP@50</th><th class="good">car mAP@50</th><th>car recall</th><th>pedestrian</th><th>bicycle(稀有)</th></tr>
+<tr><td>值</td><td>0.27</td><td class="good">0.72</td><td>0.76</td><td>0.31</td><td>0.065</td></tr>
+</table>
+<p class="mut">QA 主力类 car 足够强；总 mAP 被稀有难类拖低。权重 <code>outputs/detector/visdrone_yolov8n/weights/best.pt</code>。</p>
+</div>
+
+<h2 id="vlm">7. 视觉语言模型 (接收端)</h2>
+<div class="card">
+<p>Qwen2-VL-2B-Instruct（本地 4.2G，RTX 3080）。<code>build_vlm_prompt(task, evidence_text)</code>：s1 喂结构化 token 文本，s2/s3 喂退化图像。presence→yes/no；counting→整数（默认取 detector_target_count 除非 token 否定）。</p>
+</div>
+
+<h2 id="rl">8. 强化学习资源分配</h2>
+<div class="card">
+<ul>
+<li><b>框架</b>：DI-engine，集中式训练+执行。<b>主算法</b>：Two-timescale mobility-aware semantic PPO（语义路径 + UAV 机动 双时间尺度）。</li>
+<li><b>机制</b>：Lyapunov admission / resource projection、deadline-aware evidence guard、infeasibility-aware reject。</li>
+<li><b>动作</b>：service_level(cache/token/image/ROI/reject) + bandwidth + power + cpu_share + gpu_share + UAV assignment/机动。</li>
+<li><b>奖励</b>：semantic utility(A_k≥ε_k 成功) − 时延/能耗惩罚 − 队列/风险欠账。</li>
+<li><b>卡点</b>：<span class="warn">low_snr_blockage 场景 deadline violation ~0.854</span>，环境侧诊断中。</li>
+</ul>
+</div>
+
+<h2 id="pilot">9. Pilot 结果 (60 图 Qwen, v2.0, τ=0.3)</h2>
+<table>
+<tr><th>服务 / 问题</th><th>-5dB</th><th>0dB</th><th>5dB</th><th>10dB</th><th>15dB</th><th>20dB</th><th>跨度</th></tr>
+<tr><td>presence s1 (token)</td><td>.754</td><td>.754</td><td>.754</td><td>.754</td><td>.754</td><td>.754</td><td class="mut">0.000</td></tr>
+<tr><td class="warn">presence s2 (image)</td><td>.763</td><td>.818</td><td>.831</td><td>.852</td><td>.860</td><td>.860</td><td class="good">0.097</td></tr>
+<tr><td>counting s1 (token)</td><td>.534</td><td>.534</td><td>.534</td><td>.534</td><td>.534</td><td>.534</td><td class="mut">0.000</td></tr>
+<tr><td>counting s2 (image)</td><td>.305</td><td>.339</td><td>.347</td><td>.347</td><td>.339</td><td>.331</td><td>0.042</td></tr>
+<tr><td>ALL s2 (image)</td><td>.610</td><td>.658</td><td>.669</td><td>.684</td><td>.686</td><td>.684</td><td>0.076</td></tr>
+</table>
+<div class="card">
+<p class="good"><b>① 修复成功</b>：s2 图像 SNR 跨度 0.025 → 0.097（presence）。<b>② s1 token 完全 SNR-平</b>（鲁棒，由 detector 决定）。</p>
+<p><b>③ 交叉叙事（核心卖点）</b>：低 SNR → token 赢（鲁棒）；高 SNR → image 赢（presence 0.86&gt;0.75）；counting 全程 token 赢（detector 直接计数）。→ 正是资源分配该学的策略。</p>
+</div>
+
+<h2 id="map">10. 代码与文件映射</h2>
+<table>
+<tr><th>模块</th><th>文件 / 关键函数</th></tr>
+<tr><td>语义 LUT</td><td><code>semantic/utility.py</code>（U_sem, wilson_interval, calibrate_snr_monotonicity, get_service_candidates）</td></tr>
+<tr><td>参数化效用</td><td><code>semantic/parametric_utility.py</code> + <code>scripts/fit_parametric_semantic_utility.py</code></td></tr>
+<tr><td>信道(链路自适应)</td><td><code>degradation/digital_link.py</code> · <code>configs/v2_0_ldpc_channel.yaml</code></td></tr>
+<tr><td>退化路由</td><td><code>degradation/channel.py</code> · <code>detector/visdrone_yolo.py</code></td></tr>
+<tr><td>检测器</td><td><code>scripts/train_visdrone_detector.py</code> · <code>prepare_visdrone_yolo.py</code></td></tr>
+<tr><td>VLM 评测</td><td><code>scripts/run_v1_detector_eval.py</code> · <code>run_v1_vlm_eval.py</code></td></tr>
+<tr><td>RL</td><td><code>src/vqa_semcom/rl/</code>（v19_ppo.py 等）</td></tr>
+<tr><td>测试</td><td><code>tests/</code> — 149 通过</td></tr>
+</table>
+
+<h2 id="pos">11. 与研究方向对标 (定位)</h2>
+<div class="card">
+<p class="good"><b>对齐主流：</b>task-oriented、传 detector 语义证据而非像素、VLM 作接收端、SNR/信道自适应、多级自适应——契合 Liu 2411.02452 (wireless VQA)、UAV cognitive semcom (2502.03761)、2025 VLM-receiver 趋势。</p>
+<div class="note"><b>诚实定位：</b>s2 图像路当前是"速率自适应 JPEG"（经典分离信源信道编码），<b>不是</b>领域定义的"学习式语义图像编码 (DeepJSCC/VQ)"。建议把 s2 定位成"传统高保真服务/资源分配的另一极"，创新押在 <b>RL 资源分配 + 语义效用 LUT + token 语义服务</b>（契合 RL 主线）；若要图像路也语义化，需另接 DeepJSCC/VQ 学习式 codec。</div>
+</div>
+
+<p class="mut" style="margin-top:30px;text-align:center;font-size:12px">UAV-VQA Semantic Communication System · 自动生成于 2026-06-28 · 服务器 lab-s1</p>
+</div>
+</body>
+</html>

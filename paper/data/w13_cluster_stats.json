@@ -1,0 +1,234 @@
+{
+  "B": 5000,
+  "note": "image-clustered bootstrap; TOST margin 0.01 a priori",
+  "awgn": {
+    "rule_vs_lcb": {
+      "d": 0.0,
+      "ci90": [
+        0.0,
+        0.0
+      ],
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "p_boot": 2.0,
+      "delta_star": 0.0,
+      "tost_pass_d001": true,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "mlp_vs_rule": {
+      "d": 0.03193,
+      "ci90": [
+        0.02309,
+        0.04095
+      ],
+      "ci95": [
+        0.02155,
+        0.0428
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.04095,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "mlp_vs_linear": {
+      "d": 0.02125,
+      "ci90": [
+        0.01383,
+        0.02914
+      ],
+      "ci95": [
+        0.01258,
+        0.03122
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.02914,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "rule_vs_image": {
+      "d": 0.0682,
+      "ci90": [
+        0.04879,
+        0.08761
+      ],
+      "ci95": [
+        0.04487,
+        0.09099
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.08761,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    }
+  },
+  "rayleigh": {
+    "rule_vs_lcb": {
+      "d": 0.00071,
+      "ci90": [
+        -0.00196,
+        0.00338
+      ],
+      "ci95": [
+        -0.00249,
+        0.00392
+      ],
+      "p_boot": 0.7148,
+      "delta_star": 0.00338,
+      "tost_pass_d001": true,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "mlp_vs_rule": {
+      "d": 0.0371,
+      "ci90": [
+        0.02849,
+        0.04642
+      ],
+      "ci95": [
+        0.02718,
+        0.04838
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.04642,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "mlp_vs_linear": {
+      "d": 0.02339,
+      "ci90": [
+        0.01632,
+        0.03122
+      ],
+      "ci95": [
+        0.01514,
+        0.033
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.03122,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "rule_vs_image": {
+      "d": 0.06517,
+      "ci90": [
+        0.04576,
+        0.08494
+      ],
+      "ci95": [
+        0.04202,
+        0.08832
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.08494,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    }
+  },
+  "rician": {
+    "rule_vs_lcb": {
+      "d": 0.00303,
+      "ci90": [
+        0.00089,
+        0.00516
+      ],
+      "ci95": [
+        0.00036,
+        0.00552
+      ],
+      "p_boot": 0.0212,
+      "delta_star": 0.00516,
+      "tost_pass_d001": true,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "mlp_vs_rule": {
+      "d": 0.03312,
+      "ci90": [
+        0.02398,
+        0.04238
+      ],
+      "ci95": [
+        0.0222,
+        0.04434
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.04238,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "mlp_vs_linear": {
+      "d": 0.0235,
+      "ci90": [
+        0.01603,
+        0.03187
+      ],
+      "ci95": [
+        0.01472,
+        0.03359
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.03187,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    },
+    "rule_vs_image": {
+      "d": 0.06392,
+      "ci90": [
+        0.04469,
+        0.0828
+      ],
+      "ci95": [
+        0.04042,
+        0.08672
+      ],
+      "p_boot": 0.0002,
+      "delta_star": 0.0828,
+      "tost_pass_d001": false,
+      "n_images": 104,
+      "n_decisions": 5616
+    }
+  },
+  "pooled_3ch_rule_vs_lcb": {
+    "d": 0.00125,
+    "ci90": [
+      -0.00024,
+      0.00279
+    ],
+    "ci95": [
+      -0.00053,
+      0.00309
+    ],
+    "p_boot": 0.1824,
+    "delta_star": 0.00279,
+    "tost_pass_d001": true,
+    "n_images": 104,
+    "n_decisions": 16848
+  },
+  "p2_rule_vs_lcb": {
+    "d": 0.00469,
+    "ci90": [
+      -0.0063,
+      0.01579
+    ],
+    "ci95": [
+      -0.00835,
+      0.01774
+    ],
+    "p_boot": 0.5016,
+    "delta_star": 0.01579,
+    "tost_pass_d001": false,
+    "n_images": 122,
+    "n_decisions": 4260
+  }
+}

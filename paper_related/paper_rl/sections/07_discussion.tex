@@ -1,0 +1,128 @@
+% §VII --- Discussion. Status: REWRITTEN for the v8 admission-regime verdict.
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Dual pricing is a domain property, not a method property}
+The central methodological lesson of Section~\ref{sub:pathology} is that
+the \emph{same} Lagrangian machinery, unchanged, exhibits both textbook
+behaviours depending on where it operates. In the near-feasible nominal
+domain the quality-critical multiplier climbs slowly and stays interior
+($3.29$ at episode $500$, never touching its cap of $8$) against a realized
+cost that closes on its limit---a shadow price forming on the constraint
+boundary. In the peak overload domain the same multiplier ratchets
+monotonically to whatever ceiling it is given ($\sim\!18.4$ under a cap of
+$20$ across two earlier generations; exactly $8.00$ on $3/3$ seeds under
+the v8 cap) against a cost stuck an order of magnitude above its limit.
+This is not a tuning failure: CMDP theory says a bounded interior
+multiplier exists only when the constraint set is
+feasible~\cite{altman1999constrained,chow2017risk}. The pin \emph{is} the
+optimizer correctly reporting ``no feasible policy exists here.''
+
+Two experimental probes confirm the reading from opposite sides. The
+$150$-episode dual warm-up lets the policy form before any constraint
+price moves, yet once ascent resumes the cost is still $\approx\!0.37$ and
+the climb recurs---shaping cannot manufacture a feasible region the
+environment does not contain. Conversely, warm-\emph{starting} the
+multiplier at its pinned value (Section~\ref{sub:m3}) changes nothing
+either: the trajectory's destiny is set by the domain, not by its initial
+condition or its schedule.
+
+\subsection{In an infeasible domain, the cap is a behaviour knob---so use
+admission, not price}
+A subtler and, we believe, underreported effect: once the multiplier is
+pinned, its \emph{ceiling} stops being a safety parameter and becomes a
+behaviour-shaping knob. Capping $\lambda_{QC}$ at $8$ instead of $20$
+halved the policy's critical-escalation rate ($0.126\to0.086$), dropping
+it \emph{below} the certificate-derived budget band: at a pinned price of
+$18.4$, escalation had been the cheap escape valve from the quality
+penalty; at $8$ that pressure halves and the policy under-escalates.
+Every choice of cap trades one criterion against another because the dual
+no longer has an interior equilibrium to find. This coupling is exactly
+why constraint \emph{pricing} is the wrong control surface for an
+overloaded safety system, and why our architecture hands that regime to
+the certified escalation/admission layer with an explicit budget
+(Section~\ref{subsec:cert})---the dedicated feasibility mechanism that
+reachability-constrained RL argues infeasible states
+require~\cite{yu2022reachability}. The escalation-aware oracle makes the
+point constructively: admitted-set mission success $0.916$ is achievable
+at peak, but only by escalating $0.666$ of the critical load---no
+strategy-layer price can be ``paid'' into a $0.155$ escalation budget when
+the certificate says $0.105$ of the load is structurally unserveable and
+the deadline geometry starves the rest.
+
+\subsection{The constrained arm equalling the unconstrained arm is a
+finding, not a defect}
+At peak, the proposed constrained policy and its unconstrained ablation
+converge to statistically indistinguishable behaviour. We report this
+plainly because the mechanism is now visible: a saturated-and-uniform dual
+penalty is a constant offset that cannot shape \emph{relative} action
+values, so in the infeasible domain the dual term carries no gradient
+information. The reward-wiring fix of Section~\ref{sub:fixes} is what
+makes this interpretable---after the fix, the \emph{unconstrained} arm's
+peak behaviour improved markedly (cache flooding $0.436\to0.298$, task
+success $0.242\to0.384$), proving the reward path is load-bearing, while
+the \emph{constrained} arm's peak behaviour stayed invariant across three
+generations of reward and dual surgery (admitted mission
+$0.179/0.179/0.180$). The invariance isolates the failure to the pricing
+mechanism itself, not to plumbing. We spent three engineering generations
+(v6 scale-consistency gates, v7 link/reward realism, v8 dual levers)
+trying to make the peak dual price work before accepting the verdict; we
+document that lineage as the motivation for the admission-regime framing
+rather than presenting the architecture as designed-right-first-time.
+
+\subsection{Communication as a flight-safety variable, corrected}
+The safety bridge remains, but its sign discipline changed once the
+coupling was corrected from substitution to queueing
+(Sections~\ref{subsec:mg1} and~\ref{sub:bridge}): payload can only
+\emph{add} waiting time to the tactical loop, so the honest headline is
+asymmetric---heavy evidence \emph{taxes} the airspace ($+23.7$\,m,
+$-6\%$ capacity at peak), light evidence \emph{avoids the tax}
+($+9$\,cm), and nothing beats the BUBBLES baseline. The operational
+co-design signal survives in this honest form: at low SNR the scheduler
+should bias toward tokens not only for deadlines but to keep the
+separation service at its certified baseline, precisely when spectrum is
+scarcest. The claim is auditable at the parameter level against the
+deliverable, including the contested C2-spectrum assumption, which we
+bound by evaluating both shared and dedicated C2 modes.
+
+\subsection{System closure with the companion study}
+The companion paper~\cite{zhang2026askb4tx} establishes, in isolation, that
+question-conditioned evidence routing beats full-image transmission---even
+over an error-free channel---and that a zero-parameter rule matches a
+data-calibrated selector. The present paper embeds that per-question
+capability into a multi-UAV, safety-constrained scheduler and shows what
+survives contention and regulation: the same evidence levels that win on
+accuracy also keep the separation service at its baseline, and the
+scheduling question becomes one of admission under overload. Together the
+two studies form a closed loop from per-query evidence selection up to
+airspace-level resource and safety management. A federated
+extension---sharing evidence-selection statistics across UAVs and edge
+sites while keeping the safety kernel local---is the natural next step
+toward a deployable U-space semantic service.
+
+\subsection{Limitations}\label{sub:limitations}
+We keep the red lines explicit. \emph{First}, the peak condition is
+reported as a stress test that exceeds the strategy layer's feasible
+region: admitted-set mission success of the learned policy ($0.180$) sits
+far below the escalation-aware oracle ($0.916$), and we claim only that
+the safety accounting is carried structurally there---by the certificate
+and the budgeted escalation channel---not that the learned policy closes
+the gap. \emph{Second}, the certificate and the quality constraints
+inherit the calibrated LUT quality model; a backend swap (legacy LUT)
+shifts absolute numbers (the dual pin persists, $2/2$ seeds), so claims
+are conditional on the calibration. \emph{Third}, the conflict-budget
+normalization constant ($0.08$) is an engineering mapping within the
+BUBBLES barrier-ladder framework, declared as a design choice rather than
+a value read from the deliverable; the same holds for the M/G/1 offered-load
+presets ($\rho$ values) behind Table~\ref{tab:wsens}. \emph{Fourth},
+the escalation channel's budget is calibrated from the certificate roll,
+but the $0.05$ headroom is a design margin; under the v8 cap the
+learned policy under-escalates ($0.086$ vs.\ the $[0.105,0.205]$ band),
+and the zero-shot blockage profile shows the learned shedding behaviour
+does not transfer to unseen deeply-infeasible link regimes
+(Section~\ref{sub:m4})---both reported as open behaviour-shaping issues
+of pinned-dual regimes rather than hidden. \emph{Fifth}, per-seed variance is elevated by the
+no-GAE Monte-Carlo advantage estimate, a deliberate simplicity trade for
+the short dense-reward episodes. Finally, we do \emph{not} claim a
+certified system: the framework is BUBBLES-conformant at the
+parameter level, and all safety statements are simulation statements about
+that model, not about flight-tested hardware.

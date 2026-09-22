@@ -1,0 +1,107 @@
+% Related work grouped by energy accounting, visual transmission, and
+% adaptive inference. Comparisons identify decision variables and decoders.
+\section{Related Work}\label{sec:related}
+
+\subsection{Energy-Efficient Semantic Communication}
+Energy-efficient semantic communication considers the cost of extracting
+and processing information as well as transmitting it.
+Zheng \etal~\cite{zheng2024aerialee} study aerial-aided edge networks
+and develop incentive and distributed learning mechanisms for semantic
+transmission and coder updates. PSCom~\cite{dai2025pscom} minimizes
+communication and computation energy under constraints on latency,
+power, bandwidth, and semantic compression. Rate-splitting designs
+jointly allocate communication resources and semantic compression
+levels~\cite{xu2025rsmagreen}. Related formulations address UAV networks,
+including flight energy~\cite{wang2026rsma}, and visible-light systems
+with knowledge-update overhead~\cite{zhao2026vlc}. These studies show
+why savings in transmitted data must be evaluated together with the
+computational cost of semantic processing.
+
+For VLM-based services, the inference workload also affects the energy
+account. Li \etal~\cite{li2026onboard} consider onboard VQA and optimize
+image resolution, transmission power, and UAV trajectory under accuracy
+constraints. Device-level measurements by Zhan
+\etal~\cite{zhan2026seeing} identify autoregressive output generation
+as a major energy cost in the VLM configurations they evaluate. Their
+results indicate that reducing visual input alone may provide limited
+inference-energy savings. These findings motivate accounting for the
+processing required after transmission. Our study evaluates a
+representation choice that also changes the answering computation:
+symbolic decoding for detector information or VLM inference for an image.
+UAV-side and edge-side costs are distinguished because they draw on
+different energy supplies.
+
+\subsection{Task-Oriented Visual Communication}
+Learned image transmission provides one way to reduce communication
+cost. Deep joint source--channel coding (DJSCC) maps images directly to
+channel symbols and reconstructs them at the
+receiver~\cite{bourtsoulatze2019djscc}. Attention-based coding adapts
+to channel conditions~\cite{yang2023adjscc}, while predictive adaptive
+coding uses estimated reconstruction quality to select the transmission
+rate~\cite{zhang2023padc}. These methods improve the delivery of an
+image representation. Task-oriented schemes additionally use the
+requirements of the downstream task to determine what should be sent.
+
+For wireless VQA, MU-DeepSC learns correlated image and question
+representations with a jointly designed
+transceiver~\cite{xie2022mudeepscwcl,xie2021mudeepsc}.
+Goal-oriented VQA communication ranks bounding boxes and scene-graph
+triplets using the question and employs an answer
+reasoner~\cite{liu2024gosg}. Its comparison of representations across
+question categories is directly relevant to evidence selection.
+VideoQA-SC uses bandwidth-adaptive coding to answer video questions
+from transmitted semantics without reconstructing the
+video~\cite{guo2025videoqasc}. These approaches already evaluate
+communication through the quality of the resulting answers, rather
+than requiring accurate pixel reconstruction.
+
+Other work adapts the representation or its protection to the task.
+Park and Yoon~\cite{park2025transmit} compare object information,
+layouts, and scene graphs across visual tasks and filter redundant
+graph content. TONIC~\cite{liu2026tonic} assigns unequal protection
+according to token relevance and combines receiver-side gating with
+token completion for image classification. With pretrained multimodal
+models, query-oriented coding selects features for query-relevant image
+reconstruction~\cite{huang2026query}, and Du
+\etal~\cite{jiang2025lmmvn} prioritize image regions and patch
+transmission for a LLaVA-based vehicle assistant. These works motivate
+task-dependent representation and transmission choices. The specific
+choice examined here is between two complete answering paths within
+a structured VQA workload. Each path has its own representation,
+decoder, accuracy, and energy cost. Consequently, a smaller payload
+may save both transmission energy and VLM inference, depending on
+which decoder answers the question.
+
+\subsection{Adaptive Inference and Evidence Selection}
+Adaptive inference changes where computation takes place or how much
+information reaches the server. Neurosurgeon~\cite{kang2017neurosurgeon}
+partitions neural-network execution between a mobile device and the
+cloud to reduce latency and mobile energy consumption. Information-bottleneck
+methods learn compact representations for task-oriented edge
+inference~\cite{shao2022taskoriented}. For VQA, INAR-VL
+uses image and text complexity signals to route requests between
+complementary edge and cloud VLMs~\cite{sabanovic2026inarvl}.
+This provides an input-dependent choice of model and execution location.
+
+Adaptive evidence delivery offers a related control variable.
+Song and Kim~\cite{song2026collaborative} first send a thumbnail for
+server-side VLM inference. The server uses output uncertainty to decide
+whether to request an additional image region. Progressive semantic
+communication compresses visual tokens into refinable representations
+that can be supplied to off-the-shelf VLMs at different communication
+budgets~\cite{hsu2026progressive}. SAGE~\cite{choi2026sage} selects
+complementary visual evidence under a hard uplink budget and evaluates
+the resulting classification accuracy. In remote sensing VQA,
+Prompt-RSVQA converts extracted visual context into text for a language
+model~\cite{chappuis2022promptrsvqa}. Thus, adaptive evidence selection
+and structured context are established ways to support inference.
+
+Our design combines sender-side evidence selection with a choice of
+answering mechanism. It selects detector tokens for a symbolic decoder
+or an image for a frozen VLM before transmitting the selected payload.
+The decision does not require an initial receiver VLM pass or a request
+for additional evidence. We assess its energy--accuracy trade-off using
+logged-outcome replay, GPU power measurements, and models of transmission
+and onboard detection costs. This distinguishes evidence-level routing
+from model-placement decisions and from adapting the input to a VLM
+that still runs on every query.

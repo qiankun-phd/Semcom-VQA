@@ -1,0 +1,151 @@
+%% main.tex --- Paper 2 (BUBBLES-conformant semantic evidence scheduling).
+%% Target venue: IEEE Transactions on Cognitive Communications and Networking.
+%% Alt. venue: IEEE Transactions on Wireless Communications.
+%% "BUBBLES-Conformant Semantic Evidence Scheduling for Multi-UAV VQA:
+%%  Certified Escalation and Dual-Price Diagnostics."
+%% Compile: latexmk -pdf -outdir=build main.tex   (or pdflatex x2 + bibtex)
+
+\documentclass[journal]{IEEEtran}
+
+% --------------------------------------------------------------------------
+% Packages
+% --------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+% --------------------------------------------------------------------------
+% Custom macros
+% --------------------------------------------------------------------------
+\newcommand{\eg}{e.g.,\xspace}
+\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\etal}{\textit{et al.}\xspace}
+\newcommand{\dtc}{d_{\mathrm{TC}}}
+\newcommand{\dnmac}{d_{\mathrm{NMAC}}}
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\CITE}[1]{\textcolor{red}{[CITATION NEEDED: #1]}}
+
+% Visible placeholder box for figures whose PDF asset is not yet under figures/.
+% The \IfFileExists guard lets the document compile with or without the asset.
+\newcommand{\evfig}[4]{% {file}{width}{caption}{label}
+  \begin{figure}[t]\centering
+    \IfFileExists{figures/#1}{\includegraphics[width=#2\linewidth]{figures/#1}}%
+      {\fbox{\parbox[c][4.5cm][c]{#2\linewidth}{\centering
+        \textcolor{red}{\textbf{[\texttt{\detokenize{#1}} --- place PDF under figures/]}}}}}
+    \caption{#3}\label{#4}
+  \end{figure}}
+% Two-column-wide variant for the triptych/sweep/bridge figures.
+\newcommand{\evfigwide}[4]{% {file}{width-of-textwidth}{caption}{label}
+  \begin{figure*}[t]\centering
+    \IfFileExists{figures/#1}{\includegraphics[width=#2\textwidth]{figures/#1}}%
+      {\fbox{\parbox[c][4.5cm][c]{#2\textwidth}{\centering
+        \textcolor{red}{\textbf{[\texttt{\detokenize{#1}} --- place PDF under figures/]}}}}}
+    \caption{#3}\label{#4}
+  \end{figure*}}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+% --------------------------------------------------------------------------
+% Front matter
+% --------------------------------------------------------------------------
+\title{Admission-Aware Constrained Reinforcement Learning\\
+for Semantic Evidence Scheduling\\
+in U-Space UAV Networks}
+
+\author{Qiankun Zhang,
+        Yue Liu,~\IEEEmembership{Member,~IEEE,}
+        and~Zhijin Qin,~\IEEEmembership{Senior Member,~IEEE}
+\thanks{Manuscript submitted \today. \emph{(Corresponding author: Yue Liu.)}}
+\thanks{Q.\ Zhang and Y.\ Liu are with the Faculty of Applied Sciences,
+Macao Polytechnic University, Macao SAR, China
+(e-mail: yue.liu@mpu.edu.mo).}
+\thanks{Z.\ Qin is with the Department of Electronic Engineering, Tsinghua
+University, Beijing, China.}}
+
+\markboth{IEEE Transactions on Cognitive Communications and Networking (submitted)}%
+{Zhang \MakeLowercase{\textit{et al.}}: BUBBLES-Conformant Semantic Evidence Scheduling for Multi-UAV VQA}
+
+\maketitle
+
+% --------------------------------------------------------------------------
+% Abstract
+% --------------------------------------------------------------------------
+\begin{abstract}
+Multi-unmanned-aerial-vehicle (UAV) visual question answering (VQA) in the
+low-altitude economy couples a semantic-communication decision---which
+\emph{level} of evidence (a cached answer, symbolic detector tokens, or the
+image) to transmit for each question---with a safety-critical airspace
+resource-allocation problem regulated by U-space separation management. We
+make three contributions. First, we build, to our knowledge, the first
+U-space/BUBBLES-conformant semantic evidence-scheduling simulation
+framework in which every scenario parameter is traceable to a SESAR
+Joint Undertaking deliverable; the separation kernel reproduces the
+official G-4/G-5 numerics to within $0.18\%$. A corrected \emph{safety
+bridge} couples the payload to the separation chain through an M/G/1
+priority queue: token uploads leave the tactical-contact distance at the
+BUBBLES baseline ($370.6$ vs.\ $370.5$\,m), while image uploads at peak
+load inflate it by $23.7$\,m and forfeit $\approx\!6\%$ of relative
+airspace capacity at $-5$\,dB---an asymmetric airspace tax. Second, we
+formulate scheduling as a CMDP \emph{on the admitted set} with a
+certificate-based escalation channel: a per-slot spec-attainability
+certificate adjudicates unserveable safety-critical queries into a
+budgeted escalation path ($\delta_{\mathrm{esc}}$ calibrated from the
+certificate itself), and a risk-aware constrained hybrid-action PPO with
+per-channel dual caps and warm-up is trained on top. Third, the same dual
+machinery is operated across a feasible (nominal) and an infeasible
+(peak-overload) condition and exhibits both textbook regimes: under
+nominal the quality dual converges interior ($3.29$, never at its cap)
+and the policy reaches $93\%$ of the escalation-aware oracle's admitted
+mission success ($0.653$ vs.\ $0.703$); under peak the dual ratchets to
+its cap on $3/3$ seeds---the classical infeasibility signature---the
+constrained and unconstrained arms coincide, and safety is carried
+structurally: the escalation-aware oracle attains $0.916$ only by
+escalating $0.666$ of the critical load, while conflict, deadline-critical,
+and escalation budgets hold ($0.003$ vs.\ $0.08$; $0.086$ vs.\ $0.155$).
+A per-channel accounting table, a flat-PPO baseline, dual-machinery
+ablations, four-axis zero-shot sweeps, and honest red lines (quality
+channels are priced, approached, but not closed) complete a
+reporting-standard evaluation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Semantic communication, constrained reinforcement learning, U-space,
+UAV networks, resource allocation, visual question answering, safe RL,
+hybrid action space, Lagrangian methods.
+\end{IEEEkeywords}
+
+% --------------------------------------------------------------------------
+% Body --- one \input{} per section.
+% --------------------------------------------------------------------------
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_system_model}
+\input{sections/04_problem_formulation}
+\input{sections/05_algorithm}
+\input{sections/06_experiments}
+\input{sections/07_discussion}
+\input{sections/08_conclusion}
+
+% --------------------------------------------------------------------------
+% References
+% --------------------------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

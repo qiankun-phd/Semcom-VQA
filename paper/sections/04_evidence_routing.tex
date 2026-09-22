@@ -1,0 +1,250 @@
+% Section IV: type rule, learned per-sample routing, and conditional analysis.
+\section{Question-Conditioned Evidence Routing}\label{sec:routing}
+
+The two branches in Section~\ref{sec:system} differ in both the
+information they transmit and the computation they require. Evidence
+routing selects a branch before transmission. When detection evidence
+is sufficient to answer the question, the receiver can avoid VLM
+inference. We first introduce a question-type rule that requires no
+router training. We then develop a per-sample router that uses the
+current detector output to refine branch selection. The final subsection
+analyzes the conditions under which evidence selection can reduce
+energy without reducing accuracy.
+
+\subsection{Question-Type-Based Evidence Selection}\label{subsec:rule}
+
+Counting, comparison, co-presence, and threshold questions can be
+expressed as functions of object counts. The detection-evidence branch
+provides these counts to a symbolic decoder and avoids image-based
+inference at the receiver. Presence questions can also be answered
+from detections. However, a failure to detect an object does not mean
+that the object is absent from the scene. The image branch retains
+visual information that the detector may have missed. This difference
+motivates branch selection based on question type.
+
+Let $t(q)$ denote the type of question $q$. Let
+$\mathcal T_{\mathrm{sym}}$ contain counting, comparison, co-presence,
+and threshold, and let $\mathcal T_{\mathrm{pres}}$ contain presence.
+The type rule is
+\begin{equation}
+r(t(q))=
+\begin{cases}
+\mathrm{det}, & t(q)\in\mathcal T_{\mathrm{sym}},\\
+\mathrm{img}, & t(q)\in\mathcal T_{\mathrm{pres}}.
+\end{cases}
+\label{eq:rule}
+\end{equation}
+The rule uses neither channel-state information (CSI) nor receiver
+feedback. If it selects the detection-evidence branch, the UAV runs
+the detector and transmits the resulting packet. Otherwise, it
+transmits the image without running the detector for routing. Thus,
+the decision also determines whether onboard detection is required.
+Equation~\eqref{eq:energy} includes this detection cost.
+
+Equation~\eqref{eq:rule} defines a fixed rule. It does not guarantee
+that the selected branch is more accurate for every question of a
+given type. Missed objects, false detections, and image distortion can
+change which evidence is more useful for an individual query.
+For threshold questions, detection errors can move the estimated count
+across the threshold specified in the question and change the answer. A type-only
+rule cannot account for these sample-specific differences. This
+motivates the learned router below.
+
+\subsection{Per-Sample Evidence Routing}\label{subsec:persample}
+
+The per-sample router predicts whether each branch will answer correctly
+using information available before transmission. For each query, the
+UAV first computes $Z=g(I)$ and constructs a feature vector $x$.
+The feature vector has $18$ entries: five question-type indicators,
+ten target-class indicators, the assumed SNR in dB divided by $20$,
+the target-class detection count clipped at $60$ and divided by $60$,
+and an indicator of whether that count is nonzero. The count is
+computed from the original detector records $Z$, before channel
+impairment. It is not the count recovered at the receiver.
+Ground-truth answers, annotation-derived scene attributes, and
+receiver outputs are excluded. The assumed SNR is a transmitter-side
+input; no receiver VLM pass is required before selection.
+
+For each branch $s\in\mathcal S=\{\mathrm{det},\mathrm{img}\}$, let
+$\widehat p_s(x)$ estimate the probability that its answer is correct.
+Training uses paired binary labels $y_{i,s}\in\{0,1\}$ from the
+recorded answers of both branches. Each pair corresponds to the same
+image, question, and channel condition. Each label indicates whether
+the answer meets the scoring rule in Section~\ref{subsec:setup}.
+The labels describe the correctness of each branch, rather than
+identify one preferred branch. Both answers can therefore be correct
+or incorrect.
+
+We train the correctness predictors using binary cross-entropy.
+For $N_{\mathrm{tr}}$ training decisions, the data-fitting term is
+\begin{equation}
+\mathcal L_{\mathrm{BCE}}
+=-\frac{1}{2N_{\mathrm{tr}}}
+\sum_{i=1}^{N_{\mathrm{tr}}}\sum_{s\in\mathcal S}
+\left[y_{i,s}\log\widehat p_s(x_i)
++(1-y_{i,s})\log(1-\widehat p_s(x_i))\right].
+\label{eq:router-loss}
+\end{equation}
+We use compact multilayer perceptron (MLP) predictors.
+Each predictor has two hidden layers with $32$ and $16$ units and
+uses ReLU activations. We train the predictors with Adam.
+Predictor fitting uses training images, and early stopping uses a
+separate set of validation images. All questions and SNR replays of
+an image stay in the same partition. Section~\ref{subsec:setup}
+specifies the split, count calibration, and repeated runs.
+Predicting branch performance before transmission is related to
+predictive adaptation in image semantic communication~\cite{zhang2023padc}.
+Here, the prediction target is answer correctness rather than image
+reconstruction quality.
+
+The default decision selects the branch with the higher predicted
+probability of a correct answer:
+\begin{equation}
+\widehat s(x)=\arg\max_{s\in\mathcal S}\widehat p_s(x).
+\label{eq:argmax}
+\end{equation}
+An energy-aware extension uses the same predictors and includes a
+weighted energy cost in the decision:
+\begin{equation}
+\widehat s_\lambda(x)=
+\arg\max_{s\in\mathcal S}
+\left[\widehat p_s(x)-\lambda E_\rho(s,\gamma)\right],
+\qquad \lambda\ge0,
+\label{eq:argmax-lambda}
+\end{equation}
+where $\lambda$ has units J$^{-1}$ and $E_\rho(s,\gamma)$ is the
+energy for selector $\rho$ in \eqref{eq:energy}. Setting $\lambda=0$
+gives \eqref{eq:argmax}. We report this setting alongside
+energy-aware operating points. A positive energy price favors the lower-cost branch when
+its predicted accuracy is sufficiently close to that of the other
+branch. Section~\ref{subsec:energyctl} evaluates a fixed price grid
+and a validation-selected operating point. Costs are evaluated
+per query; their image dependence is suppressed in the notation.
+The rule does not impose a hard per-query budget or guarantee
+a test-set accuracy loss.
+
+Algorithm~\ref{alg:selector} summarizes the two routing options.
+Unlike the type rule, per-sample routing runs the detector for every
+query, even when it selects the image branch. This detection cost is
+the same for both branch choices and does not change their score
+difference. It must still be included in the total energy.
+The selected branch then follows the transmission and
+answer-generation models of Section~\ref{sec:system}. Training uses
+paired outcomes, but inference transmits only the selected evidence.
+The experiments evaluate this procedure by replaying recorded branch
+outcomes rather than running a live control loop. The type-level
+lookup table and linear predictor serve as baselines.
+Section~\ref{subsec:setup} defines these baselines.
+
+\begin{algorithm}[t]
+\caption{Question-conditioned evidence routing for one query}
+\label{alg:selector}
+\begin{algorithmic}[1]
+\REQUIRE image $I$; question $q$ and type $t(q)$; routing mode
+$\rho\in\{\mathrm{rule},\mathrm{MLP}\}$;
+for MLP, target class, assumed SNR $\gamma$, predictors
+$\widehat p_s$, and energy price $\lambda$ (default $0$)
+\IF{$\rho=\mathrm{rule}$}
+  \STATE $\widehat s\leftarrow r(t(q))$ using \eqref{eq:rule}
+\ELSE
+  \STATE compute $Z=g(I)$ and construct features $x$
+  \STATE predict $\widehat p_{\mathrm{det}}(x)$ and $\widehat p_{\mathrm{img}}(x)$
+  \STATE select $\widehat s$ using \eqref{eq:argmax-lambda}
+\ENDIF
+\IF{$\widehat s=\mathrm{det}$}
+  \IF{$\rho=\mathrm{rule}$}
+    \STATE compute $Z=g(I)$
+  \ENDIF
+  \STATE transmit $Z$; answer from received evidence $\widetilde Z$
+\ELSE
+  \STATE transmit the rate-adaptive coded image; answer from $\widehat I$
+\ENDIF
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Analysis of Evidence Selection}\label{sec:theory}
+
+\emph{Information required by the question.}
+Consider a counting question with ground truth $A_q=N_c(I)$.
+If detection recovers the true count and transmission preserves the
+relevant records, then
+$\widehat N_c(\widetilde Z)=N_c(I)$, and
+\begin{equation}
+H\!\left(A_q\mid\widehat N_c(\widetilde Z)\right)=0.
+\label{eq:count-sufficiency}
+\end{equation}
+Thus, under these ideal conditions, the detection evidence contains
+all information needed for that answer. The image is not required.
+The same result applies to comparison, co-presence, and
+threshold questions when all relevant class counts are recovered.
+This result states when detection evidence is sufficient. It does
+not guarantee that a practical detector or a noisy link meets these
+conditions.
+
+In practice, the detection-evidence branch is affected by detection
+errors and corruption or loss of transmitted records. The image
+branch is affected by compression, channel degradation, and VLM
+answering errors. For presence questions, an object missed by the
+detector may be absent from the packet but still visible in the
+image. This explains a potential advantage of
+image transmission. It does not prove that the image branch is
+always more accurate. The comparison depends on false positives, missed
+objects, the channel, and the actual receiver. Section~\ref{subsec:comp}
+therefore measures branch accuracy by question type instead of
+inferring it from detector recall alone.
+
+\emph{Conditions for energy reduction.}
+\label{subsec:pareto-theory}
+Fix a channel condition and the computation model. Let question type
+$t\in\mathcal T$ have probability $w_t>0$, with
+$\sum_{t\in\mathcal T}w_t=1$. Let $a_s(t)$ and $e_s(t)$ denote the
+expected accuracy and per-query energy of branch $s$, respectively.
+Here the costs correspond to type-only selection: detection is
+performed only when its branch is selected. A deterministic
+type-based policy $\pi:\mathcal T\to\mathcal S$ has
+\begin{equation}
+A(\pi)=\sum_{t\in\mathcal T}w_t a_{\pi(t)}(t),
+\qquad
+E(\pi)=\sum_{t\in\mathcal T}w_t e_{\pi(t)}(t).
+\label{eq:policy}
+\end{equation}
+
+\begin{proposition}[Conditional energy--accuracy dominance]\label{prop:pareto}
+Let $\mathcal T=\mathcal T_{\mathrm{sym}}\cup\mathcal T_{\mathrm{pres}}$,
+where the two sets in \eqref{eq:rule} are disjoint and nonempty. Assume that
+$e_{\mathrm{det}}(t)<e_{\mathrm{img}}(t)$ for every $t$, and that
+\begin{equation}
+\begin{aligned}
+a_{\mathrm{det}}(t)&\ge a_{\mathrm{img}}(t),
+&&t\in\mathcal T_{\mathrm{sym}},\\
+a_{\mathrm{img}}(t)&>a_{\mathrm{det}}(t),
+&&t\in\mathcal T_{\mathrm{pres}}.
+\end{aligned}
+\label{eq:ordering}
+\end{equation}
+Then the type rule $r$ maximizes $A(\pi)$ over deterministic type-based
+policies. Among the policies with maximum accuracy, $r$ has the lowest
+energy. Relative to the fixed-image policy $\pi_{\mathrm{img}}$,
+it satisfies $A(r)\ge A(\pi_{\mathrm{img}})$ and
+$E(r)<E(\pi_{\mathrm{img}})$.
+\end{proposition}
+
+\emph{Proof.}
+Each term in the accuracy sum in \eqref{eq:policy} can be maximized
+separately. Under \eqref{eq:ordering}, $r$ selects a branch with maximum
+accuracy for each type. When the two branches have equal accuracy,
+the detection-evidence branch has lower energy. On the symbolic
+types, $r$ replaces image transmission with detection evidence without
+reducing accuracy. These types have positive total probability, so
+this replacement strictly reduces the expected energy.
+These observations prove the stated results. \hfill$\square$
+
+The proposition states sufficient conditions, not a general
+optimality guarantee for \eqref{eq:rule}. In particular, the accuracy
+condition must also hold for threshold questions, which are part of
+$\mathcal T_{\mathrm{sym}}$. A small observed accuracy difference does
+not establish equality or confirm this condition. The
+experiments assess the rule and the learned router directly under
+the stated energy model. The MLP uses information beyond question
+type and has different computation costs. This proposition therefore
+does not prove the gains measured for the MLP.

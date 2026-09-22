@@ -1,0 +1,87 @@
+% §II --- Related Work. Status: DRAFT. Every \cite key is in refs.bib.
+\section{Related Work}\label{sec:related}
+
+We position the paper against three lines: semantic-aware DRL resource
+allocation, constrained/safe RL for wireless, and U-space separation
+management. Table-free boundaries are drawn explicitly at the end of each
+subsection.
+
+\subsection{Semantic-aware DRL resource allocation}
+Task-oriented and semantic communication has shifted the design objective
+from bit fidelity to downstream task success~\cite{gunduz2023beyond,
+xie2021deepsc}, with VQA a canonical receiver
+task~\cite{xie2021mudeepsc,liu2024gosg}. Park and
+Yoon~\cite{park2025transmit} transmit task-adaptive visual semantics---the
+closest single-link neighbour of our evidence levels---but on one link with
+no fleet contention, no airspace coupling, and no admission decision;
+adaptive resource allocation for semantic-communication networks is studied
+in~\cite{wang2023parameterized}, and hybrid bit/semantic transmission
+reaches UAV networks in~\cite{li2026hybrid}, again without a safety
+regulator in the loop. When many users and links share scarce spectrum and
+compute, the allocation is naturally cast as a DRL problem. Ji
+\etal~\cite{ji2024semantic} use multi-agent PPO for semantic-aware
+allocation on a VQA-bearing workload, with an exhaustive upper bound and a
+$100$-episode test protocol. Long \etal's
+Lya-HiPPO~\cite{long2025lyahippo} couples Lyapunov-guided constraint
+handling with hierarchical PPO for semantic-aware AoI minimization in
+UAV-assisted networks and is the source of our flat-PPO baseline
+convention. Hybrid discrete--continuous action spaces---selecting a mode
+and tuning its parameters---appear in parameterized-action
+RL~\cite{masson2016padrl} and its wireless
+adaptations~\cite{huang2024hybrid}, and value-based methods with
+conventional-optimization baselines are common in the IoT
+setting~\cite{shao2024value}. Our companion
+paper~\cite{zhang2026askb4tx} establishes the per-question
+evidence--question complementarity that our scheduler exploits, but it
+performs no multi-agent scheduling and imposes no safety constraints.
+\emph{Boundary}: unlike these works we (i) route among discrete
+\emph{evidence levels} rather than modulation/rate/power alone, (ii) embed
+the allocation in an externally specified U-space safety scenario, and
+(iii) audit which mechanism actually carries the safety load---pricing or
+admission---rather than assuming the learned policy satisfies the
+constraints.
+
+\subsection{Constrained and safe RL for wireless}
+Constrained MDPs~\cite{altman1999constrained} and their Lagrangian
+relaxations underpin most safe-RL practice. PPO~\cite{schulman2017ppo} is
+routinely extended with primal--dual updates on constraint
+slack~\cite{tessler2019rcpo}, trust-region feasibility
+projection~\cite{achiam2017cpo}, or Lyapunov-based
+stability~\cite{chow2018lyapunov,neely2010stochastic}. In wireless, Khairy
+\etal~\cite{khairy2021constrained} are the reporting-standard reference for
+constrained DRL---multiplier-trajectory plots, $95\%$ confidence bands, and
+an explicit zero-shot generalization section (train on $200$ devices, test
+on $100/600/1000$)---and we adopt their reporting template. A recurring but
+rarely-audited assumption in this literature is that the environment is
+feasible, so that the dual variable converges to a bounded shadow price;
+CMDP theory says exactly the opposite when it is not---under an infeasible
+constraint the multiplier diverges to its
+cap~\cite{altman1999constrained,chow2017risk}, and
+reachability-constrained RL shows that states outside the feasible set need
+a dedicated feasibility mechanism rather than a
+penalty~\cite{yu2022reachability}. \emph{Boundary}: we operate the
+\emph{same} dual machinery across a feasible (nominal) and an infeasible
+(peak-overload) operating condition and report both pathologies
+empirically---an interior shadow price in the former, a diagnostic ceiling
+ratchet in the latter---and we contribute the certificate-based
+escalation/admission layer as the feasibility mechanism that carries the
+safety load where pricing cannot.
+
+\subsection{U-space separation management}
+U-space regulation~\cite{eu2021664} and its concept of
+operations~\cite{corus2019conops,jarus2019sora,icao2005doc9854} define how
+low-altitude airspace is kept safe. The SESAR JU BUBBLES
+deliverable~\cite{bubbles2022d21} formalizes the separation management
+service: a traffic performance envelope, a chained tactical-contact
+separation minimum, a target-level-of-safety budget, and numerical
+scenarios; peer-reviewed near-midair-collision modelling provides the
+double-cited safety anchors~\cite{weinert2022well}. BUBBLES itself notes
+that UTM has begun to adopt RL (for learning separation minima), which
+legitimizes a learning approach in this domain. \emph{Boundary}: prior UTM
+work treats communication performance as an exogenous requirement
+(fit-for-purpose, with no hard delay numbers), whereas we close the loop---
+the semantic-communication choice feeds the communication-delay term of the
+separation chain, making evidence selection a first-class flight-safety
+variable. To our knowledge no prior semantic-communication or DRL
+resource-allocation paper grounds its entire scenario in a U-space
+deliverable at the parameter level.

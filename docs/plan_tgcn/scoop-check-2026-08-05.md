@@ -1,0 +1,58 @@
+# Scoop/Collision Check — "Ask Before You Transmit" (TGCN) — run 2026-08-05
+
+> Fresh sweep replacing the interrupted 2026-07-05 check (July assessment §五).
+> Method: live web search over arXiv / IEEE Xplore / Scholar signals; every ID verified at its arxiv.org URL, none inferred.
+
+## (a) Threat table (HIGH → LOW)
+
+**No HIGH threats found.** No paper located that directly claims T, ②, ⑥, or ⑧. All items below are MEDIUM or LOW.
+
+| # | Paper | ID | Date | Venue | One-sentence claim | Threat |
+|---|-------|----|------|-------|--------------------|--------|
+| 1 | "Seeing is Free, Speaking is Not: Uncovering the True Energy Bottleneck in Edge VLM Inference" (Zhan, Shen, Guo, Huang, He) | arXiv 2607.09520 | 2026-07-10 | ACM MM 2026 | On-device VLM energy profiling: decoding (output length) dominates — each output token costs 11–39× an input token; removing ALL visual tokens saves ≤10%; no wireless/semcom. | **MEDIUM (highest)** — ammunition against token-budget energy claims; does NOT measure radio vs compute, no channel, no routing. Needs pre-emptive fencing paragraph: our lever is *whether/where inference runs and what evidence feeds it*, not on-device token count at fixed inference. |
+| 2 | "INAR-VL: Input-Aware Routing for Edge–Cloud Vision-Language Inference" (Šabanović, Maliakel, Brandić) | arXiv 2605.18853 | 2026-05-13 | arXiv (cs.LG) | Routes VQA queries between small edge VLM and cloud VLM by complexity signals; 26% energy savings, 97% accuracy retention. | **MEDIUM** — query-conditioned routing changing *which* inference runs, with measured energy; but model-selection routing, no wireless channel/SNR, no question-type conditioning, no cached-answer path. |
+| 3 | "Collaborative Edge-to-Server Inference for Vision-Language Models" (Song, Kim) | arXiv 2512.16349 | 2025-12-18 (v2 2026-06-08) | arXiv (cs.CV) | Downsampled image first; server uses output-token min-entropy to request attention-selected ROI crops; VQA benchmarks. | **MEDIUM** — confidence-gated conditional transmission + ROI for VLM VQA; receiver-pull two-stage, no energy, no SNR/channel, no type router, no cached-answer/token modalities. |
+| 4 | "Intention-Aware Semantic Agent Communications for AI Glasses" (Jiang, Liu, Guo, Wen, Jin, Zhang) | arXiv 2604.23691 | 2026-04-26 | arXiv (eess.SP) | Content type (text/layout/object semantics) adaptively selected by inferred user intention, VLM at server; >50% bandwidth cut. | **MEDIUM** — intent-conditioned content-type selection adjacent to question-conditioned routing; no per-answer energy, no UAV, no cache path, no truncation gain. |
+| 5 | "Generalized Query-Oriented Image Semantic Coding Empowered by Large AI Models and Semantic-Aware Hybrid Beamforming" (Huang, Wong) | arXiv 2607.28276 (+ precursor UO-ISC arXiv 2509.08913) | 2026-07-30 | IEEE TCOM | Transmitter extracts only query-relevant image features + semantic-aware MIMO-OFDM beamforming; precursor evaluated on VQA answer-match. | **MEDIUM** — strongest query-conditioned-transmission line in a comms flagship; single-modality feature coding, no evidence-level routing, no energy, no skip-inference decision. Cite both. |
+| 6 | "SAGE: Training-Free Semantic Evidence Composition for Edge-Cloud Inference under Hard Uplink Budgets" (Choi, Park) | arXiv 2604.19623 | 2026-04-21 | arXiv | Selects "evidence units" (ViT patch importance+diversity) under hard bit budgets; ImageNet classification only. | **MEDIUM** — terminology collision on "semantic evidence" selection; mechanism is patch subsetting for classification. Cite to fence the term. |
+| 7 | "Robust Semantic Transmission for Low-Altitude UAVs: Predictive Channel-Aware Scheduling and Generative Reconstruction" (Tian, Chen, Kam) | arXiv 2602.10482 | 2026-02-11 | arXiv (cs.IT) | UAV semantic transmission robust to channel-prediction mismatch (stable PSNR under 0–10 dB prediction error). | **MEDIUM (⑥ adjacency)** — scheduling robustness under channel-knowledge mismatch, but PSNR reconstruction, not a CSI-mismatch *matrix* for task/VQA scheduling. |
+| 8 | "Efficient Onboard Vision-Language Inference in UAV-Enabled Low-Altitude Economy Networks via LLM-Enhanced Optimization" (Li et al.) | arXiv 2510.10028 | 2025-10-11 (v2 2026-06-07) | arXiv (cs.LG) | UAV trajectory + resource allocation for onboard VQA minimizing latency/power under accuracy constraints (LLM-augmented RL). | **MEDIUM** — UAV+VQA+power in one model; optimization-model energy (not measured joules), no evidence routing, no semcom channel design. |
+| 9 | "Adaptive Token Merging for Efficient Transformer Semantic Communication at the Edge" (Erak, Alhussein, Abou-Zeid, Bennis, Muhaidat) | arXiv 2509.09955 | 2025-09-12 | subm. IEEE | Training-free adaptive token merging; VQA "competitive with full LLaVA at <1/3 compute" under token budgets vs SNR. | **MEDIUM (⑧ adjacency)** — token-budget VQA-vs-SNR curves exist here; framing is graceful degradation, NOT non-monotone accuracy *gain* from confidence-ordered truncation. Contrast explicitly. |
+| 10 | "DocPrune: Efficient Document QA via Background, Question, and Comprehension-aware Token Pruning" (Adobe Research) | arXiv 2604.22281 | 2026-04 | arXiv | Question-aware token pruning *improves* EM/F1 (+1.5/+1.0) while cutting >70% TFLOPs in document QA. | **MEDIUM (⑧ adjacency)** — establishes "pruning can raise accuracy" on-device; no wireless, no confidence ordering, no threshold/counting false-positive mechanism. |
+| 11 | "Energy per Successful Goal: Goal-Level Energy Accounting for Agentic AI Systems" (Panigrahy, Tyagi) | arXiv 2605.22883 | 2026-05-20 | arXiv (cs.AI) | Defines joules-per-successful-goal accounting for agentic LLM systems; no wireless/semcom/VQA. | **MEDIUM (metric framing)** — closest "joules per completed task" metric; cite and position "joules per answered question" as its semcom/wireless instantiation. |
+| 12 | "TONIC: Token-Centric Semantic Communication for Task-Oriented Wireless Systems" (Sige Liu, Kezhi Wang) | arXiv 2605.21553 | 2026-05-20 | arXiv | GO-SG first author's follow-up: utility-aware unequal error protection of visual tokens + confidence-gated erasure recovery; classification only. | **MEDIUM (team follow-up)** — GO-SG team now at token-level semcom; not VQA/energy/routing. Cite as team's current position. |
+| 13 | "Rate-Splitting Multiple Access Enabled Probabilistic Semantic Communication in UAV Networks" (Wang, Zhang, Gan, Wenjun Xu) | arXiv 2606.30993 | 2026-06-30 | arXiv (eess.SP) | Green-line follow-up: PKG probabilistic semcom + RSMA UAV downlink, joint trajectory/power/beamforming/compression. | **LOW-MEDIUM (TGCN green-line follow-up)** — same EE-optimization genre already divided against. Cite. |
+| 14 | "Hybrid Bit and Semantic Communications for UAV-Enabled WPT Networks: Decision-Assisted DRL" (Li, Cui, Huang et al.) | arXiv 2606.00668 | 2026-05-30 | IEEE JSAC | DRL selects bit-vs-semantic mode jointly with trajectory/energy-harvesting. | **LOW** — PHY-metric-driven mode selection, no VQA/VLM. Cite only. |
+| 15 | "Energy-Efficient Probabilistic Semantic Communication Over Visible Light Networks With Rate Splitting" (Zhao, Yang, Zhu, Tong, Zhang) | arXiv 2601.10452 | 2026-01-15 | arXiv (cs.IT) | Probabilistic-semcom team follow-up: EE (comms+compute cost) over VLC with RSMA. | **LOW** — green-line continuation. Cite only. |
+| 16 | "Where Do the Joules Go? Diagnosing Inference Energy Consumption" | arXiv 2601.22076 | 2026-01 | arXiv | LLM inference energy breakdown. | **LOW** — cite for energy-measurement methodology. |
+| 17 | Hallucination filtering via discrete semantic entropy (radiology VLM) | arXiv 2510.09256 / Eur. Radiology | 2025-10 / 2026 | Eur. Radiology | Entropy-based abstention raises GPT-4o accuracy 51.7%→76.3%. | **LOW** — accuracy-raise-by-*abstention* (answer fewer), not evidence truncation (answer all). Optional cite for ⑧ framing. |
+| 18 | "Learning to Transmit: Volatility-Aware Predictive Communication for Energy-Efficient IoT" | arXiv 2607.19590 | 2026-07 | arXiv | Sensors transmit only when prediction residual exceeds threshold. | **LOW** — scalar-IoT "don't transmit" precedent. Cite only. |
+| 19 | Surveys: vision semcom (arXiv 2601.22202); NTN semcom (arXiv 2606.05216); networking-aware agentic-AI energy (arXiv 2604.07857); diffusion-semcom survey noting receiver inference energy can dominate (arXiv 2511.08416) | — | 2025-11–2026-06 | arXiv | — | **LOW** — related-work cites; 2511.08416's "receiver E_inf can dominate; break-even only at ultra-low SNR/bandwidth" passage is quotable when positioning T. |
+
+## (b) Per-claim verdict as of 2026-08
+
+- **T (compute-dominated per-answer energy; run-inference-or-not as the key decision; type-conditioned routing, 2.2×): UNCLAIMED.** Nearest pressure: 2607.09520 (compute-side profiling, no radio), 2511.08416 (analytical E_inf-vs-E_tx trade for diffusion receivers), INAR-VL (routing+energy, no channel). Nobody measures VLM-forward-vs-radio joules across SNR in a semcom system; nobody does 4-way evidence routing (cached / detector tokens / coded image / ROI). Pre-empt 2607.09520 with the skip-inference/route-evidence distinction.
+- **② Evidence-selection gain over an error-free channel: UNCLAIMED.** No paper demonstrates adaptive evidence selection beating full-image transmission at zero channel error as an explicit claim.
+- **⑥ CSI-mismatch matrix as scheduling-layer robustness metric for semantic VQA: UNCLAIMED.** Nearest: 2602.10482 (PSNR, not VQA, not a matrix); HANA-JSCC / KD imperfect-CSI works (2607.23615, 2509.04005) are PHY reconstruction robustness.
+- **⑧ Confidence-ordered top-t truncation RAISES accuracy (non-monotone, +7.7 pts): UNCLAIMED over wireless.** On-device "pruning can improve accuracy" now exists (DocPrune); token-budget VQA-vs-SNR curves exist (2509.09955, monotone framing). Nobody claims non-monotone gain from confidence-ordered detector-token truncation in a transmission system. Differentiate vs DocPrune + 2509.09955.
+
+## (c) Recommended new citations for §II
+
+**Must add (with differentiation):** 2607.09520, 2605.18853, 2512.16349, 2604.23691, 2607.28276 (+2509.08913), 2604.19623, 2602.10482, 2509.09955, 2604.22281, 2605.22883.
+**Team-follow-up cites:** 2605.21553 (TONIC), 2606.30993 (Xu line), 2601.10452 (Zhao/Yang line), 2510.10028 (v2 June 2026).
+**Optional:** 2606.00668, 2601.22076, 2604.07857, 2511.08416, 2601.22202, 2606.05216, 2607.19590.
+
+## (d) Searches that came up empty (explicit negatives)
+
+- "joules per answer" / energy-per-answered-question in semantic communication: **no new near-neighbor** (only EpG 2605.22883, non-wireless).
+- CSI-mismatch **matrix** as scheduling metric for semantic VQA: **none.**
+- Error-free-channel evidence-selection-gain claim: **none.**
+- Confidence-ordered token truncation raising VQA accuracy over a wireless link: **none.**
+- Park & Yoon (2412.13646) follow-ups since June 2026: **none** (no journal extension beyond JSAC 2025).
+- UAmsterdam 2604.26508 follow-up since June 2026: **none.**
+- Zheng et al. (aerial EE semcom, TGCN) new 2026 output: **none.**
+- GO-SG (2411.02452) journal-acceptance record: **none** (still arXiv v2, Nov 2024); team activity = TONIC.
+- Question-type-conditioned 4-way modality routing (cache/tokens/image/ROI): **no paper with this structure.**
+- Title-phrase collision ("ask before you transmit"): **none** — literature uses "understand-before-transmit"; title appears free.
+
+Verification note: every arXiv ID fetched from its arxiv.org/abs page or returned with a live URL; 2604.22281 (DocPrune) and 2510.09256 verified via arxiv.org/html listings + Adobe Research publication page (not deep-fetched).

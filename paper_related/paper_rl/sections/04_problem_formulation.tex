@@ -1,0 +1,123 @@
+% §IV --- Problem Formulation. Status: DRAFT.
+\section{Problem Formulation}\label{sec:problem}
+
+We model joint semantic-evidence and airspace-resource scheduling as a
+constrained Markov decision process (CMDP)
+$\langle\mathcal{S},\mathcal{A},P,r,\{c_i\},\{d_i\},\gamma\rangle$
+\emph{with a budgeted escalation channel}. The certificate of
+Section~\ref{subsec:cert} splits the query stream into the admitted set
+$\mathcal{K}_{\mathrm{adm}}(\pi)$ (served, rejected-while-serveable, or
+expired-while-serveable) and the escalated remainder; the rate constraints
+are stated \emph{on the admitted set}, and escalation itself is a budgeted
+event:
+\begin{align}\label{eq:cmdp}
+\max_{\pi}\;&\mathbb{E}\!\left[\sum_{t}\gamma^{t}\,r(s_t,a_t)\right]\\
+\text{s.t.}\;\;
+&\mathbb{E}\big[c_i \,\big|\, k\in\mathcal{K}_{\mathrm{adm}}(\pi)\big]\le d_i,
+\;\; i\in\mathcal{I},\nonumber\\
+&\mathbb{E}\big[\mathbf{1}\{k\ \text{escalated}\}\big]\le
+\delta_{\mathrm{esc}},\nonumber
+\end{align}
+with $\mathcal{I}=\{$quality-n, quality-c, deadline-n, deadline-c, conflict,
+battery, GPU$\}$. This admitted-set formulation is the honest one for an
+overloaded safety system: a scheduler cannot promise a violation rate on
+queries that are physically unserveable, but it can promise (i) a violation
+rate on what it admits and (ii) a certified, budgeted escalation rate for
+what it does not. Both promises are auditable, and Section~\ref{sec:experiments}
+reports them channel-by-channel.
+
+\subsection{State}
+The recommended observation \texttt{state\_v2\_fixed} is
+$\approx\!137$-dimensional and comprises: (i) a task block
+(question-type one-hot, SNR, deadline, cache-hit rate, and the
+spec-attainability certificate bit of Definition~\ref{def:cert}); (ii) per
+evidence-level features (LUT payload and accuracy, plus seven
+semantic-feasibility features per level---accuracy lower-confidence bound,
+uncertainty, quality gap, joint feasibility); (iii) per-UAV state
+($7$ dims: position, battery, status) and per-edge state ($4$ dims: CPU,
+GPU, VRAM, queue); (iv) the water levels of five Lyapunov virtual queues;
+and (v) mobility features and action-mask features stored for replay at
+update time (Section~\ref{sec:algorithm}).
+
+\subsection{Hybrid action space (two timescales)}
+The action factorizes into a fast head, updated every slot, and a slow
+head, updated every $K=3$ slots (Table~\ref{tab:action}). The fast head
+carries the semantic-evidence routing and physical-resource shares; the
+slow head carries task assignment and flight manoeuvres, whose effects
+(delay, energy, conflict geometry) unfold over multiple slots. Continuous
+sub-actions pass through a state-independent Gaussian, then a
+sigmoid/tanh squash into their physical ranges. Two further outcomes
+complete the action semantics: \emph{reject/defer}, produced when the
+semantic feasibility projection (Section~\ref{sec:algorithm}) rewrites a
+deadline-infeasible transmission into an explicit drop or postponement
+(a first-class action with its own reward accounting), and
+\emph{escalate}, which is \emph{not} policy-selectable---the certificate
+of Definition~\ref{def:cert} adjudicates every critical/high query that
+ends rejected or expired, so the policy cannot game the escalation channel
+by dropping serveable safety queries.
+
+\begin{table}[t]
+\centering
+\caption{Hybrid action space and control timescales.}
+\label{tab:action}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.35cm}>{\raggedright\arraybackslash}p{1.02cm}>{\raggedright\arraybackslash}p{4.53cm}@{}}
+\toprule
+Head & Type & Controls / timescale \\
+\midrule
+\texttt{service} & disc.\ $\{0,1,2\}$ & evidence route (cache / token / image); fast (each slot) \\
+\texttt{resource} & cont.\ $4$-d & A2G bandwidth share, Tx power $[0.05,1]$\,W, edge CPU, edge GPU share; fast \\
+\texttt{mobility} & disc. & task--UAV assignment; $5$ manoeuvre modes (stay, serve, reposition, avoid, return-base); slow ($K{=}3$) \\
+\texttt{waypoint} & cont.\ $2$-d & $\tanh\!\times\!80$\,m horizontal, $\tanh\!\times\!20$\,m vertical increment; slow \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Constraint set}
+The constraints are risk-differentiated: \emph{critical} tasks carry
+tighter limits than \emph{normal} ones (Table~\ref{tab:constraints}). The
+quality constraints cap the semantic-quality violation rate on the
+admitted set; the deadline constraints cap the timeout-violation rate; the
+conflict constraint caps the tactical conflict rate at the TLS-derived
+budget of Section~\ref{sec:system}; battery and GPU constraints cap
+resource-exhaustion risk; and the escalation budget caps how much of the
+critical load may be handed upward.
+
+\begin{table}[t]
+\centering
+\caption{Constraint set and limits $d_i$ (rates on the admitted set;
+escalation is a budgeted channel of its own).}
+\label{tab:constraints}
+\footnotesize
+\begin{tabular}{@{}llp{3.1cm}@{}}
+\toprule
+Constraint $c_i$ & Limit $d_i$ & Source \\
+\midrule
+quality (normal)   & $0.05$ & risk-aware setting \\
+quality (critical) & $0.02$ & risk-aware (tighter) \\
+deadline (normal)  & $0.05$ & $\tau_{\mathrm{normal}}{=}4.8$\,s QoS (§\ref{subsec:qos}) \\
+deadline (critical)& $0.02$ & $\tau_{\mathrm{critical}}{=}3.8$\,s QoS (§\ref{subsec:qos}) \\
+conflict           & $\approx0.08$ & TLS$_{\mathrm{MAC}}$ via barrier ladder (§\ref{sec:system}) \\
+battery            & --- & UAV energy model \\
+GPU (VRAM)         & --- & model-cache LRU \\
+\midrule
+escalation & $0.155$ / $0.05$ & certificate calibration, peak/nominal (§\ref{subsec:cert}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reward and environment}
+The reward is a heavily shaped \texttt{semantic\_utility} signal: semantic
+success and an accuracy-lower-confidence-bound margin (risk-weighted, with
+critical tasks scaled $\times1.6$), minus a quality-gap penalty,
+delay/energy/payload costs, and manoeuvre/safety costs; a
+cache-collapse penalty ($\sim\!-16\times$gap when $s_0$ is selected despite
+a semantic gap) discourages degenerate reuse. The environment models a
+six-term delay decomposition (fly$+$sense$+$tx$+$queue$+$infer$+$load),
+a four-term energy model, GPU VRAM with an LRU model cache, the
+fresh$\to$stale$\to$expired semantic cache, and the UTM/DSS conflict state
+machine; the A2G propagation, shared-pool bandwidth share, and
+slotted-serial uplink follow Section~\ref{subsec:a2g}, with received SNR
+quantized to $\{-5,\dots,20\}$\,dB bins. This CMDP is the target of the
+constrained-RL solver in Section~\ref{sec:algorithm}.

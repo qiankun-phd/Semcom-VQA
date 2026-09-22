@@ -1,0 +1,5 @@
+policy,episodes,tasks,task_success_rate,average_accuracy,average_delay,average_energy,quality_violation_rate,deadline_violation_rate
+always_cache,2,80,0.075,0.453936,0.678375,0.2,0.925,0.0
+always_light,2,80,0.225,0.55003,2.017125,1.0,0.775,0.0
+always_image,2,80,0.4,0.663382,3.984375,2.5,0.6,0.35
+greedy_min_sufficient_evidence,2,80,0.4625,0.628822,3.325875,1.9325,0.5375,0.35

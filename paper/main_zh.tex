@@ -1,0 +1,61 @@
+% Complete Chinese reading manuscript; shared bodies remain editable under sections_zh/.
+% Compile from paper/: latexmk -xelatex -outdir=build main_zh.tex
+\documentclass[UTF8,12pt,fontset=fandol]{ctexart}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx,booktabs,array}
+\usepackage{algorithm,algorithmic}
+\usepackage{setspace,cite,url}
+\usepackage{etoolbox}
+\usepackage[unicode,hidelinks]{hyperref}
+\setstretch{1.2}
+\AtBeginEnvironment{table}{\singlespacing}
+\AtBeginEnvironment{figure}{\singlespacing}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.8}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{5}
+\newtheorem{proposition}{命题}
+\floatname{algorithm}{算法}
+\renewcommand{\algorithmicrequire}{\textbf{输入：}}
+\newcommand{\paperref}[1]{\ref{#1}}
+\newcommand{\papereqref}[1]{\eqref{#1}}
+\makeatletter
+\newcommand{\bibcontrol}{\immediate\write\@auxout{\string\citation{BSTcontrol}}}
+\makeatother
+\title{传输前先问：面向无人机视觉问答的\\低能耗证据级语义通信系统}
+\author{\small Qiankun Zhang\quad Yue Liu\quad Zhijin Qin\\
+\small Hongbin Liang\quad Nelson L. S. da Fonseca}
+\date{\small 中文整合稿}
+\hypersetup{pdftitle={面向无人机视觉问答的低能耗证据级语义通信系统},
+pdfauthor={Qiankun Zhang, Yue Liu, Zhijin Qin, Hongbin Liang, Nelson L. S. da Fonseca}}
+\begin{document}
+\maketitle
+\bibcontrol
+\input{sections_zh/00_abstract}
+\input{sections_zh/01_introduction}
+\input{sections_zh/02_related_work}
+\input{sections_zh/03_system_model}
+\input{sections_zh/04_evidence_routing}
+\input{sections_zh/06_experiments}
+\input{sections_zh/08_conclusion}
+\clearpage
+\begingroup
+\small\singlespacing
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\endgroup
+\clearpage
+\appendix
+\ctexset{section/name={附录,}}
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theHfigure}{supp.\arabic{figure}}
+\renewcommand{\theHtable}{supp.\arabic{table}}
+\input{sections_zh/supplementary}
+\end{document}

@@ -1,0 +1,122 @@
+Editor-in-Chief
+IEEE Transactions on Cognitive Communications and Networking
+                                                                  2026-05-08
+
+Dear Editor,
+
+We submit the manuscript "Multi-UAV Semantic Offloading for VQA Tasks
+via Robust Hybrid Reinforcement Learning" for consideration as a
+regular paper in IEEE TCCN.
+
+This work substantially extends our conference paper "Hybrid
+Reinforcement Learning for Resource Allocation in VQA-Oriented UAV
+Semantic Offloading" with new formulation, a new algorithm, new theory,
+and broader empirical evidence. The conference paper is cited in the
+manuscript and is also enclosed for reference.
+
+1. Substantial new contributions
+
+  (i)   System model. The conference version assumed a single UAV
+        serving three stationary users over a static air-to-ground
+        channel. The journal extension models multi-UAV deployments
+        (up to four UAVs and nine users) with Poisson task arrivals,
+        random-walk user mobility, and per-slot Rician small-scale
+        fading. The problem is reformulated as a Dec-POMDP with a
+        unified delay--energy joint cost (Section III).
+
+  (ii)  Algorithm. We replace single-agent HPPO with MA-HPPO, a
+        multi-agent hybrid PPO under centralized training and
+        decentralized execution. MA-HPPO uses role-aware specialized
+        discrete heads (one per UAV / UE / channel slot) and a single
+        Gaussian continuous head with a fixed standard deviation
+        (Section IV). The conference single-agent HPPO is preserved
+        as a baseline to demonstrate the multi-agent gain.
+
+  (iii) Theoretical analysis. A new Section V derives two propositions
+        for the factorized hybrid policy: an unbiased policy-gradient
+        decomposition that separates the discrete and continuous
+        score-function gradients, and a monotonic improvement bound
+        under the clipped surrogate objective via additive KL
+        decomposition. A per-iteration computational complexity
+        analysis quantifies the trunk-encoder cost relative to the
+        MAPPO-hybrid weight-shared variant.
+
+  (iv)  Baselines. Three additional baselines accompany the conference
+        PADDPG and PDQN: a parameter-shared MAPPO-hybrid variant, the
+        conference single-UAV HPPO retained for backward-compatibility
+        check, and a non-learning Greedy LUT heuristic that selects
+        the best UE symbol cardinality by direct LUT look-up.
+
+  (v)   Empirical evaluation. Five new experiment classes accompany
+        the conference convergence / cost / similarity comparison:
+        multi-UAV scaling on the (M,N) grid (Table II, Fig. 4); a
+        four-axis ablation study (Table III); sensitivity to the
+        delay--energy trade-off and per-channel bandwidth (Fig. 7);
+        post-hoc robustness to channel SINR perturbation and to
+        unseen UE counts (Fig. 8); adversarial jamming up to 15 dBm
+        under a constant-power attacker (Fig. 9); and large-scale UE
+        generalization to N = 16 without retraining (Table IV).
+
+2. Quantitative delta
+
+  - Pages:                 6 -> 12 (+100%)
+  - Numbered sections:     6 -> 9 (+50%)
+  - Figures:               5 -> 8 (+60%)
+  - Tables:                1 -> 5 (+400%)
+  - Bibliography:          16 -> 38 (+138%)
+  - Baselines:             2 -> 5 (+150%)
+  - Theoretical results:   0 -> 2 propositions + complexity bound
+  - System-model axes:     1 UAV / 3 UE / static channel
+                           -> up to 4 UAVs / 9 UEs / mobile UEs /
+                              dynamic Poisson tasks / time-varying
+                              Rician fading / adversarial jamming
+  - New experiment classes: multi-UAV scaling, ablation, sensitivity,
+                            channel/UE robustness, adversarial jamming,
+                            large-scale UE generalization
+
+  Total new content vs the conference version exceeds 50% by page count
+  and 70% by figure/table count, well above the IEEE TCCN substantial
+  new contribution threshold.
+
+3. Reproducibility
+
+  Code, configurations, and the experiment commit tag are released at
+  https://github.com/qiankun-phd/hppo-uav (branch journal-ext, commit
+  4dc7f94e). The DeepSC-VQA semantic-similarity look-up table file
+  VQA_table.mat shipped with the env package has SHA-256
+  6861b230eb97de885311698bb8b09830dc7886a773109bad75a637a3cbd93fe4
+  for verification. The semantic similarity is loaded from this file
+  via a deterministic 5x5 symbol grid by 7-bin SINR axis interpolation;
+  see Section III.C for details.
+
+4. Suggested topical fit
+
+  The manuscript fits TCCN's editorial focus on learning-driven
+  cognitive networking, resource adaptation under uncertainty, and
+  semantic / task-oriented communication. We respectfully suggest
+  Editorial Area "Cognitive radio resource management with machine
+  learning" or "Intelligent resource allocation for next-generation
+  wireless networks" as candidate handling areas.
+
+5. Confirmations
+
+  We confirm that this manuscript has not been published or submitted
+  elsewhere. All authors have reviewed and approved the submission.
+  The work was supported by the National Natural Science Foundation
+  of China under Grant No. 62501107 and by Macao Polytechnic University
+  under Grant No. fca.91c6.2db2.1.
+
+Authors
+
+  Qiankun Zhang   Faculty of Applied Sciences, Macao Polytechnic University
+  Zelin Ji        Shenzhen Institute for Advanced Study, UESTC
+  Yue Liu         Faculty of Applied Sciences, Macao Polytechnic University
+  Ze Song         Faculty of Applied Sciences, Macao Polytechnic University
+  Zhijin Qin      Department of Electronic Engineering, Tsinghua University
+
+Corresponding author: Yue Liu  (yue.liu@mpu.edu.mo)
+
+We thank the editor and the reviewers for their consideration.
+
+Sincerely,
+Qiankun Zhang (on behalf of all authors)

@@ -1,0 +1,277 @@
+{
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "mcnemar": {
+    "awgn": {
+      "seed0": {
+        "vs_rule": {
+          "b": 218,
+          "c": 53,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 143,
+          "c": 38,
+          "p": 0.0
+        }
+      },
+      "seed1": {
+        "vs_rule": {
+          "b": 202,
+          "c": 16,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 140,
+          "c": 14,
+          "p": 0.0
+        }
+      },
+      "seed2": {
+        "vs_rule": {
+          "b": 203,
+          "c": 16,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 135,
+          "c": 8,
+          "p": 0.0
+        }
+      }
+    },
+    "rayleigh": {
+      "seed0": {
+        "vs_rule": {
+          "b": 237,
+          "c": 35,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 151,
+          "c": 26,
+          "p": 0.0
+        }
+      },
+      "seed1": {
+        "vs_rule": {
+          "b": 226,
+          "c": 16,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 142,
+          "c": 9,
+          "p": 0.0
+        }
+      },
+      "seed2": {
+        "vs_rule": {
+          "b": 226,
+          "c": 13,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 142,
+          "c": 6,
+          "p": 0.0
+        }
+      }
+    },
+    "rician": {
+      "seed0": {
+        "vs_rule": {
+          "b": 205,
+          "c": 27,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 146,
+          "c": 22,
+          "p": 0.0
+        }
+      },
+      "seed1": {
+        "vs_rule": {
+          "b": 211,
+          "c": 21,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 149,
+          "c": 13,
+          "p": 0.0
+        }
+      },
+      "seed2": {
+        "vs_rule": {
+          "b": 222,
+          "c": 32,
+          "p": 0.0
+        },
+        "vs_linear": {
+          "b": 154,
+          "c": 18,
+          "p": 0.0
+        }
+      }
+    },
+    "pooled_3ch_vs_rule": {
+      "seed0": {
+        "b": 660,
+        "c": 115,
+        "p": 0.0
+      },
+      "seed1": {
+        "b": 639,
+        "c": 53,
+        "p": 0.0
+      },
+      "seed2": {
+        "b": 651,
+        "c": 61,
+        "p": 0.0
+      }
+    },
+    "pooled_3ch_vs_linear": {
+      "seed0": {
+        "b": 440,
+        "c": 86,
+        "p": 0.0
+      },
+      "seed1": {
+        "b": 431,
+        "c": 36,
+        "p": 0.0
+      },
+      "seed2": {
+        "b": 431,
+        "c": 32,
+        "p": 0.0
+      }
+    }
+  },
+  "per_type_delta": {
+    "awgn": {
+      "presence": {
+        "mean": 0.0646,
+        "min": 0.0646,
+        "max": 0.0646
+      },
+      "counting": {
+        "mean": 0.014,
+        "min": 0.0101,
+        "max": 0.0179
+      },
+      "comparison": {
+        "mean": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "co_presence": {
+        "mean": -0.0128,
+        "min": -0.0224,
+        "max": -0.0064
+      },
+      "threshold": {
+        "mean": 0.0166,
+        "min": 0.0112,
+        "max": 0.0256
+      }
+    },
+    "rayleigh": {
+      "presence": {
+        "mean": 0.0711,
+        "min": 0.0711,
+        "max": 0.0711
+      },
+      "counting": {
+        "mean": 0.0195,
+        "min": 0.0195,
+        "max": 0.0195
+      },
+      "comparison": {
+        "mean": -0.0011,
+        "min": -0.0016,
+        "max": 0.0
+      },
+      "co_presence": {
+        "mean": -0.0005,
+        "min": -0.0064,
+        "max": 0.0032
+      },
+      "threshold": {
+        "mean": 0.015,
+        "min": 0.0112,
+        "max": 0.0192
+      }
+    },
+    "rician": {
+      "presence": {
+        "mean": 0.0637,
+        "min": 0.0634,
+        "max": 0.0638
+      },
+      "counting": {
+        "mean": 0.0161,
+        "min": 0.014,
+        "max": 0.0179
+      },
+      "comparison": {
+        "mean": 0.0011,
+        "min": 0.0,
+        "max": 0.0032
+      },
+      "co_presence": {
+        "mean": -0.0053,
+        "min": -0.016,
+        "max": 0.0
+      },
+      "threshold": {
+        "mean": 0.0182,
+        "min": 0.0128,
+        "max": 0.0256
+      }
+    }
+  },
+  "ablation_rician_mlp": {
+    "full": {
+      "acc_mean": 0.7033,
+      "acc_std": 0.001
+    },
+    "drop_qtype": {
+      "acc_mean": 0.7009,
+      "acc_std": 0.0005,
+      "delta_vs_full": -0.0025
+    },
+    "drop_class": {
+      "acc_mean": 0.7007,
+      "acc_std": 0.0016,
+      "delta_vs_full": -0.0026
+    },
+    "drop_view_risk": {
+      "acc_mean": 0.702,
+      "acc_std": 0.0026,
+      "delta_vs_full": -0.0014
+    },
+    "drop_snr": {
+      "acc_mean": 0.7034,
+      "acc_std": 0.001,
+      "delta_vs_full": 0.0001
+    },
+    "drop_detector": {
+      "acc_mean": 0.6796,
+      "acc_std": 0.0006,
+      "delta_vs_full": -0.0237
+    },
+    "drop_polarity": {
+      "acc_mean": 0.679,
+      "acc_std": 0.0016,
+      "delta_vs_full": -0.0243
+    }
+  },
+  "frontier_note": "c1_frontier_rician_mlp.csv = seed-mean lambda sweep"
+}

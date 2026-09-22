@@ -1,0 +1,137 @@
+%% main.tex — TCCN journal extension of "Hybrid Reinforcement Learning for
+%% Resource Allocation in VQA-Oriented UAV Semantic Offloading".
+%% Skeleton built on IEEEtran v1.8b (see bare_jrnl.tex for reference).
+%% Compile: latexmk -pdf -outdir=build main.tex
+
+\documentclass[journal,twoside]{IEEEtran}
+% Final submission format: two-column twoside per IEEEtran journal class.
+% (D1–D11 used [journal,onecolumn,draftcls] for writing comfort.)
+
+% --------------------------------------------------------------------------
+% Packages
+% --------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+% --------------------------------------------------------------------------
+% Custom macros
+% --------------------------------------------------------------------------
+\newcommand{\method}{MA-HPPO\xspace}
+\newcommand{\eg}{e.g.,\xspace}
+\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\etal}{\textit{et al.}\xspace}
+\newcommand{\TODO}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\CITE}[1]{\textcolor{red}{[CITATION NEEDED: #1]}}
+
+% Visible placeholder box for figures whose PDF asset is not yet rendered.
+% Replace the figure body with \figplaceholder{label}{height} until the
+% real PDF / PNG lands under figures/. D9--D10 generate the real figures.
+\newcommand{\figplaceholder}[2]{%
+  \fbox{\parbox[c][#2][c]{0.92\linewidth}{\centering
+    \textcolor{red}{\textbf{[#1 placeholder]}}}}%
+}
+
+% Theorem environments for §V
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+% --------------------------------------------------------------------------
+% Front matter
+% --------------------------------------------------------------------------
+\title{Multi-UAV Semantic Offloading for VQA Tasks via Robust Hybrid Reinforcement Learning}
+
+\author{Qiankun Zhang,
+        Zelin Ji,
+        Yue Liu,~\IEEEmembership{Member,~IEEE,}
+        Ze Song,
+        and~Zhijin Qin,~\IEEEmembership{Senior Member,~IEEE}
+\thanks{Q.\ Zhang, Y.\ Liu, and Z.\ Song are with the Faculty of Applied Sciences,
+Macao Polytechnic University, Macao SAR, China (e-mail: yue.liu@mpu.edu.mo).}
+\thanks{Z.\ Ji is with the Shenzhen Institute for Advanced Study, University of
+Electronic Science and Technology of China, Shenzhen, China.}
+\thanks{Z.\ Qin is with the Department of Electronic Engineering, Tsinghua
+University, Beijing, China.}
+\thanks{This work was supported by the National Natural Science Foundation of
+China (NSFC) under Grant No.~62501107, and by Macao Polytechnic University
+(No.~fca.91c6.2db2.1).}
+\thanks{Corresponding author: Yue Liu.}}
+
+\markboth{IEEE Transactions on Cognitive Communications and Networking}%
+{Zhang \MakeLowercase{\textit{et al.}}: Multi-UAV Semantic Offloading for VQA Tasks via Robust Hybrid RL}
+
+\maketitle
+
+% --------------------------------------------------------------------------
+% Abstract --- 5-sentence formula (Farquhar): achieved / why-hard / how /
+% evidence / headline number. Final version drafted on D5.
+% --------------------------------------------------------------------------
+\begin{abstract}
+We propose \method, a multi-agent hybrid proximal policy optimization
+algorithm that jointly optimizes the trajectory, transmit power,
+channel, and semantic-symbol selection for multiple UAVs cooperatively
+offloading visual question answering tasks to a multi-access edge
+computing server. Coupling these decisions is critical because
+DeepSC-VQA semantic similarity is non-monotonic in the symbol
+cardinality and depends on signal-to-noise ratios that are themselves
+shaped by the UAV trajectories, but prior single-UAV / static-channel
+formulations leave this coupling unsolved under realistic dynamics.
+\method casts the problem as a decentralized partially observable
+Markov decision process whose joint action factorizes into a discrete
+component (per-device channel and semantic-symbol selection) and a
+continuous component (per-UAV trajectory and per-device transmit
+power), trains the actor with a piecewise reward that ties resource
+decisions to semantic-task fidelity, and inherits a monotonic
+improvement guarantee under a clipped surrogate objective via an
+additive KL decomposition across the two factors. Evaluation against
+five baselines (MAPPO-hybrid, PADDPG, PDQN, single-UAV HPPO, and a
+LUT-grade Greedy heuristic) on a measurement-grade DeepSC-VQA semantic
+similarity look-up table demonstrates dominance across joint cost,
+delay, energy, similarity, and success-rate axes, with robustness
+preserved under multi-UAV scaling, channel and UE-count perturbations,
+adversarial jamming up to 15\,dBm, and large-scale UE generalization to
+$N{=}16$ without retraining. \method reduces the joint
+delay--energy cost by 17\% relative to the strongest learning baseline
+and lifts task success rate from $0.66$ to $0.81$ at $(M,N){=}(2,4)$.
+\end{abstract}
+
+\begin{IEEEkeywords}
+UAV networks, semantic communication, deep reinforcement learning, hybrid
+action space, multi-agent, resource allocation, VQA, robustness.
+\end{IEEEkeywords}
+
+% --------------------------------------------------------------------------
+% Body --- one \input{} per section. Edits should land in sections/, not here.
+% --------------------------------------------------------------------------
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_system_model}
+\input{sections/04_methodology}
+\input{sections/05_theory}
+\input{sections/06_experiments}
+\input{sections/07_discussion}
+\input{sections/08_limitations}
+\input{sections/09_conclusion}
+
+% --------------------------------------------------------------------------
+% References --- bibtex with IEEEtran.bst. Every entry in refs.bib was
+% retrieved via DOI content negotiation (curl -LH "Accept: application/x-bibtex"
+% doi.org/<DOI>) and cross-checked against Semantic Scholar / CrossRef.
+% --------------------------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

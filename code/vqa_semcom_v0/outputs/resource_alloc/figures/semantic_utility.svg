@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 720 260">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="48" y="28" font-family="Arial" font-size="16" font-weight="700">Semantic Utility</text>
+<line x1="48" y1="212" x2="672" y2="212" stroke="#333"/>
+<line x1="48" y1="212" x2="48" y2="48" stroke="#333"/>
+<rect x="60" y="90" width="112" height="122" fill="#2f6f8f"/>
+<text x="116.0" y="84" text-anchor="middle" font-family="Arial" font-size="11">0.57</text>
+<text x="116.0" y="228" text-anchor="middle" font-family="Arial" font-size="10">cache_first</text>
+<rect x="184" y="90" width="112" height="122" fill="#2f6f8f"/>
+<text x="240.0" y="84" text-anchor="middle" font-family="Arial" font-size="11">0.57</text>
+<text x="240.0" y="228" text-anchor="middle" font-family="Arial" font-size="10">deadline_aware_greedy</text>
+<rect x="308" y="122" width="112" height="90" fill="#2f6f8f"/>
+<text x="364.0" y="116" text-anchor="middle" font-family="Arial" font-size="11">0.42</text>
+<text x="364.0" y="228" text-anchor="middle" font-family="Arial" font-size="10">goal_oriented_priority</text>
+<rect x="432" y="68" width="112" height="144" fill="#2f6f8f"/>
+<text x="488.0" y="62" text-anchor="middle" font-family="Arial" font-size="11">0.67</text>
+<text x="488.0" y="228" text-anchor="middle" font-family="Arial" font-size="10">joint_greedy_resource</text>
+<rect x="556" y="90" width="112" height="122" fill="#2f6f8f"/>
+<text x="612.0" y="84" text-anchor="middle" font-family="Arial" font-size="11">0.57</text>
+<text x="612.0" y="228" text-anchor="middle" font-family="Arial" font-size="10">min_sufficient_evidence</text>
+</svg>

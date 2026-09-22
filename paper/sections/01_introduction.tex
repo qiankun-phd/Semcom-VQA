@@ -1,0 +1,119 @@
+% Revised introduction: application, evidence trade-off, related approaches,
+% specific gap, system overview, contributions, and organization.
+\section{Introduction}\label{sec:intro}
+
+\IEEEPARstart{U}{nmanned} aerial vehicles (UAVs) provide imagery for
+inspection, traffic monitoring, and disaster assessment. Extracting useful
+information from these images has motivated both human-assisted analysis
+and automated object detection~\cite{ofli2016combining,pi2020convolutional}.
+Visual question answering (VQA) offers another interface: users ask about
+image content in natural language, such as the number of vehicles in a
+scene. Remote sensing VQA has established this task and provided
+benchmarks for evaluating it~\cite{lobry2020rsvqa}. With pretrained
+vision--language models (VLMs)~\cite{wang2024qwen2vl}, an edge server can
+process an aerial image together with a question. Applying this approach
+over a UAV uplink, however, requires attention to both communication and
+computation costs. Image transmission uses limited wireless resources,
+while generating each answer also requires model inference. Reducing
+the energy per question therefore calls for a design that considers both
+costs.
+
+The information required to answer a question need not include the full
+image. For example, detected object classes and counts may support a
+comparison between the numbers of cars and buses. Such structured
+information has a small payload and can be processed by simple rules.
+However, a missed object cannot generally be recovered from the detector
+output alone. An image preserves visual details that may help answer
+questions about objects omitted by the detector, but requires more
+transmission and receiver computation. Moreover, the additional details
+do not guarantee that a particular VLM will answer every question more
+accurately. The choice depends on the question, the available detector
+evidence, and the performance of the two processing paths over the link.
+A useful selection method must identify when the smaller representation
+is adequate and when image transmission is worth its cost.
+
+Semantic and task-oriented communication provides the basis for making
+such decisions according to the information needed by the receiver
+task~\cite{gunduz2023beyond,strinati2021sixg,kountouris2021semantics}.
+For wireless VQA, MU-DeepSC jointly designs the transceiver to convey
+image and question features~\cite{xie2022mudeepscwcl}.
+Goal-oriented VQA communication instead extracts and ranks bounding boxes
+or scene-graph information according to the question~\cite{liu2024gosg}.
+Query-oriented image coding also uses the query to select features for
+image reconstruction~\cite{huang2026query}. Park and
+Yoon~\cite{park2025transmit} compare visual representations across tasks
+and select simpler or richer semantics according to task requirements.
+Their task-level choice motivates examining which evidence and decoder
+to use for each question within a VQA workload.
+Du \etal~\cite{jiang2025lmmvn} use LLaVA for vehicle VQA and prioritize
+image regions and patch transmission according to user interest.
+That approach adapts the visual input to a multimodal model; our question
+is when structured evidence can instead support symbolic decoding and
+avoid VLM inference.
+These studies establish task- and question-aware transmission as existing
+design principles. In visual
+reasoning, Prompt-RSVQA converts extracted visual context into text for a
+language model~\cite{chappuis2022promptrsvqa}. Thus, structured visual
+information is also an established alternative input to a reasoning
+model.
+
+A complementary line studies the energy implications of semantic
+processing. Green semantic communication considers communication and
+computation costs in aerial edge networks and probabilistic semantic
+systems~\cite{zheng2024aerialee,dai2025pscom}. Input-aware VLM routing
+selects between edge and cloud models according to the input and their
+accuracy--cost trade-off~\cite{sabanovic2026inarvl}. Building on these
+directions, we investigate a specific decision for structured aerial VQA:
+whether to transmit detector information for symbolic decoding or an image
+for VLM inference. The decision changes both the transmitted
+representation and the computation needed to answer the question.
+Its value must therefore be assessed through answer accuracy and the
+combined communication and computation energy, rather than payload size
+alone.
+
+To study this decision, we propose an evidence-level semantic
+communication system with a sender-side router and two receiver paths.
+The token path transmits structured detector outputs and uses a
+lightweight symbolic decoder. The image path transmits an image to a
+frozen VLM. The system uses an aerial-domain detector and conventional
+channel coding without jointly training the transceiver and the VLM.
+A training-free rule selects the path from the question type. A learned
+per-sample router further uses detector information to predict which path
+will answer correctly, and an energy price controls the
+accuracy--energy trade-off. We evaluate these choices on structured
+questions about detected object categories. The aim is to identify when
+evidence selection improves energy efficiency without reducing answer
+accuracy, and to characterize the conditions under which the gain holds.
+The main contributions are as follows:
+
+\begin{itemize}
+\item We formulate evidence selection as a joint choice of payload and
+  receiver processing. The energy account includes transmission,
+  onboard detection, and receiver inference, with UAV and edge costs
+  distinguished. This formulation makes the cost of each answering path
+  explicit and supports energy--accuracy comparisons.
+\item We develop a training-free type rule and an MLP-based per-sample
+  router. Conditional analysis explains when the type rule
+  preserves accuracy while reducing energy. An energy-price extension
+  provides a tunable operating point for the learned selector.
+\item We evaluate the system on two aerial datasets, with AWGN,
+  Rayleigh, and Rician channels on the primary dataset and Rician on
+  the second. Evaluation combines logged-outcome replay, GPU power
+  measurements, and transmission cost modeling. Under the reference
+  configuration, the type rule reduces mean accounted energy per question by
+  approximately $55\%$ on VisDrone relative to rate-adaptive image
+  transmission while improving accuracy. On DroneVehicle, a
+  validation-selected learned router achieves $74.60\%$ accuracy
+  at $4.47$ J per query, compared with $72.93\%$ at $11.21$ J
+  for the type rule. We retain simple baselines and matched-receiver
+  comparisons to identify where learned selection helps and where
+  its additional complexity offers little benefit. These results
+  concern system energy, not a measured UAV battery gain.
+\end{itemize}
+
+The remainder of this paper is organized as follows.
+Section~\ref{sec:related} reviews related work.
+Section~\ref{sec:system} presents the system model and energy accounting.
+Section~\ref{sec:routing} develops the selectors and their analytical
+support. Section~\ref{sec:exp} reports the experiments and discusses
+their limitations. Section~\ref{sec:conc} concludes the paper.

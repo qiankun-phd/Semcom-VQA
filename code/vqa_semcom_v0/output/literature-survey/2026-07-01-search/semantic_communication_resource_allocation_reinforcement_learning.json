@@ -1,0 +1,638 @@
+[
+  {
+    "title": "Semantic-Aware Resource Allocation Based on Deep Reinforcement Learning for 5G-V2X HetNets",
+    "authors": [
+      "Zhiyu Shao",
+      "Qiong Wu",
+      "Pingyi Fan",
+      "Nan Cheng",
+      "Qian-Xi Fan",
+      "Jiangzhou Wang"
+    ],
+    "year": 2024,
+    "venue": "IEEE Communications Letters",
+    "abstract": "This letter proposes a semantic-aware resource allocation (SARA) framework with flexible duty cycle (DC) coexistence mechanism (SARADC) for 5G-V2X Heterogeneous Network (HetNets) based on deep reinforcement learning (DRL) proximal policy optimization (PPO). Specifically, we investigate V2X networks within a three-tiered HetNets structure. To meet the demands of high-speed vehicular networking in urban environments, we design a semantic communication system and introduce two resource allocation metrics: high-speed semantic transmission rate (HSR) and semantic spectrum efficiency (HSSE). Additionally, we address the coexistence of vehicular users and WiFi users in 5G New Radio Unlicensed (NR-U) networks. Our approach jointly optimizes the DC coexistence mechanism and the allocation of resources and base stations (BSs). Unlike traditional bit-based transmission methods, our approach integrates the semantic communication into the communication system. Experimental results show that our proposed framework significantly improves HSSE and semantic throughput (ST) for both vehicular and WiFi users compared to conventional methods.",
+    "url": "https://www.semanticscholar.org/paper/a25bd092702639ae791ff51db9d0603ccfd30504",
+    "doi": "10.1109/LCOMM.2024.3443603",
+    "citation_count": 51,
+    "source": "s2"
+  },
+  {
+    "title": "Value Bonuses using Ensemble Errors for Exploration in Reinforcement Learning",
+    "authors": [
+      "Abdul Wahab",
+      "Raksha Kumaraswamy",
+      "Martha White"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Optimistic value estimates provide one mechanism for directed exploration in reinforcement learning (RL). The agent acts greedily with respect to an estimate of the value plus what can be seen as a value bonus. The value bonus can be learned by estimating a value function on reward bonuses, propagating local uncertainties around rewards. However, this approach only increases the value bonus for an action retroactively, after seeing a higher reward bonus from that state and action. Such an approach does not encourage the agent to visit a state and action for the first time. In this work, we introduce an algorithm for exploration called Value Bonuses with Ensemble errors (VBE), that maintains an ensemble of random action-value functions (RQFs). VBE uses the errors in the estimation of these RQFs to design value bonuses that provide first-visit optimism and deep exploration. The key idea is to design the rewards for these RQFs in such a way that the value bonus can decrease to zero. We show that VBE outperforms Bootstrap DQN and two reward bonus approaches (RND and ACB) on several classic environments used to test exploration and provide demonstrative experiments that it can scale easily to more complex environments like Atari.",
+    "url": "http://arxiv.org/abs/2602.12375v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic-Aware Resource Management for C-V2X Platooning via Multi-Agent Reinforcement Learning",
+    "authors": [
+      "Wenjun Zhang",
+      "Qiong Wu",
+      "Pingyi Fan",
+      "Kezhi Wang",
+      "Nan Cheng",
+      "Wen Chen",
+      "Khaled B. Letaief"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "Semantic communication transmits the extracted features of information rather than raw data, significantly reducing redundancy, which is crucial for addressing spectrum and energy challenges in 6G networks. In this paper, we introduce semantic communication into a cellular vehicle-to-everything (C-V2X)- based autonomous vehicle platoon system for the first time, aiming to achieve efficient management of communication resources in a dynamic environment. Firstly, we construct a mathematical model for semantic communication in platoon systems, in which the DeepSC model and MU-DeepSC model are used to semantically encode and decode unimodal and multi-modal data, respectively. Then, we propose the quality of experience (QoE) metric based on semantic similarity and semantic rate. Meanwhile, we consider the success rate of semantic information transmission (SRS) metric to ensure the fairness of channel resource allocation. Next, the optimization problem is posed with the aim of maximizing the QoE in vehicle-to-vehicle (V2V) links while improving SRS. To solve this mixed integer nonlinear programming problem (MINLP) and adapt to time-varying channel conditions, the paper proposes a distributed semantic-aware multi-modal resource allocation (SAMRA) algorithm based on multi-agent reinforcement learning (MARL), referred to as SAMRAMARL. The algorithm can dynamically allocate channels and power and determine semantic symbol length based on the contextual importance of the transmitted information, ensuring efficient resource utilization. Finally, extensive simulations have demonstrated that SAMRAMARL outperforms existing methods, achieving significant gains in QoE, SRS, and communication delay in C-V2X platooning scenarios.",
+    "url": "http://arxiv.org/abs/2411.04672v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Graph Neural Networks and Deep Reinforcement Learning Based Resource Allocation for V2X Communications",
+    "authors": [
+      "Maoxin Ji",
+      "Qiong Wu",
+      "Pingyi Fan",
+      "Nan Cheng",
+      "Wen Chen",
+      "Jiangzhou Wang",
+      "Khaled B. Letaief"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "In the rapidly evolving landscape of Internet of Vehicles (IoV) technology, Cellular Vehicle-to-Everything (C-V2X) communication has attracted much attention due to its superior performance in coverage, latency, and throughput. Resource allocation within C-V2X is crucial for ensuring the transmission of safety information and meeting the stringent requirements for ultra-low latency and high reliability in Vehicle-to-Vehicle (V2V) communication. This paper proposes a method that integrates Graph Neural Networks (GNN) with Deep Reinforcement Learning (DRL) to address this challenge. By constructing a dynamic graph with communication links as nodes and employing the Graph Sample and Aggregation (GraphSAGE) model to adapt to changes in graph structure, the model aims to ensure a high success rate for V2V communication while minimizing interference on Vehicle-to-Infrastructure (V2I) links, thereby ensuring the successful transmission of V2V link information and maintaining high transmission rates for V2I links. The proposed method retains the global feature learning capabilities of GNN and supports distributed network deployment, allowing vehicles to extract low-dimensional features that include structural information from the graph network based on local observations and to make independent resource allocation decisions. Simulation results indicate that the introduction of GNN, with a modest increase in computational load, effectively enhances the decision-making quality of agents, demonstrating superiority to other methods. This study not only provides a theoretically efficient resource allocation strategy for V2V and V2I communications but also paves a new technical path for resource management in practical IoV environments.",
+    "url": "http://arxiv.org/abs/2407.06518v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Interference-Aware K-Step Reachable Communication in Multi-Agent Reinforcement Learning",
+    "authors": [
+      "Ziyu Cheng",
+      "Jinsheng Ren",
+      "Zhouxian Jiang",
+      "Chenzhihang Li",
+      "Rongye Shi",
+      "Bin Liang",
+      "Jun Yang"
+    ],
+    "year": 2026,
+    "venue": "arXiv",
+    "abstract": "Effective communication is pivotal for addressing complex collaborative tasks in multi-agent reinforcement learning (MARL). Yet, limited communication bandwidth and dynamic, intricate environmental topologies present significant challenges in identifying high-value communication partners. Agents must consequently select collaborators under uncertainty, lacking a priori knowledge of which partners can deliver task-critical information. To this end, we propose Interference-Aware K-Step Reachable Communication (IA-KRC), a novel framework that enhances cooperation via two core components: (1) a K-Step reachability protocol that confines message passing to physically accessible neighbors, and (2) an interference-prediction module that optimizes partner choice by minimizing interference while maximizing utility. Compared to existing methods, IA-KRC enables substantially more persistent and efficient cooperation despite environmental interference. Comprehensive evaluations confirm that IA-KRC achieves superior performance compared to state-of-the-art baselines, while demonstrating enhanced robustness and scalability in complex topological and highly dynamic multi-agent scenarios.",
+    "url": "http://arxiv.org/abs/2603.15054v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Resource Allocation for Downlink NOMA Systems: Key Techniques and Open Issues",
+    "authors": [
+      "S. M. Riazul Islam",
+      "Ming Zeng",
+      "Octavia A. Dobre",
+      "Kyung-Sup Kwak"
+    ],
+    "year": 2017,
+    "venue": "arXiv",
+    "abstract": "This article presents advances in resource allocation (RA) for downlink non-orthogonal multiple access (NOMA) systems, focusing on user pairing (UP) and power allocation (PA) algorithms. The former pairs the users to obtain the high capacity gain by exploiting the channel gain difference between the users, while the later allocates power to users in each cluster to balance system throughput and user fairness. Additionally, the article introduces the concept of cluster fairness and proposes the divideand- next largest difference-based UP algorithm to distribute the capacity gain among the NOMA clusters in a controlled manner. Furthermore, performance comparison between multiple-input multiple-output NOMA (MIMO-NOMA) and MIMO-OMA is conducted when users have pre-defined quality of service. Simulation results are presented, which validate the advantages of NOMA over OMA. Finally, the article provides avenues for further research on RA for downlink NOMA.",
+    "url": "http://arxiv.org/abs/1801.00121v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Censored Semi-Bandits for Resource Allocation",
+    "authors": [
+      "Arun Verma",
+      "Manjesh K. Hanawal",
+      "Arun Rajkumar",
+      "Raman Sankaran"
+    ],
+    "year": 2021,
+    "venue": "arXiv",
+    "abstract": "We consider the problem of sequentially allocating resources in a censored semi-bandits setup, where the learner allocates resources at each step to the arms and observes loss. The loss depends on two hidden parameters, one specific to the arm but independent of the resource allocation, and the other depends on the allocated resource. More specifically, the loss equals zero for an arm if the resource allocated to it exceeds a constant (but unknown) arm dependent threshold. The goal is to learn a resource allocation that minimizes the expected loss. The problem is challenging because the loss distribution and threshold value of each arm are unknown. We study this setting by establishing its `equivalence' to Multiple-Play Multi-Armed Bandits (MP-MAB) and Combinatorial Semi-Bandits. Exploiting these equivalences, we derive optimal algorithms for our problem setting using known algorithms for MP-MAB and Combinatorial Semi-Bandits. The experiments on synthetically generated data validate the performance guarantees of the proposed algorithms.",
+    "url": "http://arxiv.org/abs/2104.05781v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Mobility-Aware Resource Allocation for mmWave IAB Networks: A Multi-Agent Reinforcement Learning Approach",
+    "authors": [
+      "Bibo Zhang",
+      "Ilario Filippini"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "abstract": "MmWaves have been envisioned as a promising direction to provide Gbps wireless access. However, they are susceptible to high path losses and blockages, which directional antennas can only partially mitigate. That makes mmWave networks coverage-limited, thus requiring dense deployments. Integrated access and backhaul (IAB) architectures have emerged as a cost-effective solution for network densification. Resource allocation in mmWave IAB networks must face big challenges to cope with heavy temporal dynamics, such as intermittent links caused by user mobility and blockages from moving obstacles. This makes it extremely difficult to find optimal and adaptive solutions. In this article, exploiting the distributed structure of the problem, we propose a Multi-Agent Reinforcement Learning (MARL) framework to optimize user throughput via flow routing and link scheduling in mmWave IAB networks characterized by user mobility and link outages generated by moving obstacles. The proposed approach implicitly captures the environment dynamics, coordinates the interference, and manages the buffer levels of IAB relay nodes. We design different MARL components, considering full-duplex and half-duplex IAB-nodes. In addition, we provide a communication and coordination scheme for RL agents in an online training framework, addressing the feasibility issues of practical systems. Numerical results show the effectiveness of the proposed approach.",
+    "url": "http://arxiv.org/abs/2205.06011v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Semantic Web Technology for Agent Communication Protocols",
+    "authors": [
+      "Idoia Berges",
+      "Jesús Bermúdez",
+      "Alfredo Goñi",
+      "Arantza Illarramendi"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "One relevant aspect in the development of the Semantic Web framework is the achievement of a real inter-agents communication capability at the semantic level. The agents should be able to communicate and understand each other using standard communication protocols freely, that is, without needing a laborious a priori preparation, before the communication takes place. For that setting we present in this paper a proposal that promotes to describe standard communication protocols using Semantic Web technology (specifically, OWL-DL and SWRL). Those protocols are constituted by communication acts. In our proposal those communication acts are described as terms that belong to a communication acts ontology, that we have developed, called CommOnt. The intended semantics associated to the communication acts in the ontology is expressed through social commitments that are formalized as fluents in the Event Calculus. In summary, OWL-DL reasoners and rule engines help in our proposal for reasoning about protocols. We define some comparison relationships (dealing with notions of equivalence and specialization) between protocols used by agents from different systems.",
+    "url": "http://arxiv.org/abs/2401.11841v1",
+    "doi": "10.1007/978-3-540-68234-9_4",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Multiuser Resource Allocation for Semantic-Relay-Aided Text Transmissions",
+    "authors": [
+      "Zeyang Hu",
+      "Tianyu Liu",
+      "Changsheng You",
+      "Zhaohui Yang",
+      "Mingzhe Chen"
+    ],
+    "year": 2023,
+    "venue": "arXiv",
+    "abstract": "Semantic communication (SemCom) is an emerging technology that extracts useful meaning from data and sends only relevant semantic information. Thus, it has the great potential to improve the spectrum efficiency of conventional wireless systems with bit transmissions, especially in low signal-to-noise ratio (SNR) and small bandwidth regions. However, the existing works have mostly overlooked the constraints of mobile devices, which may not have sufficient capabilities to implement resource-demanding semantic encoder/decoder based on deep learning. To address this issue, we propose in this paper a new semantic relay (SemRelay), which is equipped with a semantic receiver to assist multiuser text transmissions. Specifically, the SemRelay decodes semantic information from a base station and forwards it to the users using conventional bit transmission, hence effectively improving text transmission efficiency. To study the multiuser resource allocation, we formulate an optimization problem to maximize the multiuser weighted sum-rate by jointly designing the SemRelay transmit power allocation and system bandwidth allocation. Although this problem is non-convex and hence challenging to solve, we propose an efficient algorithm to obtain its high-quality suboptimal solution by using the block coordinate descent method. Last, numerical results show the effectiveness of the proposed algorithm as well as superior performance of the proposed SemRelay over the conventional decode-and-forward (DF) relay, especially in small bandwidth region.",
+    "url": "http://arxiv.org/abs/2311.06854v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "A Theory of Semantic Communication",
+    "authors": [
+      "Yulin Shao",
+      "Qi Cao",
+      "Deniz Gunduz"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "abstract": "Semantic communication is an emerging research area that has gained a wide range of attention recently. Despite this growing interest, there remains a notable absence of a comprehensive and widely-accepted framework for characterizing semantic communication. This paper introduces a new conceptualization of semantic communication and formulates two fundamental problems, which we term language exploitation and language design. Our contention is that the challenge of language design can be effectively situated within the broader framework of joint source-channel coding theory, underpinned by a comprehensive end-to-end distortion metric. To tackle the language exploitation problem, we put forth three approaches: semantic encoding, semantic decoding, and a synergistic combination of both in the form of combined semantic encoding and decoding. Furthermore, we establish the semantic distortion-cost region as a critical framework for assessing the language exploitation problem. For each of the three proposed approaches, the achievable distortion-cost region is characterized. Overall, this paper aims to shed light on the intricate dynamics of semantic communication, paving the way for a deeper understanding of this evolving field.",
+    "url": "http://arxiv.org/abs/2212.01485v4",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "ASTER: Adaptive Spatio-Temporal Early Decision Model for Dynamic Resource Allocation",
+    "authors": [
+      "Shulun Chen",
+      "Wei Shao",
+      "Flora D. Salim",
+      "Hao Xue"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "abstract": "Supporting decision-making has long been a central vision in the field of spatio-temporal intelligence. While prior work has improved the timeliness and accuracy of spatio-temporal forecasting, converting these forecasts into actionable strategies remains a key challenge. A main limitation is the decoupling of the prediction and the downstream decision phases, which can significantly degrade the downstream efficiency. For example, in emergency response, the priority is successful resource allocation and intervention, not just incident prediction. To this end, it is essential to propose an Adaptive Spatio-Temporal Early Decision model (ASTER) that reforms the forecasting paradigm from event anticipation to actionable decision support. This framework ensures that information is directly used for decision-making, thereby maximizing overall effectiveness. Specifically, ASTER introduces a new Resource-aware Spatio-Temporal interaction module (RaST) that adaptively captures long- and short-term dependencies under dynamic resource conditions, producing context-aware spatiotemporal representations. To directly generate actionable decisions, we further design a Preference-oriented decision agent (Poda) based on multi-objective reinforcement learning, which transforms predictive signals into resource-efficient intervention strategies by deriving optimal actions under specific preferences and dynamic constraints. Experimental results on four benchmark datasets demonstrate the state-of-the-art performance of ASTER in improving both early prediction accuracy and resource allocation outcomes across six downstream metrics.",
+    "url": "http://arxiv.org/abs/2506.17929v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Reconfigurable Intelligent Surface-assisted Multi-UAV Networks: Efficient Resource Allocation with Deep Reinforcement Learning",
+    "authors": [
+      "Khoi Khac Nguyen",
+      "Saeed Khosravirad",
+      "Daniel Benevides da Costa",
+      "Long D. Nguyen",
+      "Trung Q. Duong"
+    ],
+    "year": 2021,
+    "venue": "arXiv",
+    "abstract": "In this paper, we propose reconfigurable intelligent surface (RIS)-assisted unmanned aerial vehicles (UAVs) networks that can utilise both advantages of UAV's agility and RIS's reflection for enhancing the network's performance. To aim at maximising the energy efficiency (EE) of the considered networks, we jointly optimise the power allocation of the UAVs and the phase-shift matrix of the RIS. A deep reinforcement learning (DRL) approach is proposed for solving the continuous optimisation problem with time-varying channels in a centralised fashion. Moreover, a parallel learning approach is also proposed for reducing the information transmission requirement of the centralised approach. Numerical results show a significant improvement of our proposed schemes compared with the conventional approaches in terms of EE, flexibility, and processing time. Our proposed DRL methods for RIS-assisted UAV networks can be used for real-time applications due to their capability of instant decision-making and handling the time-varying channel with the dynamic environmental setting.",
+    "url": "http://arxiv.org/abs/2105.14142v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Adaptive Resource Allocation for Semantic Communication Networks",
+    "authors": [
+      "Lingyi Wang",
+      "Wei Wu",
+      "Fuhui Zhou",
+      "Zhaohui Yang",
+      "Zhijin Qin"
+    ],
+    "year": 2023,
+    "venue": "arXiv",
+    "abstract": "Semantic communication, recognized as a promising technology for future intelligent applications, has received widespread research attention. Despite the potential of semantic communication to enhance transmission reliability, especially in low signal-to-noise (SNR) environments, the critical issue of resource allocation and compatibility in the dynamic wireless environment remains largely unexplored. In this paper, we propose an adaptive semantic resource allocation paradigm with semantic-bit quantization (SBQ) compatibly for existing wireless communications, where the inaccurate environment perception introduced by the additional mapping relationship between semantic metrics and transmission metrics is solved. In order to investigate the performance of semantic communication networks, the quality of service for semantic communication (SC-QoS), including the semantic quantization efficiency (SQE) and transmission latency, is proposed for the first time. A problem of maximizing the overall effective SC-QoS is formulated by jointly optimizing the transmit beamforming of the base station, the bits for semantic representation, the subchannel assignment, and the bandwidth resource allocation. To address the non-convex formulated problem, an intelligent resource allocation scheme is proposed based on a hybrid deep reinforcement learning (DRL) algorithm, where the intelligent agent can perceive both semantic tasks and dynamic wireless environments. Simulation results demonstrate that our design can effectively combat semantic noise and achieve superior performance in wireless communications compared to several benchmark schemes. Furthermore, compared to mapping-guided paradigm based resource allocation schemes, our proposed adaptive scheme can achieve up to 13% performance improvement in terms of SC-QoS.",
+    "url": "http://arxiv.org/abs/2312.01081v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Resource allocation for text semantic communications",
+    "authors": [
+      "Lei Yan",
+      "Zhijin Qin",
+      "Rui Zhang",
+      "Yongzhao Li",
+      "Geoffrey Ye Li"
+    ],
+    "year": 2022,
+    "venue": "arXiv",
+    "abstract": "Semantic communications have shown its great potential to improve the transmission reliability, especially in the low signal-to-noise regime. However, resource allocation for semantic communications still remains unexplored, which is a critical issue in guaranteeing the semantic transmission reliability and the communication efficiency. To fill this gap, we investigate the spectral efficiency in the semantic domain and rethink the semantic-aware resource allocation issue. Specifically, taking text semantic communication as an example, the semantic spectral efficiency (S-SE) is defined for the first time, and is used to optimize resource allocation in terms of channel assignment and the number of transmitted semantic symbols. Additionally, for fair comparison of semantic and conventional communication systems, a transform method is developed to convert the conventional bit-based spectral efficiency to the S-SE. Simulation results demonstrate the validity and feasibility of the proposed resource allocation method, as well as the superiority of semantic communications in terms of the S-SE.",
+    "url": "http://arxiv.org/abs/2201.06023v2",
+    "doi": "10.1109/LWC.2022.3170849",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Mining Event Logs to Support Workflow Resource Allocation",
+    "authors": [
+      "Tingyu Liu",
+      "Yalong Cheng",
+      "Zhonghua Ni"
+    ],
+    "year": 2012,
+    "venue": "arXiv",
+    "abstract": "Workflow technology is widely used to facilitate the business process in enterprise information systems (EIS), and it has the potential to reduce design time, enhance product quality and decrease product cost. However, significant limitations still exist: as an important task in the context of workflow, many present resource allocation operations are still performed manually, which are time-consuming. This paper presents a data mining approach to address the resource allocation problem (RAP) and improve the productivity of workflow resource management. Specifically, an Apriori-like algorithm is used to find the frequent patterns from the event log, and association rules are generated according to predefined resource allocation constraints. Subsequently, a correlation measure named lift is utilized to annotate the negatively correlated resource allocation rules for resource reservation. Finally, the rules are ranked using the confidence measures as resource allocation rules. Comparative experiments are performed using C4.5, SVM, ID3, Naïve Bayes and the presented approach, and the results show that the presented approach is effective in both accuracy and candidate resource recommendations.",
+    "url": "http://arxiv.org/abs/1206.6557v1",
+    "doi": "10.1016/j.knosys.2012.05.010",
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Efficient Resource Allocation for On-Demand Mobile-Edge Cloud Computing",
+    "authors": [
+      "Xu Chen",
+      "Wenzhong Li",
+      "Sanglu Lu",
+      "Zhi Zhou",
+      "Xiaoming Fu"
+    ],
+    "year": 2018,
+    "venue": "arXiv",
+    "abstract": "Mobile-edge cloud computing is a new paradigm to provide cloud computing capabilities at the edge of pervasive radio access networks in close proximity to mobile users. Aiming at provisioning flexible on-demand mobile-edge cloud service, in this paper we propose a comprehensive framework consisting of a resource-efficient computation offloading mechanism for users and a joint communication and computation (JCC) resource allocation mechanism for network operator. Specifically, we first study the resource-efficient computation offloading problem for a user, in order to reduce user's resource occupation by determining its optimal communication and computation resource profile with minimum resource occupation and meanwhile satisfying the QoS constraint. We then tackle the critical problem of user admission control for JCC resource allocation, in order to properly select the set of users for resource demand satisfaction. We show the admission control problem is NP-hard, and hence develop an efficient approximation solution of a low complexity by carefully designing the user ranking criteria and rigourously derive its performance guarantee. To prevent the manipulation that some users may untruthfully report their valuations in acquiring mobile-edge cloud service, we further resort to the powerful tool of critical value approach to design truthful pricing scheme for JCC resource allocation. Extensive performance evaluation demonstrates that the proposed schemes can achieve superior performance for on-demand mobile-edge cloud computing.",
+    "url": "http://arxiv.org/abs/1806.03124v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Digital Twin Vehicular Edge Computing Network: Task Offloading and Resource Allocation",
+    "authors": [
+      "Yu Xie",
+      "Qiong Wu",
+      "Pingyi Fan"
+    ],
+    "year": 2024,
+    "venue": "arXiv",
+    "abstract": "With the increasing demand for multiple applications on internet of vehicles. It requires vehicles to carry out multiple computing tasks in real time. However, due to the insufficient computing capability of vehicles themselves, offloading tasks to vehicular edge computing (VEC) servers and allocating computing resources to tasks becomes a challenge. In this paper, a multi task digital twin (DT) VEC network is established. By using DT to develop offloading strategies and resource allocation strategies for multiple tasks of each vehicle in a single slot, an optimization problem is constructed. To solve it, we propose a multi-agent reinforcement learning method on the task offloading and resource allocation. Numerous experiments demonstrate that our method is effective compared to other benchmark algorithms.",
+    "url": "http://arxiv.org/abs/2407.11310v2",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "RL-Driven Semantic Compression Model Selection and Resource Allocation in Semantic Communication Systems",
+    "authors": [
+      "Xinyi Lin",
+      "Peizheng Li",
+      "Adnan Aijaz"
+    ],
+    "year": 2025,
+    "venue": "IEEE International Symposium on Personal, Indoor and Mobile Radio Communications",
+    "abstract": "Semantic communication (SemCom) is an emerging paradigm that leverages semantic-level understanding to improve communication efficiency, particularly in resource-constrained scenarios. However, existing SemCom systems often overlook diverse computational and communication capabilities and requirements among different users. Motivated by the need to adaptively balance semantic accuracy, latency, and energy consumption, this paper presents a reinforcement learning (RL)-driven framework for semantic compression model (SCM) selection and resource allocation in multi-user SemCom systems. To address the challenges of balancing image reconstruction quality and communication performance, a system-level optimization metric called Rate-Distortion Efficiency (RDE) has been defined. The framework considers multiple SCMs with varying complexity and resource requirements. A proximal policy optimization (PPO)-based RL approach is developed to dynamically select SCMs and allocate bandwidth and power under non-convex constraints. Simulations demonstrate that the proposed method outperforms several baseline strategies. This paper also discusses the generalization ability, computational complexity, scalability, and practical implications of the framework for real-world SemCom systems.",
+    "url": "https://www.semanticscholar.org/paper/3141a1e61f5f002b9748d62eb51d15bcc1bfe567",
+    "doi": "10.1109/PIMRC62392.2025.11274758",
+    "citation_count": 1,
+    "source": "s2"
+  },
+  {
+    "title": "Resource Allocation for the Training of Image Semantic Communication Networks",
+    "authors": [
+      "Yang Li",
+      "Xinyu Zhou",
+      "Jun Zhao"
+    ],
+    "year": 2025,
+    "venue": "arXiv",
+    "abstract": "Semantic communication is a new paradigm that aims at providing more efficient communication for the next-generation wireless network. It focuses on transmitting extracted, meaningful information instead of the raw data. However, deep learning-enabled image semantic communication models often require a significant amount of time and energy for training, which is unacceptable, especially for mobile devices. To solve this challenge, our paper first introduces a distributed image semantic communication system where the base station and local devices will collaboratively train the models for uplink communication. Furthermore, we formulate a joint optimization problem to balance time and energy consumption on the local devices during training while ensuring effective model performance. An adaptable resource allocation algorithm is proposed to meet requirements under different scenarios, and its time complexity, solution quality, and convergence are thoroughly analyzed. Experimental results demonstrate the superiority of our algorithm in resource allocation optimization against existing benchmarks and discuss its impact on the performance of image semantic communication systems.",
+    "url": "http://arxiv.org/abs/2501.04408v1",
+    "doi": null,
+    "citation_count": 0,
+    "source": "arxiv"
+  },
+  {
+    "title": "Task Offloading and Resource Allocation for Semantic Communication in Air-Ground MEC Networks: A Deep Reinforcement Learning Approach",
+    "authors": [
+      "Yifan Zhang",
+      "Fangfang Yin",
+      "Lin Yang",
+      "Junwei Zhang",
+      "Libiao Jin",
+      "Shufeng Li"
+    ],
+    "year": 2025,
+    "venue": "2025 IEEE 102nd Vehicular Technology Conference (VTC2025-Fall)",
+    "abstract": "With the rapid proliferation of intelligent internet of things (IoT) terminals, conventional terrestrial networks are increasingly strained by limited bandwidth, high latency, and constrained computation capabilities. Air-Ground integrated networks (AGIN) offer a promising solution through flexible deployment, including enhanced coverage and low latency. To enable intelligent services, we propose an air-ground multi-access edge computing (MEC) network for semantic communication. Within this network, users transmit compressed semantic task data to unmanned aerial vehicles (UAVs) and terrestrial small-cell base stations (SBSs) using a probabilistic semantic compression (PSC) technique. A joint resource optimization problem is developed to determine semantic compression, task allocation, computation resource allocation, power control, and user association, aiming to minimize the system cost. The optimization problem is then formulated as a Markov decision process (MDP) and solved by a proximal policy optimization (PPO) algorithm based on deep reinforcement learning (DRL). Simulation results show that the proposed method significantly outperforms three other DRL baselines, achieving a reduction up to 74.12% in overall latency-energy cost under diverse system configurations.",
+    "url": "https://www.semanticscholar.org/paper/9e4cc3d789e4eb2655c89678e914eb49446d9651",
+    "doi": "10.1109/VTC2025-Fall65116.2025.11310510",
+    "citation_count": 0,
+    "source": "s2"
+  },
+  {
+    "title": "Deep Reinforcement Learning-Based Resource Allocation and Mode Selection for Semantic Communication",
+    "authors": [
+      "Hyeonho Noh",
+      "Sojeong Park",
+      "Hyun Jong Yang"
+    ],
+    "year": 2024,
+    "venue": "International Symposium on Modeling and Optimization in Mobile, Ad-Hoc and Wireless Networks",
+    "abstract": null,
+    "url": "https://www.semanticscholar.org/paper/a78f884cbd80988576876a597f5e9ce85d32bdd6",
+    "doi": null,
+    "citation_count": 3,
+    "source": "s2"
+  },
+  {
+    "title": "Resource Allocation for Multi-cell Semantic Communication based on Deep Reinforcement Learning",
+    "authors": [
+      "Guang Cheng",
+      "Xiaoming Wang",
+      "Dapeng Li",
+      "Rui Jiang",
+      "Youyun Xu"
+    ],
+    "year": 2023,
+    "venue": "International Conference on Speech Technology and Human-Computer Dialogue",
+    "abstract": "Semantic communication is considered to be able to break through the limitations of Shannon's law and truly realizes the 6th generation mobile communication technology (6G). Most of the current semantic communication researches focus on signal detection, semantic extraction and recovery. The resource allocation in semantic communication system has not been completely considered. Meanwhile, with the development of communication system, the communication environment is increasingly complex, so that the high dynamic resource allocation problem is difficult to be solved by classical methods. Therefore, this paper formulates to solve multi-object, non-convex, dynamic resource allocation problems in multi-cell semantic communication systems through deep reinforcement learning. Based on Transformer model, we realize the transformation from bit information transmission rate to semantic information transmission rate. At the same time, we introduce semantic throughput (STP) as a metric of system semantic transmission rate. Moreover, we use deep reinforcement learning to solve sub-channel allocation and power allocation problems in dynamic systems. Compared with the traditional resource allocation method, that of semantic communication in this paper has larger STP under the same semantic confidence.",
+    "url": "https://www.semanticscholar.org/paper/26e1e32dde06617df4ef243d21e2bfdf27f30763",
+    "doi": "10.1109/ICCT59356.2023.10419633",
+    "citation_count": 5,
+    "source": "s2"
+  },
+  {
+    "title": "Semantic-Aware Resource Allocation in MEC-Assisted SAGIN: A Deep Reinforcement Learning-based Approach",
+    "authors": [
+      "Yuexin Liu",
+      "Fangfang Yin",
+      "Qihong Liu",
+      "Danpu Liu",
+      "Libiao Jin",
+      "Shufeng Li"
+    ],
+    "year": 2025,
+    "venue": "2025 IEEE 102nd Vehicular Technology Conference (VTC2025-Fall)",
+    "abstract": "In this paper, we propose a semantic communication framework facilitated by multi-access edge computing (MEC)assisted satellite-air-ground integrated networks (SAGIN), which comprises of LEO satellites, unmanned aerial vehicles (UAVs), and macro-cell base stations (MBSs). Considering the limited wireless resources and diversified quality of service (QoS) requirements of semantic tasks, an optimization problem with the goal of minimizing system cost in terms of the task latency and energy consumption is formulated. In order to address the mixed-integer nonlinear programming (MINLP) problem, we propose an alternating optimization algorithm that tackles UAV deployment sub-problem with the successive convex approximation (SCA) method, task offloading, semantic compression, power allocation and computation resource allocation optimization with deep reinforcement learning (DRL)-based multi-agent proximal policy optimization (MAPPO) method. Simulation results demonstrate that our proposed algorithm outperformes other reinforcement learning algorithms, i.e., about 5.12%, 23.72% and 35.64% over PPO, DDPG, and A2C, respectively.",
+    "url": "https://www.semanticscholar.org/paper/bde640691dcbdb52d05b9c4b0d56f61b26d2d4a2",
+    "doi": "10.1109/VTC2025-Fall65116.2025.11310140",
+    "citation_count": 1,
+    "source": "s2"
+  },
+  {
+    "title": "Resource Allocation for Semantic Aware Relay Networks using Multi-Agent Reinforcement Learning",
+    "authors": [
+      "Waleed Ahsan",
+      "C. Foh",
+      "Yi Ma"
+    ],
+    "year": 2025,
+    "venue": "2025 IEEE 101st Vehicular Technology Conference (VTC2025-Spring)",
+    "abstract": "The variety and volume of real-time video streaming services make network resources like power, frequency, and time critical to the user experience. Semantic communication, by transmitting only meaningful data, significantly reduces the load on the network, leading to faster transmission times and reduced latency-both crucial for enhancing user experience. In this paper, we develop a context-aware resource allocation framework for a semantic-aware regenerative AI-based Unmanned Aerial Vehicle (UAV) setup that accommodates both conventional and semantic communication users. Specifically, we define a semantic feature pooling mechanism, upon which a novel Quality of Experience (QoE) model is proposed. For dynamic network environments, we formulate a long-term resource allocation problem by maximizing the expected rewards. Each UAV is modeled as a learning agent, with each resource allocation solution corresponding to an action taken by the UAVs. We then develop a Multi-Agent Reinforcement Learning (MARL) framework in which each agent discovers its optimal strategy based on local observations. More specifically, we propose an agent-independent method where all agents execute a decision algorithm independently while sharing a common structure based on Q-learning. The proposed framework also facilitates intelligent traffic steering by dynamically adjusting resource distribution based on real-time context. Finally, simulation results demonstrate the effectiveness and superiority of the proposed method in terms of overall QoE.",
+    "url": "https://www.semanticscholar.org/paper/542f2c05a7c08b91004d29d5dfc47b398f698b8c",
+    "doi": "10.1109/VTC2025-Spring65109.2025.11174537",
+    "citation_count": 0,
+    "source": "s2"
+  },
+  {
+    "title": "Deep Reinforcement Learning-Based Resource Allocation for Hybrid Bit and Generative Semantic Communications in Space-Air-Ground Integrated Networks",
+    "authors": [
+      "Chong Huang",
+      "Xuyang Chen",
+      "Gaojie Chen",
+      "Pei Xiao",
+      "Geoffrey Ye Li",
+      "Wei Huang"
+    ],
+    "year": 2024,
+    "venue": "IEEE Journal on Selected Areas in Communications",
+    "abstract": "In this paper, we introduce a novel framework consisting of hybrid bit-level and generative semantic communications for efficient downlink image transmission within space-air-ground integrated networks (SAGINs). The proposed model comprises multiple low Earth orbit (LEO) satellites, unmanned aerial vehicles (UAVs), and ground users. Considering the limitations in signal coverage and receiver antennas that make the direct communication between satellites and ground users unfeasible in many scenarios, thus UAVs serve as relays and forward images from satellites to the ground users. Our hybrid communication framework effectively combines bit-level transmission with several semantic-level image generation modes, optimizing bandwidth usage to meet stringent satellite link budget constraints and ensure communication reliability and low latency under low signal-to-noise ratio (SNR) conditions. To reduce the transmission delay while ensuring reconstruction quality for the ground user, we propose a novel metric to measure delay and reconstruction quality in the proposed system, and employ a deep reinforcement learning (DRL)-based strategy to optimize resource allocation in the proposed network. Simulation results demonstrate the superiority of the proposed framework in terms of communication resource conservation, reduced latency, and maintaining high image quality, significantly outperforming traditional solutions. Therefore, the proposed framework can ensure the real-time image transmission requirements in SAGINs, even under dynamic network conditions and user demand.",
+    "url": "https://www.semanticscholar.org/paper/c34e3c73bc0cab684a3f7b29ae0c137aba9d6fb8",
+    "doi": "10.1109/JSAC.2025.3623157",
+    "citation_count": 18,
+    "source": "s2"
+  },
+  {
+    "title": "Hybrid Reinforcement Learning for Resource Allocation in VQA-Oriented UAV Semantic Offloading",
+    "authors": [
+      "Qiankun Zhang",
+      "Zelin Ji",
+      "Yue Liu",
+      "Ze Song",
+      "Zhijing Qin"
+    ],
+    "year": 2026,
+    "venue": "IEEE Wireless Communications and Networking Conference",
+    "abstract": "Visual question answering (VQA) plays an important role in enhancing situational awareness, while unmanned aerial vehicles (UAV) provide flexible platforms to support such semantic communication tasks. This paper investigates resource allocation for VQA in UAV-assisted semantic communication networks. In the proposed framework, both UAV and user equipment (UE) adopt deep semantic communication (DeepSC)-VQA to encode semantic features, which are then offloaded to a multi-access edge computing (MEC) server for inference. To jointly optimize the energy consumption and the latency of the whole system, we develop a hybrid proximal policy optimization (HPPO) algorithm with a tailored reward function that coordinates the UAV trajectory, radio resource allocation, and semantic offloading. Simulation results show that the HPPO-based scheme consistently outperforms conventional reinforcement learning benchmarks, achieving a superior balance between the energy consumption and the latency.",
+    "url": "https://www.semanticscholar.org/paper/3efb3d6bf7a887428c928734ed43a14ecc65fb9e",
+    "doi": "10.1109/WCNC65185.2026.11555390",
+    "citation_count": 0,
+    "source": "s2"
+  },
+  {
+    "title": "Reinforcement learning-based resource allocation for multi-task multi-codebook semantic communications",
+    "authors": [
+      "Ying Zhang",
+      "Leibing Yan",
+      "Guang Li"
+    ],
+    "year": 2026,
+    "venue": "Physical Communication",
+    "abstract": null,
+    "url": "https://www.semanticscholar.org/paper/59edee9db083e5b580db365294d07c0e15deab06",
+    "doi": "10.1016/j.phycom.2025.102982",
+    "citation_count": 1,
+    "source": "s2"
+  },
+  {
+    "title": "DRL-Driven Dynamic Resource Allocation for Task-Oriented Semantic Communication",
+    "authors": [
+      "Haijun Zhang",
+      "Hongyu Wang",
+      "Yabo Li",
+      "Keping Long",
+      "A. Nallanathan"
+    ],
+    "year": 2023,
+    "venue": "IEEE Transactions on Communications",
+    "abstract": "Semantic communication has been regarded as a promising technology to serve upcoming intelligent applications. However, few studies have addressed the problem of resource allocation in semantic communication networks. Most resource allocation mechanisms act fairly to all original data, ignoring the meaning behind the transmitted bits. In this paper, a dynamic resource allocation scheme for the task-oriented semantic communication network (TOSCN) based on deep reinforcement learning (DRL) is proposed, which allows data with richer semantic information to preferentially occupy limited communication resources. This paper aims to design a deep deterministic policy gradient (DDPG) agent at the micro base station to maximize the long-term transmission efficiency of tasks. Firstly, the relationship between semantic information and task performance is investigated. Subsequently, a novel wireless resource allocation model for TOSCN is proposed by taking the image classification task as an example. Then, a joint optimization problem of the semantic compression ratio, transmit power, and bandwidth of each user is formulated. The agent is trained in an interactive learning environment to obtain a decent trade-off between the amount of data delivered to the receiver and the accuracy of intelligent tasks. Simulation results demonstrate that the proposed scheme achieves significant advantages in relieving communication pressure and improving task performance in resource-constrained wireless networks.",
+    "url": "https://www.semanticscholar.org/paper/bd5648c4700a4c75c2fb80fc939229f08f9902f9",
+    "doi": "10.1109/TCOMM.2023.3274145",
+    "citation_count": 165,
+    "source": "s2"
+  },
+  {
+    "title": "Tasks-Oriented Channel Optimization and Resource Allocation in Vehicular Networks: A Hierarchical Reinforcement Learning Based Approach",
+    "authors": [
+      "Runtao Lin",
+      "Caili Guo",
+      "Biling Zhang",
+      "Jiujiu Chen",
+      "Hanyang Li"
+    ],
+    "year": 2025,
+    "venue": "IEEE Transactions on Vehicular Technology",
+    "abstract": "The number of devices, data volume, and pictures and videos in the vehicular networks have all increased significantly as a result of the continued development of 6G technology, putting an enormous burden on the edge communication resources. To solve this problem, a good resource allocation scheme is necessary. Existing resource allocation algorithms often pursue accurate transmission and ignore time-varying channels. In order to further obtain real and reasonable resource allocation results, this paper introduces semantic communication. It then decomposes that problem to further establish a hierarchical framework. The problem is addressed via a task-oriented channel optimization and resource allocation scheme based on a hierarchical reinforcement learning (TCRS-HRL) algorithm. First, a channel optimization and resource allocation problem under an imperfect channel state is developed, and it is divided into two separate sub problems for optimization. Second, the resource allocation problem at the edge is addressed with the introduction of hierarchical reinforcement learning and the TCRS-HRL algorithm. The ideal channel state and resource allocation approach are found by constructing the state space, action space, and environmental feedback for each aspect individually. Finally, simulations have demonstrated the superiority and performance benefits of the proposed algorithm compared to current methods, showing that the implementation of TCRS-HRL can result in an accuracy improvement of roughly 8%.",
+    "url": "https://www.semanticscholar.org/paper/3b4e2abef3ffc5f08644ea646c164f3f82ce98af",
+    "doi": "10.1109/TVT.2024.3523499",
+    "citation_count": 2,
+    "source": "s2"
+  },
+  {
+    "title": "AI-Native 6G Networks: Adaptive Resource Allocation Through Edge-Integrated Deep Reinforcement Learning",
+    "authors": [
+      "Anurag Shrivastava",
+      "Zaid Alsalami",
+      "R. V. S. S. S. Nagini",
+      "Aman Sharma",
+      "Irfan Khan",
+      "Manish Gupta"
+    ],
+    "year": 2025,
+    "venue": "2025 International Conference on Intelligent & Innovative Practices in Engineering & Management (IIPEM)",
+    "abstract": "This paper investigates AI-Native 6G networks that integrate deep reinforcement learning (DRL) agents at the network edge to achieve adaptive, low-latency, and energy-efficient resource allocation. We present a conceptual architecture—Edge-Integrated DRL (EIDRL)—that combines lightweight on-device policies, edge-hosted value models, and a hierarchical orchestration layer that mediates model updates, inference placement, and safety constraints. The proposed framework explicitly addresses 6G-era characteristics: massive heterogeneous devices, semantic and sensing-aided communications, integration of sensing/communication/computation (ISCC), and stringent reliability/latency requirements. We detail the learning formulation (state, action, reward, multi-timescale update rules), introduce techniques for sample-efficient training (model-based rollouts, transfer from foundation WLAMs, and federated/split learning hybrids), and propose mechanisms for safety, fairness, and compute-aware scheduling. Through analytical arguments and representative numerical scenarios (multi-tenant edge slices, ISAC nodes, and mobile user clusters), we demonstrate that EIDRL reduces regret relative to static baselines, lowers average latency under load, and improves spectral and energy efficiency when the edge controller coordinates inference placement and action aggregation. Finally, we identify open research directions—privacy-preserving multi-agent coordination, certifiable robustness of learned policies, semantics-aware reward design, and operational considerations for O-RAN/OAI integration—thereby providing a focused research agenda for adaptive resource allocation in AI-native 6G systems.",
+    "url": "https://www.semanticscholar.org/paper/19135dd2d7ecc8f0bda1c66393bf84cb643b1735",
+    "doi": "10.1109/IIPEM65914.2025.11548455",
+    "citation_count": 0,
+    "source": "s2"
+  },
+  {
+    "title": "QoSem-based Resource Allocation for Semantic Communication in NTN Downlinks",
+    "authors": [
+      "Frodouard Minani",
+      "Makoto Kobayashi",
+      "T. Fujihashi",
+      "Md. Abdul Alim",
+      "S. Saruwatari",
+      "Takashi Watanabe"
+    ],
+    "year": 2024,
+    "venue": "Global Communications Conference",
+    "abstract": "Non-terrestrial networks (NTNs) are crucial for 6G communications but face challenges like classical communication bottlenecks. Semantic communication (SemCom) offers a solution, but efficient resource allocation remains unresolved. This paper proposes a joint approach for resource allocation and semantic information selection in low-earth orbit (LEO) satellite-based image transmission. A novel metric, Quality of Semantic (QoSem), is introduced to measure the SemCom performance. An optimization problem is formulated to maximize QoSem by allocating computing, power, and bandwidth resources and selecting optimal semantic information. Furthermore, we propose a novel deep reinforcement learning (DRL) algorithm, namely Mixed-Action Decision Intelligent Semantic-aware Soft-Actor Critic (MADIS-SAC), to handle the problem’s nonconvexity and NP-hard complexity. Results show 82.5% of QoSem improvement compared to baselines under resource constraints.",
+    "url": "https://www.semanticscholar.org/paper/0eb09e747fa239afeafa7c407117290cb17587b1",
+    "doi": "10.1109/GLOBECOM52923.2024.10901128",
+    "citation_count": 4,
+    "source": "s2"
+  },
+  {
+    "title": "Resource Allocation for Multi-Cell Semantic Communication Systems Based on DRL",
+    "authors": [
+      "Xiahua Jia",
+      "Xiaoming Wang",
+      "Yongjia Zhang",
+      "M. Sheng",
+      "Guang Cheng"
+    ],
+    "year": 2024,
+    "venue": "2024 12th International Conference on Information Systems and Computing Technology (ISCTech)",
+    "abstract": "To improve user service satisfaction level (SSL), this paper investigates a resource allocation method for multicell semantic communication systems with multi-service hybrid transmission mode. For the coexistence of textual semantic communication service and ultra-high reliability and low latency (URLLC) service, we utilize a deep reinforcement learning (DRL) method to solve dynamic sub-channel assignment and power allocation optimization problem. Then, we design an event triggering control mechanism (ETC) and a centralized training and distributed execution (CTDE) method for the multi-agent DRL-based resource allocation network, to reduce transmission delay of the multi-cell semantic communication system. Simulation results illustrate that the proposed algorithm can achieve better service satisfaction level performance with lower time cost compared with existing methods.",
+    "url": "https://www.semanticscholar.org/paper/35283aa73fb8aa57ace0e69533f40dea43a3219e",
+    "doi": "10.1109/ISCTech63666.2024.10845514",
+    "citation_count": 3,
+    "source": "s2"
+  },
+  {
+    "title": "NOMA-Enhanced Intelligent Semantic Communication Networks using Deep Reinforcement Learning",
+    "authors": [
+      "Thanh Phung Truong",
+      "Donghyeon Hur",
+      "Junsuk Oh",
+      "Donghyun Lee",
+      "Dongwook Won",
+      "Jeongyeup Paek",
+      "Sungrae Cho"
+    ],
+    "year": 2024,
+    "venue": "International Conference on Information Networking",
+    "abstract": "This research explores an intelligent semantic communication network where the base station (BS) processes and transmits semantic data to users through a wireless link. To improve communication between the BS and users, we apply the non-orthogonal multiple access (NOMA) technique in this system. Within this system, we consider the delay model for transmitting original data from the BS to users using semantic communication. This model consists of three main phases: (i) extracting semantic data from the original data at the BS; (ii) transmitting this semantic data from the BS to the users; and (iii) reconstructing the original data from the received semantic data at the users. To optimize the overall system delay, we formulate a problem involving optimizing beamforming vectors and computation resource allocation at the BS. To address this problem, we propose a deep reinforcement learning (DRL) framework that utilizes the deep deterministic policy gradient algorithm. In simulations, we analyze the convergence of our proposed framework, which shows stable performance under varying algorithm parameters.",
+    "url": "https://www.semanticscholar.org/paper/eafe2c9b00806d4225b2a3dda00e8aa9301a8f37",
+    "doi": "10.1109/ICOIN59985.2024.10572204",
+    "citation_count": 0,
+    "source": "s2"
+  },
+  {
+    "title": "EoSI-Aware Resource Allocation for Semantic Communication-Enabled Industrial IoT System",
+    "authors": [
+      "Xin Xiang",
+      "Xiong Li",
+      "Qimei Cui",
+      "Xuefei Zhang",
+      "Xiaofeng Tao"
+    ],
+    "year": 2023,
+    "venue": "International Conference on Wireless Communications and Signal Processing",
+    "abstract": "In the semantic communication-enabled Industrial Internet of Things system (SemCom-IIoT), ensuring efficient task accomplishment encounters a critical issue: how to timely and accurately transmit and process semantic information of moderate amount with minimum resource cost, namely improving the efficiency of semantic information applied to the task. To overcome the problem, we provide a joint optimization of multi-dimensional resource allocation and semantic retention ratio selection in this paper. Specifically, a novel performance metric named efficiency of semantic information (EoSI) is defined to quantify the aforementioned efficiency. Further, considering the dynamics of the industrial environment, we exploit a deep reinforcement learning algorithm to maximize EoSI of the system by adaptively adjusting the allocation of computing resources, bandwidth resources and the selection of semantic retention ratio. Extensive simulation results demonstrate that our proposed approach can significantly enhance EoSI by up to 173% and 139% respectively in the context of a large number of devices and the strict task accuracy requirement, compared with other benchmarks.",
+    "url": "https://www.semanticscholar.org/paper/073424f547fbce54ba718135edeb076678636f3d",
+    "doi": "10.1109/WCSP58612.2023.10405335",
+    "citation_count": 5,
+    "source": "s2"
+  },
+  {
+    "title": "Joint Computing Resource and Bandwidth Allocation for Semantic Communication Networks",
+    "authors": [
+      "Fangzhou Zhao",
+      "Gaurav Bagwe",
+      "Ezedin Mohammed",
+      "Lei Feng",
+      "Lan Zhang",
+      "Yao Sun"
+    ],
+    "year": 2023,
+    "venue": "IEEE Vehicular Technology Conference",
+    "abstract": "As a new communication paradigm, neural network-driven semantic communication (SemCom) has demonstrated considerable promise in enhancing resource efficiency by transmitting the semantics rather than all bits of source information. Using a large semantic coding model can accurately distil semantics, and significantly save the required bandwidth. However, this consumes a large amount of computing resources, which are also precious in the network. In this paper, we investigate the joint computing resources and bandwidth allocation for SemCom networks. We first introduce the computing latency model in SemCom, and formulate the joint computing resources and bandwidth allocation optimization problem with the objective of maximizing semantic accuracy. Then, we transform this problem into a deep reinforcement learning framework and exploit a multi-agent proximal policy optimization to solve it. Numerical results show that the proposed method significantly improves the average semantic accuracy in the resource-constrained cases, compared with the two baselines.",
+    "url": "https://www.semanticscholar.org/paper/c4ba92a32703eb67c30f9681d0e981738a863e00",
+    "doi": "10.1109/VTC2023-Fall60731.2023.10333793",
+    "citation_count": 13,
+    "source": "s2"
+  },
+  {
+    "title": "Proactive Resource Allocation in Time-Sensitive Mobile-Edge Computing Using LLM-Guided Hierarchical Multi-Agent Reinforcement Learning",
+    "authors": [
+      "Cong Wang",
+      "Jianbao Hao",
+      "Sancheng Peng",
+      "Ying Yuan",
+      "Guorui Li",
+      "Guojon Wang"
+    ],
+    "year": 2026,
+    "venue": "IEEE Network",
+    "abstract": "With the rapid development of sixth-generation mobile communication technology, a huge intelligent society composed of billions of Internet of Things (IoT) devices is rapidly emerging. It results in mobile edge computing systems facing two challenges: limited resources and highly dynamic network environments. Recent advances in large language models (LLMs) show strong abilities in decision-making, semantic understanding, and reasoning. These abilities enable LLMs to improve global coordination and proactive scheduling in communication-computation integrated IoT systems. This paper proposes a novel semantics-enhanced hierarchical multi-agent reinforcement learning framework for uncrewed aerial vehicle-assisted mobile edge computing systems, which innovatively incorporates a pretrained LLM as the global situational awareness module in the macro-coordination layer. We design a spatio-temporal decision network that integrates a graph attention network and a temporal convolutional network, leveraging the semantic reasoning of LLM to enable proactive global resource allocation. To address the combinatorial explosion in decision spaces, we develop a heuristic-guided hypergraph network at the micro-execution layer to improve learning efficiency. Experimental results demonstrate that our proposed framework achieves a 21.3% reduction in the average age of information and a 12.5% improvement in task completion rate compared with classical hierarchical reinforcement learning models, showing clear advantages in both stability and overall performance.",
+    "url": "https://www.semanticscholar.org/paper/11e67909ff1e23e170c3ea2ca9d2483f19b804d6",
+    "doi": "10.1109/MNET.2025.3643160",
+    "citation_count": 0,
+    "source": "s2"
+  },
+  {
+    "title": "DRL-Empowered Joint Semantic Representation and Resource Allocation for Multi-User Multi-Task Communication Systems",
+    "authors": [
+      "Hangyu Ren",
+      "Richeng Jin",
+      "Juan Liu",
+      "Xijun Wang"
+    ],
+    "year": 2025,
+    "venue": "International Conference on Wireless Communications and Signal Processing",
+    "abstract": "The proliferation of smart Internet of Things (IoT) devices has exacerbated spectrum scarcity, particularly for bandwidth-intensive visual data transmission with stringent latency constraints. This paper proposes a novel multi-task-oriented semantic communication framework that jointly optimizes semantic encoding and resource allocation in multi-user downlink scenarios. Our approach introduces an adaptive semantic encoder at the edge device that intelligently decomposes visual information into two complementary components: common semantics that capture cross-task correlations and task-specific semantics tailored to individual user needs. Upon receiving task-relevant semantics, each user can efficiently reconstruct its required semantic information to execute its designated visual task. To maximize the Quality of Semantic Communication (QoSC) within constrained resources, we develop a deep reinforcement learning-based optimization framework that dynamically optimizes semantic compression ratios, power and bandwidth allocation, and encoder-decoder parameters in an end-to-end manner. Experimental results demonstrate that our framework achieves superior performance compared to conventional schemes, significantly improving semantic communication efficiency while maintaining competitive task performance across diverse visual tasks.",
+    "url": "https://www.semanticscholar.org/paper/8f49f06bd4f1c98cf72ae48ef6e214ef40ad4810",
+    "doi": "10.1109/WCSP68525.2025.1010373",
+    "citation_count": 0,
+    "source": "s2"
+  }
+]

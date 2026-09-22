@@ -1,0 +1,254 @@
+{
+  "paths": {
+    "visdrone_val": "data/raw/visdrone/DET/val",
+    "tasks_csv": "outputs/tasks/v0_tasks.csv",
+    "vlm_lut_csv": "outputs/lut/v0_semantic_quality_lut.csv",
+    "lut_csv": "outputs/lut/v0_semantic_quality_lut.csv",
+    "lut_json": "outputs/lut/v0_semantic_quality_summary.json",
+    "lut_md": "outputs/lut/v0_semantic_quality_summary.md",
+    "sim_results_csv": "outputs/sim/v0_results.csv",
+    "sim_summary_md": "outputs/sim/v0_summary.md",
+    "resource_results_csv": "outputs/resource_alloc/v0_resource_results.csv",
+    "resource_summary_md": "outputs/resource_alloc/v0_resource_summary.md",
+    "resource_report_md": "outputs/resource_alloc/v0_resource_report.md",
+    "resource_fig_dir": "outputs/resource_alloc/figures"
+  },
+  "download": {
+    "det_val_file_id": "1bxK5zgLn0_L8x276eKkuYA_FzwCIjb59",
+    "det_val_zip": "data/raw/visdrone/VisDrone2019-DET-val.zip"
+  },
+  "bins": {
+    "channel": ["bad", "medium", "good"],
+    "view_quality": ["poor", "medium", "good"],
+    "freshness": ["fresh", "stale", "expired"],
+    "service_levels": [0, 1, 2, 3],
+    "question_types": ["presence", "counting", "risk", "attribute", "relation"],
+    "risk_levels": ["normal", "critical"]
+  },
+  "thresholds": {
+    "epsilon_normal": 0.65,
+    "epsilon_critical": 0.82,
+    "tau_normal": 5.0,
+    "tau_critical": 3.0
+  },
+  "view_quality": {
+    "good_score": 0.62,
+    "medium_score": 0.30,
+    "scale_reference": 0.0022,
+    "density_penalty_start": 8.0,
+    "density_penalty_per_object": 0.015,
+    "min_density_component": 0.68,
+    "binning": "quantile"
+  },
+  "evaluator": {
+    "seed": 7,
+    "ci_noise_scale": 0.035,
+    "base_accuracy": {
+      "presence": 0.93,
+      "counting": 0.84,
+      "risk": 0.82,
+      "attribute": 0.80,
+      "relation": 0.78
+    },
+    "service_gain": {
+      "0": 0.76,
+      "1": 0.90,
+      "2": 1.00,
+      "3": 0.98
+    },
+    "light_evidence_boost": {
+      "presence": 1.12,
+      "counting": 1.10,
+      "risk": 1.00,
+      "attribute": 1.04,
+      "relation": 1.02
+    },
+    "channel_quality": {
+      "bad": 0.68,
+      "medium": 0.86,
+      "good": 0.98
+    },
+    "view_quality": {
+      "poor": 0.58,
+      "medium": 0.80,
+      "good": 0.97
+    },
+    "freshness_quality": {
+      "0": {"fresh": 0.96, "stale": 0.76, "expired": 0.52},
+      "1": {"fresh": 0.98, "stale": 0.90, "expired": 0.78},
+      "2": {"fresh": 0.99, "stale": 0.97, "expired": 0.92},
+      "3": {"fresh": 0.99, "stale": 0.96, "expired": 0.90}
+    },
+    "risk_penalty": {
+      "normal": 1.00,
+      "critical": 0.94
+    },
+    "empirical_calibration": {
+      "enabled": true,
+      "question_type_scale": {
+        "presence": 1.00,
+        "counting": 0.98,
+        "risk": 0.97,
+        "attribute": 0.96,
+        "relation": 0.94
+      },
+      "service_level_bias": {
+        "0": -0.015,
+        "1": 0.005,
+        "2": 0.020,
+        "3": 0.015
+      },
+      "view_quality_bias": {
+        "poor": -0.020,
+        "medium": 0.000,
+        "good": 0.010
+      }
+    }
+  },
+  "simulation": {
+    "seed": 13,
+    "tasks_per_episode": 40,
+    "policies": ["always_cache", "always_light", "always_image", "always_roi", "greedy_min_sufficient_evidence"],
+    "delay_by_level": {
+      "0": 0.6,
+      "1": 1.8,
+      "2": 3.4,
+      "3": 2.6
+    },
+    "energy_by_level": {
+      "0": 0.2,
+      "1": 1.0,
+      "2": 2.5,
+      "3": 1.8
+    },
+    "channel_delay_multiplier": {
+      "bad": 1.45,
+      "medium": 1.10,
+      "good": 0.90
+    }
+  },
+  "resource_env": {
+    "seed": 17,
+    "num_uavs": 2,
+    "tasks_per_episode": 12,
+    "episode_slots": 6,
+    "scenario": "literature_demo",
+    "cell_radius_m": 1000.0,
+    "uav_altitude_m": 80.0,
+    "initial_battery": 100.0,
+    "uav_speed_mps": 18.0,
+    "observe_travel_fraction": 0.05,
+    "total_bandwidth_mhz": 12.0,
+    "edge_cpu_capacity": 10.0,
+    "edge_gpu_capacity": 4.0,
+    "cache_capacity": 64,
+    "freshness_slots": {
+      "fresh": 1,
+      "stale": 3
+    },
+    "payload_mb_by_level": {
+      "0": 0.01,
+      "1": 0.18,
+      "2": 1.6,
+      "3": 0.55
+    },
+    "sensing_time_by_level": {
+      "0": 0.0,
+      "1": 0.35,
+      "2": 0.9,
+      "3": 0.65
+    },
+    "workload_by_level": {
+      "0": 0.15,
+      "1": 0.9,
+      "2": 1.8,
+      "3": 1.35
+    },
+    "gpu_workload_by_level": {
+      "0": 0.02,
+      "1": 0.35,
+      "2": 1.1,
+      "3": 0.85
+    },
+    "a2g": {
+      "enabled": true,
+      "carrier_mhz": 2400.0,
+      "reference_distance_m": 1.0,
+      "reference_gain_db": -40.0,
+      "path_loss_exponent": 2.2,
+      "noise_figure_db": 7.0,
+      "excess_loss_db": 4.0,
+      "los_excess_loss_db": 1.0,
+      "nlos_excess_loss_db": 10.0,
+      "los_a": 9.61,
+      "los_b": 0.16,
+      "fading_mode": "slow_fading",
+      "slow_fading_std_db": 2.0,
+      "fast_fading_std_db": 5.0,
+      "fading_correlation": 0.85,
+      "interference_enabled": true,
+      "interference_floor_dbm": -120.0,
+      "interference_overlap_scale": 0.02,
+      "bad_snr_db": 5.0,
+      "good_snr_db": 15.0
+    },
+    "channel_rate_factor": {
+      "bad": 0.7,
+      "medium": 1.2,
+      "good": 2.0
+    },
+    "power_levels_w": [0.2, 0.6, 1.2, 2.0],
+    "bandwidth_shares": [0.15, 0.25, 0.4, 0.6],
+    "cpu_shares": [0.15, 0.25, 0.4, 0.6],
+    "gpu_shares": [0.05, 0.15, 0.3, 0.5],
+    "queue_delay_scale": 0.35,
+    "gpu_queue_delay_scale": 0.25,
+    "model_load_delay": 0.4,
+    "model_cache_capacity": 3,
+    "model_cache_hit_delay_scale": 0.15,
+    "gpu_memory_capacity_mb": 8192.0,
+    "gpu_memory_load": 0.25,
+    "model_memory_mb_by_level": {
+      "0": 256.0,
+      "1": 1536.0,
+      "2": 4096.0,
+      "3": 3072.0
+    },
+    "batching_delay_scale": 0.08,
+    "semantic_cache": {
+      "fresh_hit_probability": 0.96,
+      "stale_hit_probability": 0.68,
+      "expired_hit_probability": 0.28,
+      "spatial_reuse_radius_m": 140.0,
+      "reuse_boost": 0.18,
+      "policy": "priority_freshness"
+    },
+    "propulsion_energy_per_m": 0.003,
+    "hover_energy_per_slot": 0.03,
+    "return_energy_reserve": 5.0,
+    "battery_failure_threshold": 1.0,
+    "sensing_energy_by_level": {
+      "0": 0.0,
+      "1": 0.2,
+      "2": 0.55,
+      "3": 0.4
+    },
+    "compute_energy_per_workload": 0.06,
+    "gpu_energy_per_workload": 0.05,
+    "battery_cost_scale": 0.02,
+    "observation": {
+      "max_tasks": 12,
+      "max_uavs": 4
+    },
+    "scenario_task_count": 6,
+    "reward_weights": {
+      "success": 4.0,
+      "delay": 0.25,
+      "energy": 0.15,
+      "payload": 0.05,
+      "quality_violation": 2.0,
+      "deadline_violation": 1.5,
+      "airspace_conflict": 1.0
+    }
+  }
+}

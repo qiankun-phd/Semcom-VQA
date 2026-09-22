@@ -1,0 +1,33 @@
+% §VIII --- Conclusion. Status: REWRITTEN for the v8 admission-regime verdict.
+\section{Conclusion}\label{sec:conclusion}
+
+We presented a U-space/BUBBLES-conformant framework for jointly scheduling
+semantic evidence levels and airspace resources in multi-UAV visual
+question answering, in which every scenario parameter is traceable to a
+SESAR JU deliverable and the separation kernel reproduces the official
+numerics to within $0.18\%$. A corrected safety bridge couples the payload
+to the tactical-contact separation chain through an M/G/1 priority queue:
+tokens keep the separation service at its certified baseline, while peak
+image traffic inflates the contact distance by $23.7$\,m and forfeits
+$\approx\!6\%$ of relative airspace capacity---communication remains a
+flight-safety variable, now with honest sign discipline. Scheduling is
+formalized as a CMDP on the admitted set with a certificate-based,
+budget-calibrated escalation channel, and solved by a risk-aware
+constrained hybrid-action PPO behind a six-layer constraint stack. The
+central empirical result is a dual-pathology contrast obtained by running
+the same machinery in a feasible and an infeasible regime: under nominal
+load the quality dual converges to an interior shadow price ($3.29$) and
+the policy attains $93\%$ of the escalation-aware oracle's admitted
+mission success; under peak overload the dual ratchets to its cap on
+$3/3$ seeds, the constrained and unconstrained arms coincide, and safety
+is carried structurally---the escalation-aware oracle reaches $0.916$ only
+by escalating $0.666$ of the critical load, while the conflict, critical-
+deadline, and escalation budgets all hold with margin. The methodological
+takeaway---read a pinned multiplier as an infeasibility certificate and
+reach for admission control rather than a higher price, verifying with
+channel-off and warm-start-at-the-pin ablations---is the paper's most
+portable contribution. Future work will close the nominal quality gap
+that the interior dual is still pricing at episode $500$, learn the
+escalate/serve split directly against the certificate budget, and pursue
+a federated extension that shares evidence-selection statistics across a
+U-space fleet while keeping the safety kernel local.
