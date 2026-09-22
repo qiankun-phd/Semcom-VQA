@@ -4,6 +4,11 @@
 
 当前主线不是问题引导编码。问题门控在已完成评测里没有超过同预算的普通神经压缩。系统主体仍是：预训练神经图像编码、实际码流、RGB 重建、固定 Qwen 回答。尚未成立的贡献候选，是在回答质量约束下选择压缩强度和信道保护。证据边界以 [docs/RESEARCH_CONTROL.md](docs/RESEARCH_CONTROL.md) 为准，不要用更早的稿件标题代替它。
 
+本分支的 EXP-011 已完成 120 张开发图的“图像码率 × 接收视觉预算”9 配置验证。
+实现和冻结协议见 [运行说明](code/vqa_semcom_v0/experiments/rgb_rate_visual_budget/README.md)，
+聚合图表与证据限制见 [开发分析](docs/experiments/EXP-011/analysis-report.md)。
+路由上限不是已训练路由器的成绩；独立测试与实测节能尚未成立。
+
 ## 从哪里读
 
 | 路径 | 内容 |

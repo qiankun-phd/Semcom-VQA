@@ -1,0 +1,14 @@
+{
+  "input_sha256": {
+    "summary.json": "fba680f9f7620374f5105fa2aa0c613565c2abe8fe5697b9c19566fc6be2a4e7",
+    "decision.json": "077f34081bb9a03dd2fbc2676db54c317785a17aa20965d28509271d06c2efbe",
+    "scored.json": "a67d44012c7a0a3ed4057caaaf06fdf65d514db2c279594f2e1e8f43c5739cd1",
+    "report.md": "c893836cc1ac96de7123b91ac0144339af74a6e60451793a332678fbf4c9cb9a"
+  },
+  "scope": "development_descriptive",
+  "contains_private_question_content": false,
+  "figures": [
+    "figure-01-accuracy-grid",
+    "figure-02-latency-tokens"
+  ]
+}

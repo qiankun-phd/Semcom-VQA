@@ -1,0 +1,64 @@
+{
+  "experiment_id": "EXP-011",
+  "state": "PREREGISTERED_BEFORE_GRID_INFERENCE",
+  "split": "dev",
+  "expected_questions": 120,
+  "expected_question_type_counts": {
+    "object_presence": 20,
+    "counting": 20,
+    "color": 20,
+    "positional_reasoning": 20,
+    "scene_recognition": 20,
+    "activity_recognition": 20
+  },
+  "dev_manifest_sha256": "d4ddd573ada3906a17b555aff16a7628b596d9baa3bbad14521a1727865bbf35",
+  "receiver_sha256": "a2c9476840f0aa56553ff12f7eaec5be4b7b4df32df3c2d7865aea4ebe3c6a21",
+  "receiver": "Qwen3-VL-4B-Instruct NF4 plus frozen TDIUC standard rank-8 language LoRA",
+  "codec": "frozen bmshj2018-hyperprior quality 3; long edge 320; existing uniform-gain full packets",
+  "budgets": [2000, 4000, 8000],
+  "tiers": [
+    {"name": "low", "pixels": 50176},
+    {"name": "medium", "pixels": 100352},
+    {"name": "high", "pixels": 200704}
+  ],
+  "pixel_target_policy": "equal min/max pixel targets, actual grid-rounded tokens measured, not hard token caps",
+  "seed": 20260922,
+  "max_new_tokens": 16,
+  "sampling": false,
+  "primary_reference": {"budget": 4000, "tier": "high"},
+  "lambda_grid": [0.0, 0.01, 0.025, 0.05, 0.1, 0.2, 0.4],
+  "primary_lambda": 0.05,
+  "oracle_utility": "correct - lambda * (actual_image_bytes / 8000 + actual_visual_tokens / same_image_high_tokens)",
+  "oracle_baselines": {
+    "rate_only": "max over fixed tiers of mean per-image max over rate utility",
+    "compute_only": "max over fixed rates of mean per-image max over tier utility",
+    "joint": "mean per-image max over all nine configurations utility",
+    "note": "compare joint to strongest single-axis oracle, not merely high-tier or 4k slices"
+  },
+  "bootstrap_replicates": 2000,
+  "screening_thresholds": {
+    "fixed_max_lost_questions": 1,
+    "fixed_min_median_latency_reduction": 0.2,
+    "fixed_max_image_byte_ratio_vs_reference": 1.0,
+    "joint_min_utility_over_best_fixed": 0.025,
+    "joint_min_utility_over_each_one_axis_oracle": 0.01,
+    "joint_min_correct_gain_over_best_fixed": 3
+  },
+  "screening_only": true,
+  "physical_symbols": "510 * ceil(image_packet_bytes / 48); analytical accounting, no noisy channel simulated in grid",
+  "delivery": "clean cached packet roundtrip only, not wireless delivery",
+  "energy": "null unless valid hardware energy telemetry; never infer joules from tokens/latency/power limit",
+  "question_traffic_included": false,
+  "receiver_timing_scope": "CUDA-synchronized generate, includes vision encoder and language generation, excludes loading/image decompression; preprocessing separate",
+  "sealed_test_policy": "never read labels or infer test during development; freeze deployable policy and primary comparisons before test",
+  "stage3": {
+    "requires_positive_development_screen": true,
+    "requires_frozen_deployable_policy": true,
+    "oracle_is_deployable": false,
+    "channel": "shared Rician K=6 dB, Es/N0, perfect receiver CSI, LDPC(1020,512)/QPSK, all-fragment CRC, no retransmission",
+    "snr_db": [-5, -2.5, 0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20],
+    "channel_seeds": [1701, 1702, 1703, 1704, 1705, 1706, 1707, 1708, 1709, 1710, 1711, 1712, 1713, 1714, 1715, 1716, 1717, 1718, 1719, 1720],
+    "failure_answer": "frozen training-only exact-question majority, otherwise global training majority; all failures retained in denominator",
+    "new_controller_training": "only after oracle headroom screen; preregister bounded training on train split, not these development answers"
+  }
+}
