@@ -1,0 +1,78 @@
+{
+  "experiment_id": "EXP-012",
+  "state": "PREREGISTERED_BEFORE_NEW_DATA_AND_TRAINING",
+  "seed": 20260922,
+  "data": {
+    "train": 480,
+    "validation": 120,
+    "train_per_type": 80,
+    "validation_per_type": 20,
+    "types": ["object_presence", "counting", "color", "positional_reasoning", "scene_recognition", "activity_recognition"],
+    "exclusions": "project-known receiver fine-tuning images, historical experiment manifests, old dev120 and sealed-test300 identities; available image hashes",
+    "new_test_opened": false,
+    "legacy_dev120": "one exploratory check AFTER model/checkpoint/axis selection is frozen on new validation; not independent test",
+    "scope_limit": "No claim about foundation-model pretraining contamination; test labels/images not read for this experiment"
+  },
+  "budgets": [2000, 4000, 8000],
+  "frame_header_bytes": 1,
+  "budget_interpretation": "raw codec caps; ALL methods add one tier byte, so actual full-image caps are 2001/4001/8001 B",
+  "tiers": [{"name": "low", "pixels": 50176}, {"name": "medium", "pixels": 100352}, {"name": "high", "pixels": 200704}],
+  "receiver_sha256": "a2c9476840f0aa56553ff12f7eaec5be4b7b4df32df3c2d7865aea4ebe3c6a21",
+  "receiver": "frozen standard Qwen3-VL-4B-Instruct NF4 + language rank-8 LoRA",
+  "codec": "frozen bmshj2018-hyperprior quality3; longedge320; uniform map; 12 gain-search iterations",
+  "max_new_tokens": 16,
+  "feature_schema": {
+    "question": "256-dimensional L2-normalized stable hashed word unigram/bigram counts; no fitted vocabulary or pretrained encoder",
+    "image": "83 dimensions: 8x8 grayscale thumbnail, RGB means/stds, 8-bin luminance histogram, horizontal/vertical gradient means, log width/height and aspect ratio",
+    "image_preprocessing": "full-view image; texture statistics on at most 64x64 thumbnail; no crop or detector",
+    "forbidden": ["answer", "ground_truth_question_type", "image_id", "question_id", "nine_run_predictions", "nine_run_confidences", "measured_post_inference_latency"],
+    "decision_cost": "nominal candidate full-byte cap / 8001 plus candidate pixel target / high target; no all-budget encodes to decide",
+    "training_scaler": "image features standardized with train480 only; question hash vector unchanged"
+  },
+  "training": {
+    "seeds": [7, 17, 27],
+    "hidden": [128, 64],
+    "dropout": 0.1,
+    "max_epochs": 50,
+    "patience": 8,
+    "min_epochs": 10,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "loss": "binary cross entropy of per-action correct/incorrect labels, no oracle one-hot imitation",
+    "checkpoint_selection": "minimum new-validation BCE only; ties earlier epoch",
+    "variants": ["joint9", "rate_only_at_each_of_three_fixed_tiers", "compute_only_at_each_of_three_fixed_rates", "question_only_joint9"],
+    "primary_predictor": "arithmetic mean of probabilities from all three seeds; report each seed too",
+    "fixed_other_axis_selection": "maximum new-validation realized utility of ensemble; deterministic lower nominal cost tie-break",
+    "no_retraining": ["codec", "Qwen", "LoRA", "visual backbone"]
+  },
+  "selection": {
+    "lambda": 0.05,
+    "score": "predicted_correct_probability - lambda * nominal_resource_cost",
+    "report_utility": "actual_correct - lambda * (full_image_bytes / 8001 + actual_visual_tokens / same_image_high_tokens)",
+    "ties": "lower nominal cost, then action index",
+    "primary_fixed_reference": "4000_medium",
+    "strong_fixed": "best new-validation realized utility among all nine cells, frozen before legacy-dev evaluation"
+  },
+  "screen": {
+    "scope": "exploratory learnability, not confirmatory generalization",
+    "maximum_lost_questions_vs_primary_fixed": 1,
+    "maximum_mean_image_byte_ratio_vs_primary_fixed": 0.9,
+    "minimum_utility_gain_over_strong_fixed_and_learned_single_axes": 0.005,
+    "minimum_consistent_seeds": 2,
+    "maximum_latency_ratio_vs_primary_fixed": 1.05,
+    "latency_gate": "PENDING until paired live single-selected-path processing is measured, including feature/router, source resize+g_a+gain search+entropy coding, decoder, receiver preprocessing and generation",
+    "negative_signal": "stop this feature/controller version, preserve negative result; no test or SNR expansion",
+    "no_posthoc_relaxation": "EXP-011 20% fixed-efficiency criterion remains unchanged; these are separately preregistered routing criteria"
+  },
+  "diagnostics": {
+    "image_shuffle": "frozen joint ensemble; question unchanged; deterministic cyclic permutation of image-feature vectors only",
+    "question_only": "separately trained same-size MLP with image features zeroed",
+    "uncertainty": "paired image bootstrap 2000 resamples; all 3 seeds; reused-dev and selection uncertainty disclosed"
+  },
+  "timing": "server component profiling only, not UAV measurement or wireless end-to-end latency",
+  "energy_j": null,
+  "question_traffic_included": false,
+  "test_policy": "sealed300 never opened by this pipeline; positive learnability alone does not start SNR or authorize final claims",
+  "wallclock_limit_seconds": 28800
+}
