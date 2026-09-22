@@ -162,7 +162,12 @@ class FeatureTest(unittest.TestCase):
 
     def test_feature_functions_match_frozen_exp012_without_labels(self) -> None:
         from PIL import Image
-        source_code = Path(__file__).resolve().parents[1] / "rgb_joint_selector"
+        candidates = [
+            Path(__file__).resolve().parents[1] / "rgb_joint_selector",
+            Path(__file__).resolve().parents[2] / "rgb_joint_selector_20260922" / "code",
+            Path(__file__).resolve().parents[2] / "rgb_joint_selector" / "code",
+        ]
+        source_code = next((c for c in candidates if (c / "features.py").is_file()), candidates[0])
         legacy = data.load_legacy(source_code, "features")
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "source.jpg"

@@ -19,7 +19,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import evaluate_test as evaluation  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
-SOURCE = HERE.parent / "rgb_joint_selector"
+
+
+def _resolve_source() -> Path:
+    candidates = [
+        HERE.parent / "rgb_joint_selector",
+        HERE.parent.parent / "rgb_joint_selector_20260922" / "code",
+        HERE.parent.parent / "rgb_joint_selector" / "code",
+    ]
+    for candidate in candidates:
+        if (candidate / "train_selector.py").is_file():
+            return candidate
+    return HERE.parent / "rgb_joint_selector"
+
+
+SOURCE = _resolve_source()
 TASKS = ["object_presence", "counting", "color", "positional_reasoning", "scene_recognition", "activity_recognition"]
 
 
