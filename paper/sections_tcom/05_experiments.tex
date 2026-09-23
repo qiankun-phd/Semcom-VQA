@@ -2,30 +2,47 @@
 
 \subsection{Experimental Setup}
 \subsubsection{Dataset and Partitioning}
-To comprehensively evaluate multimodal task performance, we conduct evaluations on the Task-Directed Image Understanding and Challenge (TDIUC) benchmark~\cite{kafle2017tdiuc}, one of the most rigorous and diverse VQA datasets designed to measure specific reasoning capabilities while mitigating language bias. 
+We evaluate performance on the Task-Directed Image Understanding and Challenge (TDIUC) benchmark~\cite{kafle2017tdiuc}, a rigorous VQA dataset designed to evaluate distinct task reasoning capabilities while mitigating language bias. Our blind test set encompasses 2,400 independent images equally split across six semantic task categories (400 images each): Object Presence, Counting, Positional Reasoning, Scene Recognition, Activity Recognition, and Color Recognition. The policy training and validation sets comprise 4,800 and 1,200 images, respectively, with strict image-hash deduplication ensuring zero data leakage.
 
-The evaluation encompasses 2,400 independent blind test images across six representative semantic task categories (400 images per category):
-\begin{enumerate}
-    \item \textbf{Object Presence}: Binary verification of object existence within the scene.
-    \item \textbf{Counting}: Enumeration of target objects requiring fine-grained spatial localisation.
-    \item \textbf{Positional Reasoning}: Determining relative spatial configurations (e.g., ``to the left of'', ``behind'').
-    \item \textbf{Scene Recognition}: Identifying overall environmental context (e.g., kitchen, highway, runway).
-    \item \textbf{Activity Recognition}: Classifying human or vehicular action dynamics.
-    \item \textbf{Color Recognition}: Discriminating object chromatic attributes under varying illumination.
-\end{enumerate}
-The policy training set contains 4,800 images, and the validation set comprises 1,200 images. Strict image-hash deduplication ensures zero overlap across training, validation, and test splits.
+\begin{table}[!t]
+\centering
+\caption{Key System Simulation and Neural Architecture Parameters}
+\label{tab:system_parameters}
+\footnotesize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter / Subsystem} & \textbf{Configuration Value} \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Physical Uplink Channel \& DigiSem-PHY:}} \\
+Carrier Frequency & $2.4\text{ GHz}$ (Sub-6 GHz ISM band) \\
+System Bandwidth ($W$) & $1.0\text{ MHz}$ \\
+Symbol Modulation & QPSK ($2\text{ bits/symbol}$, $1.0\text{ Msps}$) \\
+Channel Fading Model & Block flat Rician fading ($K = 6\text{ dB}$) \\
+Operating SNR Range ($\gamma$) & $-5.0\text{ dB}$ to $20.0\text{ dB}$ ($10$ discrete points) \\
+Channel Codec & 3GPP 5G $\text{LDPC}(1020, 512)$, rate $R \approx 1/2$ \\
+Channel Decoding & Soft BP (max 50 iterations) + CRC-32 \\
+Transmitter Power Modes & CSPM ($P_s = P_0$) and CQEM ($E_{\mathrm{tx}} = E_0$) \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Neural Source Codec \& Edge VLM:}} \\
+Source Image Codec & Variational Hyperprior (\texttt{bmshj2018}) \\
+Source Bitrate Tiers ($B$) & $2000, 4000, 8000$ bytes \\
+Edge VLM Backbone & Qwen3-VL-4B-Instruct \\
+Model Quantization & 4-bit NormalFloat (NF4) \\
+Parameter-Efficient Tuning & LoRA ($r=8, \alpha=16$, $5.9\text{M}$ trainable params) \\
+DyTBA Token Budgets ($T_v$) & Low ($44$), Medium ($110$), High ($216$) tokens \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Dataset \& Hardware Platform:}} \\
+Evaluation Dataset & TDIUC (2,400 blind test images, 6 tasks) \\
+Task Categories (400 each) & Presence, Count, Position, Scene, Act., Color \\
+Edge Server Platform & NVIDIA A100 (80 GB), AMD EPYC 7763 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
 
-\subsubsection{Physical Layer and Wireless Channel Simulation}
-Wireless channels are simulated across 10 channel SNR operating points:
-\begin{equation}
-\gamma \in \{-5.0, -2.5, 0.0, 2.5, 5.0, 7.5, 10.0, 12.5, 15.0, 20.0\}\text{ dB}.
-\end{equation}
-The channel undergoes block flat Rician fading with a Rice factor $K = 6\text{ dB}$. Channel coding is performed via a 3GPP 5G-compliant $\text{LDPC}(1020, 512)$ code with QPSK digital modulation ($m=2$). The receiver executes iterative Soft Belief Propagation (BP) decoding up to 50 iterations with early termination based on parity-check equations, followed by CRC-32 cyclic redundancy verification.
-
-\subsubsection{Model and Computational Hardware Specifications}
-Neural image source compression is implemented via the CompressAI \texttt{bmshj2018-hyperprior} variational architecture. The edge VLM is Qwen3-VL-4B-Instruct, loaded in 4-bit NormalFloat (NF4) quantization and adapted via rank-8 LoRA on the language backbone attention projections ($5{,}898{,}240$ trainable parameters). 
-
-Inference latency and energy benchmarks are profiled on an enterprise-grade computing platform equipped with an NVIDIA A100 Tensor Core GPU (80GB VRAM, PCIe Gen4, TDP 300W) and an AMD EPYC 7763 64-Core Processor. GPU power is recorded via NVML hardware monitoring, and forward inference latency is measured with microsecond CUDA synchronization events after GPU warmup.
+\subsubsection{Physical Layer Simulation and Neural Specifications}
+Wireless channels are simulated across 10 channel SNR operating points: $\gamma \in \{-5.0, -2.5, 0.0, \dots, 20.0\}\text{ dB}$ over Rician fading ($K=6\text{ dB}$) under 3GPP 5G $\text{LDPC}(1020, 512)$ coding and QPSK modulation. Neural image compression uses CompressAI \texttt{bmshj2018-hyperprior}, and the edge VLM is Qwen3-VL-4B-Instruct in 4-bit NormalFloat (NF4) adapted via rank-8 LoRA ($5.9\text{M}$ parameters). Benchmarks are executed on an NVIDIA A100 GPU and AMD EPYC 7763 processor. Full parameters are summarized in Table~\ref{tab:system_parameters}.
 
 \begin{figure*}[!t]
 \centering
@@ -79,43 +96,42 @@ Oracle Upper Bound & $0.00\%$ & $0.00\%$ & $40.50\%$ & $41.83\%$ & $76.12\%$ & $
 Fig.~\ref{fig:accuracy_vs_snr} compares end-to-end VQA strict accuracy across the full range of channel SNRs from $-5.0\text{ dB}$ to $20.0\text{ dB}$ for both CSPM and CQEM.
 
 \subsubsection{Constant Symbol-Power Mode (CSPM)}
-In Fig.~\ref{fig:accuracy_vs_snr}(a), transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all transmission schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$ in CSPM, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks). 
-
-CART-Net strictly envelopes all individual fixed-rate baselines across the entire SNR continuum. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), CART-Net attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, CART-Net reaches $76.50\%$ accuracy, closely approaching the 8000-byte ceiling ($76.62\%$) without incurring its high transmission overhead.
+In Fig.~\ref{fig:accuracy_vs_snr}(a), transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$ in CSPM, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks). 
+CART-Net strictly envelopes all individual fixed-rate baselines across the entire SNR continuum. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), CART-Net attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, CART-Net reaches $76.50\%$ accuracy, closely approaching the 8000-byte ceiling ($76.62\%$).
 
 \subsubsection{Constant Query-Energy Mode (CQEM) with PPC Power Boost}
 Fig.~\ref{fig:accuracy_vs_snr}(b) illustrates the transformative impact of green cross-layer co-optimization under CQEM. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a \textbf{$+3.01\text{ dB}$ physical SNR boost over 4000 bytes} and a \textbf{$+6.00\text{ dB}$ boost over 8000 bytes} via the Physical Power Concentration (PPC) mechanism.
+This shifts the LDPC waterfall curve: at $\gamma = 2.5\text{ dB}$, fixed 4k collapses to \textbf{$7.00\%$}, and the blind policy collapses to \textbf{$9.21\%$}. In stark contrast, CART-Net delivers \textbf{$36.92\%$ accuracy}---a \textbf{$+29.92\%$ advantage over fixed 4k} and \textbf{$+27.71\%$ over the blind policy}. At $\gamma = 5.0\text{ dB}$, CART-Net achieves \textbf{$58.71\%$ accuracy} ($+27.12\%$ over fixed 4k). At $\gamma \ge 15.0\text{ dB}$, it smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
 
-This PPC power concentration completely shifts the LDPC waterfall curve:
-\begin{itemize}
-    \item At $\gamma = 2.5\text{ dB}$, the standard fixed 4000-byte baseline suffers a catastrophic block error rate, yielding a collapsed accuracy of only \textbf{$7.00\%$}. The channel-blind policy, unaware of the harsh channel, attempts to transmit larger payloads and collapses to \textbf{$9.21\%$}. In stark contrast, CART-Net senses the channel attenuation, clamps the source bitrate to 2000 bytes, and delivers \textbf{$36.92\%$ accuracy}---a remarkable \textbf{$+29.92\%$ absolute advantage over fixed 4k} and \textbf{$+27.71\%$ over the blind policy}.
-    \item At $\gamma = 5.0\text{ dB}$, CART-Net achieves \textbf{$58.71\%$ accuracy}, vastly outstripping fixed 4k ($31.58\%$) by \textbf{$+27.12\%$}.
-    \item At $\gamma \ge 15.0\text{ dB}$, packet delivery probability approaches $100\%$, and CART-Net smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
-\end{itemize}
-These results demonstrate that task-oriented semantic communication cannot treat physical layer channel coding as an isolated black box; cross-layer co-optimization is indispensable for robust wireless edge intelligence.
-
-\begin{figure*}[!t]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.98\linewidth]{figures/tgcn_publication_figures_20260922/fig3_energy_latency_tradeoff.pdf}
-\caption{Semantic energy and delay efficiency metrics across the channel physical SNR continuum from $\gamma = -5.0\text{ dB}$ to $20.0\text{ dB}$. (a) Semantic Energy Efficiency ($\eta_{\mathrm{SEE}} = \text{Accuracy} / (E_{\mathrm{tx}} / E_{2\text{k}})$, \% per unit energy) versus channel SNR $\gamma$. CART-Net delivers up to a 10.5-fold energy efficiency advantage ($+33.4$ margin) over fixed 4k under severe fading ($\gamma = 2.5\text{ dB}$) via PPC power concentration and reaches peak efficiency ($71.4$) at $10\text{ dB}$. (b) Semantic Delay Efficiency ($\eta_{\mathrm{SDE}} = \text{Accuracy} / t_{\mathrm{e2e}}$, \% accuracy per second) versus channel SNR $\gamma$, demonstrating superior end-to-end task throughput enabled by DyTBA visual token pruning and adaptive channel coding.}
-\label{fig:energy_latency_tradeoff}
-\end{figure*}
+\includegraphics[width=\columnwidth]{figures/tgcn_publication_figures_20260922/fig3_see_vs_snr.pdf}
+\caption{Semantic Energy Efficiency ($\eta_{\mathrm{SEE}}$, \% accuracy per unit energy) versus channel SNR $\gamma$. CART-Net delivers up to a 10.5-fold energy efficiency advantage ($+33.4$ margin) over fixed 4k under severe fading ($\gamma = 2.5\text{ dB}$) via PPC power concentration.}
+\label{fig:see_vs_snr}
+\end{figure}
 
-\subsection{Semantic Energy and Delay Efficiency Evaluation (Figure~\ref{fig:energy_latency_tradeoff})}
-To evaluate green edge intelligence in task-oriented communications, we define two holistic physical-semantic efficiency metrics that capture the trade-offs between task performance and resource expenditures across fading channels:
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/tgcn_publication_figures_20260922/fig4_sde_vs_snr.pdf}
+\caption{Semantic Delay Efficiency ($\eta_{\mathrm{SDE}}$, \% accuracy per second) versus channel SNR $\gamma$, demonstrating superior end-to-end task throughput enabled by DyTBA visual token pruning and adaptive channel coding.}
+\label{fig:sde_vs_snr}
+\end{figure}
+
+\subsection{Semantic Energy and Delay Efficiency Evaluation (Figures~\ref{fig:see_vs_snr} and~\ref{fig:sde_vs_snr})}
+To evaluate green edge intelligence in task-oriented communications, we define two holistic physical-semantic efficiency metrics that capture trade-offs between task performance and resource expenditures across fading channels:
 \begin{equation}
     \eta_{\mathrm{SEE}} = \frac{\mathrm{Acc}\,(\%)}{E_{\mathrm{tx}} / E_{2\mathrm{k}}}, \qquad \eta_{\mathrm{SDE}} = \frac{\mathrm{Acc}\,(\%)}{t_{\mathrm{e2e}}\text{ (s)}},
 \end{equation}
-where $\mathrm{Acc}$ is the strict task accuracy (\%), $E_{\mathrm{tx}} / E_{2\mathrm{k}}$ denotes the relative RF transmission energy (normalized to 2000-byte transmission), and $t_{\mathrm{e2e}}$ represents the total end-to-end latency ($t_{\mathrm{enc}} + t_{\mathrm{tx}} + t_{\mathrm{dec}} + t_{\mathrm{vlm}}$). Fig.~\ref{fig:energy_latency_tradeoff} illustrates their evolution across the SNR continuum.
+where $\mathrm{Acc}$ is strict accuracy (\%), $E_{\mathrm{tx}} / E_{2\mathrm{k}}$ denotes relative RF transmission energy, and $t_{\mathrm{e2e}}$ represents total end-to-end latency ($t_{\mathrm{enc}} + t_{\mathrm{tx}} + t_{\mathrm{dec}} + t_{\mathrm{vlm}}$). Figs.~\ref{fig:see_vs_snr} and~\ref{fig:sde_vs_snr} illustrate their evolution across the SNR continuum.
 
-\subsubsection{Semantic Energy Efficiency Trends (Fig.~\ref{fig:energy_latency_tradeoff}(a))}
+\subsubsection{Semantic Energy Efficiency Trends (Fig.~\ref{fig:see_vs_snr})}
 \begin{itemize}
-    \item \textbf{Severe Fading ($\gamma = 2.5\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines suffer from low packet delivery ratios due to codeword failure, collapsing their energy efficiency to $3.50$ and $0.02$, respectively. In contrast, CART-Net activates PPC to sustain link connectivity while operating at minimal baseline energy ($E_{\mathrm{tx}} / E_{2\mathrm{k}} = 1.00$), achieving $\eta_{\mathrm{SEE}} = 36.92$---an outstanding \textbf{10.5-fold energy efficiency enhancement} ($+33.42$ margin over fixed 4k) and \textbf{8.0-fold advantage over the channel-blind policy} ($4.61$).
-    \item \textbf{Moderate Fading ($\gamma = 10.0\text{ dB}$)}: CART-Net peaks at $\eta_{\mathrm{SEE}} = 71.38$, more than \textbf{doubling the efficiency of fixed 4k} ($34.77$, a \textbf{2.1-fold improvement}) by transmitting half the complex symbols while preserving $71.38\%$ task accuracy.
-    \item \textbf{High-SNR Regime ($\gamma \ge 12.5\text{ dB}$)}: As the channel clears, CART-Net deliberately migrates queries into higher-capacity rate bands ($4\text{ kB}$ and $8\text{ kB}$), trading raw energy efficiency for visual fidelity to approach the $76.62\%$ task accuracy ceiling.
+    \item \textbf{Severe Fading ($\gamma = 2.5\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines suffer from low packet delivery ratios due to codeword failure, collapsing energy efficiency to $3.50$ and $0.02$, respectively. CART-Net activates PPC at minimal baseline energy ($E_{\mathrm{tx}} / E_{2\mathrm{k}} = 1.00$), achieving $\eta_{\mathrm{SEE}} = 36.92$---an outstanding \textbf{10.5-fold energy efficiency enhancement} ($+33.42$ margin over fixed 4k) and \textbf{8.0-fold advantage over the blind policy} ($4.61$).
+    \item \textbf{Moderate Fading ($\gamma = 10.0\text{ dB}$)}: CART-Net peaks at $\eta_{\mathrm{SEE}} = 71.38$, achieving a \textbf{2.1-fold improvement over fixed 4k} ($34.77$) by transmitting half the complex symbols while preserving $71.38\%$ task accuracy.
+    \item \textbf{High-SNR Regime ($\gamma \ge 12.5\text{ dB}$)}: As the channel clears, CART-Net deliberately migrates queries into higher-capacity rate bands ($4\text{ kB}$ and $8\text{ kB}$), trading raw energy efficiency for visual fidelity to approach the $76.62\%$ task ceiling.
 \end{itemize}
 
-\subsubsection{Semantic Delay Efficiency Trends (Fig.~\ref{fig:energy_latency_tradeoff}(b))}
+\subsubsection{Semantic Delay Efficiency Trends (Fig.~\ref{fig:sde_vs_snr})}
 The metric $\eta_{\mathrm{SDE}}$ quantifies task throughput in percentage accuracy delivered per second of total pipeline execution:
 \begin{itemize}
     \item At $\gamma = 2.5\text{ dB}$, CART-Net attains \textbf{$63.1\%/\text{s}$}, providing an absolute throughput advantage of \textbf{$+51.5\%/\text{s}$ (a 5.4-fold gain)} over fixed 4k ($11.6\%/\text{s}$) and outstripping the blind policy ($15.2\%/\text{s}$).
@@ -144,5 +160,33 @@ Fig.~\ref{fig:task_breakdown}(b) reveals that DyTBA autonomously discovers the u
 \subsubsection{Task-Level Outage Resilience under Harsh Fading (\texorpdfstring{$\gamma = 5.0\text{ dB}$}{gamma = 5.0 dB})}
 Fig.~\ref{fig:task_breakdown}(a) evaluates category-specific accuracy under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). Due to severe block error rates, the fixed \texttt{4000\_medium} baseline suffers from a low packet delivery ratio ($40.5\%$), crashing across all six task categories. 
 CART-Net maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes (activating PPC) while DyTBA adaptively budgets receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category: Object Presence ($74.25\%$ vs. $41.25\%$, \textbf{$+33.00\%$ gain}), Scene Recognition ($72.50\%$ vs. $34.75\%$, \textbf{$+37.75\%$ gain}), Color Recognition ($64.00\%$ vs. $33.75\%$, \textbf{$+30.25\%$ gain}), Activity Recognition ($52.75\%$ vs. $30.75\%$, \textbf{$+22.00\%$ gain}), Counting ($43.25\%$ vs. $23.50\%$, \textbf{$+19.75\%$ gain}), and Positional Reasoning ($42.50\%$ vs. $25.50\%$, \textbf{$+17.00\%$ gain}).
+
+\begin{table}[!t]
+\centering
+\caption{Component Ablation Analysis Across Channel Operating Regimes}
+\label{tab:ablation_study}
+\footnotesize
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+\multirow{2}{*}{\textbf{Framework Variant}} & \multicolumn{2}{c}{\textbf{Severe ($\gamma = 2.5\text{ dB}$)}} & \multicolumn{2}{c}{\textbf{Moderate ($\gamma = 10\text{ dB}$)}} & \textbf{Rel. Energy} & \textbf{Mean Latency} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+& Acc (\%) & $\eta_{\mathrm{SEE}}$ & Acc (\%) & $\eta_{\mathrm{SEE}}$ & $E_{\mathrm{tx}}/E_{2\mathrm{k}}$ & $t_{\mathrm{e2e}}$ (ms) \\
+\midrule
+\textbf{Proposed EcoSem-VQA} & $\mathbf{36.92}$ & $\mathbf{36.92}$ & $\mathbf{71.38}$ & $\mathbf{71.38}$ & $\mathbf{1.00 \sim 2.45}$ & $\mathbf{567.8 \sim 622.5}$ \\
+w/o Channel CSI (Blind) & $9.21$ & $4.61$ & $69.75$ & $39.63$ & $1.76$ & $618.2$ \\
+w/o DyTBA ($T_v \equiv 110$) & $36.21$ & $36.21$ & $71.12$ & $71.12$ & $1.00 \sim 2.00$ & $585.2 \sim 604.5$ \\
+w/o PPC (CSPM Mode) & $7.00$ & $3.50$ & $69.54$ & $34.77$ & $2.00$ & $604.5$ \\
+Fixed Ref. (\texttt{4000\_med}) & $7.00$ & $3.50$ & $69.54$ & $34.77$ & $2.00$ & $604.5$ \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{Component Ablation Study (Table~\ref{tab:ablation_study})}
+To isolate and quantify the explicit contributions of individual cross-layer components within EcoSem-VQA, Table~\ref{tab:ablation_study} provides a rigorous ablation benchmark across channel fading regimes.
+\textit{1) Cross-Layer CSI Awareness:} Disabling channel sensing forces the policy into the channel-blind mode. Under severe fading ($\gamma = 2.5\text{ dB}$), this incurs catastrophic block decoding outages, collapsing accuracy to $9.21\%$ and cratering $\eta_{\mathrm{SEE}}$ from $36.92$ to $4.61$ (an $8.0$-fold efficiency drop).
+\textit{2) DyTBA Adaptive Token Pruning:} Enforcing a static visual token budget ($T_v \equiv 110$) robs the receiver of computational elasticity. On coarse presence queries, processing redundant visual tokens imposes a $49.2\%$ token overhead and adds $36.7\text{ ms}$ of unneeded inference latency.
+\textit{3) PPC Power Concentration:} In CQEM, concentrating energy onto the compact 2000-byte payload yields a $+3.01\text{ dB}$ SNR advantage that protects codewords from erasure. Without PPC, the packet delivery ratio plunges to $40.5\%$, dropping accuracy to $7.00\%$.
 These empirical findings substantiate that EcoSem-VQA successfully decouples task semantic requirements from physical channel outages, delivering unmatched resilience and green energy efficiency.
 

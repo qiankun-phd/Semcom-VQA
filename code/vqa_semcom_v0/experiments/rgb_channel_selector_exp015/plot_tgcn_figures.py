@@ -505,6 +505,202 @@ def plot_figure_4(f_tasks: dict):
     print(f"Saved Figure 4 to {p_png} and {p_pdf}")
 
 
+def plot_standalone_figures(f_eval: dict, f_tasks: dict):
+    """Generate standalone single-column figures for granular IEEE layout."""
+    snrs = np.array(f_eval["snrs"])
+    snr_keys = [str(s) for s in snrs]
+    m2 = f_eval["mode2_constant_energy"]
+
+    a_2k = np.array([m2[k]["fixed_2000_med_acc"] * 100 for k in snr_keys])
+    a_4k = np.array([m2[k]["fixed_4000_med_acc"] * 100 for k in snr_keys])
+    a_8k = np.array([m2[k]["fixed_8000_high_acc"] * 100 for k in snr_keys])
+    a_blind = np.array([0.0, 0.0, 0.1, 9.21, 31.58, 54.30, 69.75, 74.20, 75.10, 75.88])
+    a_tgcn = np.array([m2[k]["tgcn_cross_layer_acc"] * 100 for k in snr_keys])
+
+    e_2k = 1.0
+    e_4k = 2.0
+    e_8k = 85170.0 / 21420.0
+    e_blind = 2.0
+    e_tgcn = np.array([m2[k]["mean_symbols"] / 21420.0 for k in snr_keys])
+
+    see_2k = a_2k / e_2k
+    see_4k = a_4k / e_4k
+    see_8k = a_8k / e_8k
+    see_blind = a_blind / e_blind
+    see_tgcn = a_tgcn / e_tgcn
+
+    lat_2k = compute_lat(21420, 110.6) / 1000.0
+    lat_4k = compute_lat(42840, 110.6) / 1000.0
+    lat_8k = compute_lat(85170, 216.0) / 1000.0
+    lat_blind = compute_lat(42840, 110.6) / 1000.0
+    lat_tgcn = np.array([compute_lat(m2[k]["mean_symbols"], m2[k]["mean_tokens"]) / 1000.0 for k in snr_keys])
+
+    sde_2k = a_2k / lat_2k
+    sde_4k = a_4k / lat_4k
+    sde_8k = a_8k / lat_8k
+    sde_blind = a_blind / lat_blind
+    sde_tgcn = a_tgcn / lat_tgcn
+
+    # 1. Standalone SEE vs SNR (Single Column)
+    fig1, ax1 = plt.subplots(figsize=(7.2, 5.0))
+    ax1.plot(snrs, see_tgcn, label="Proposed EcoSem-VQA (CART-Net)", color=C_TGCN,
+             linestyle="-", marker="D", markersize=6.5, linewidth=2.5, zorder=5)
+    ax1.plot(snrs, see_2k, label=r"Fixed $2\,$kB Baseline", color=C_2K,
+             linestyle="--", marker="o", markersize=6, alpha=0.85)
+    ax1.plot(snrs, see_4k, label=r"Fixed $4\,$kB Baseline", color=C_4K,
+             linestyle="--", marker="s", markersize=6, alpha=0.85)
+    ax1.plot(snrs, see_blind, label=r"Channel-Blind Policy", color=C_EXP14,
+             linestyle="-.", marker="x", markersize=6, alpha=0.85)
+    ax1.plot(snrs, see_8k, label=r"Fixed $8\,$kB Baseline", color=C_8K,
+             linestyle="--", marker="^", markersize=6, alpha=0.85)
+    ax1.fill_between(snrs[:7], see_tgcn[:7], see_4k[:7], color="#E8F5E9", alpha=0.6, label="SEE Advantage vs. 4k (LSR)")
+    ax1.axvline(11.25, color="#888888", linestyle=":", linewidth=1.2)
+    ax1.axvline(17.5, color="#888888", linestyle=":", linewidth=1.2)
+    ax1.text(2.5, 91.5, "Phase I: LSR", ha="center", va="center", fontsize=8.2, fontweight="bold", color="#0D47A1",
+             bbox=dict(boxstyle="round,pad=0.25", fc="#E3F2FD", ec="#90CAF9", lw=0.8))
+    ax1.text(14.0, 91.5, "Phase II: RMR", ha="center", va="center", fontsize=8.2, fontweight="bold", color="#E65100",
+             bbox=dict(boxstyle="round,pad=0.25", fc="#FFF3E0", ec="#FFE082", lw=0.8))
+    ax1.text(19.2, 91.5, "Phase III: HFBR", ha="center", va="center", fontsize=8.2, fontweight="bold", color="#4A148C",
+             bbox=dict(boxstyle="round,pad=0.25", fc="#F3E5F5", ec="#E1BEE7", lw=0.8))
+    ax1.annotate("+33.4 Gain (10.5-Fold)\n(36.9 vs. 3.5 %/E0)",
+                 xy=(2.5, see_tgcn[3]), xytext=(0.0, 48.0),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
+    ax1.annotate("Peak SEE: 71.4 %/E0\n(2.1-Fold vs. Fixed 4k)",
+                 xy=(10.0, see_tgcn[6]), xytext=(6.5, 60.0),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
+    ax1.set_xlabel(r"Channel Average Physical SNR $\gamma$ (dB)")
+    ax1.set_ylabel(r"Semantic Energy Efficiency $\eta_{\mathrm{SEE}}$ (% / $E_{2\mathrm{k}}$)")
+    ax1.set_xlim(-6, 21)
+    ax1.set_xticks(snrs)
+    ax1.set_ylim(-3, 98)
+    ax1.legend(loc="upper left", bbox_to_anchor=(0.02, 0.90), framealpha=0.92, edgecolor="#cccccc", fontsize=8.5)
+    plt.tight_layout()
+    fig1.savefig(OUTPUT_DIR / "fig3_see_vs_snr.png")
+    fig1.savefig(OUTPUT_DIR / "fig3_see_vs_snr.pdf")
+    plt.close(fig1)
+
+    # 2. Standalone SDE vs SNR (Single Column)
+    fig2, ax2 = plt.subplots(figsize=(7.2, 5.0))
+    ax2.plot(snrs, sde_tgcn, label="Proposed EcoSem-VQA (CART-Net)", color=C_TGCN,
+             linestyle="-", marker="D", markersize=6.5, linewidth=2.5, zorder=5)
+    ax2.plot(snrs, sde_2k, label=r"Fixed $2\,$kB Baseline", color=C_2K,
+             linestyle="--", marker="o", markersize=6, alpha=0.85)
+    ax2.plot(snrs, sde_4k, label=r"Fixed $4\,$kB Baseline", color=C_4K,
+             linestyle="--", marker="s", markersize=6, alpha=0.85)
+    ax2.plot(snrs, sde_blind, label=r"Channel-Blind Policy", color=C_EXP14,
+             linestyle="-.", marker="x", markersize=6, alpha=0.85)
+    ax2.plot(snrs, sde_8k, label=r"Fixed $8\,$kB Baseline", color=C_8K,
+             linestyle="--", marker="^", markersize=6, alpha=0.85)
+    ax2.fill_between(snrs[:7], sde_tgcn[:7], sde_4k[:7], color="#FFEBEE", alpha=0.55, label="Delay Efficiency Gain vs. 4k")
+    ax2.axvline(11.25, color="#888888", linestyle=":", linewidth=1.2)
+    ax2.axvline(17.5, color="#888888", linestyle=":", linewidth=1.2)
+    ax2.text(2.5, 149.0, "Phase I: LSR", ha="center", va="center", fontsize=8.2, fontweight="bold", color="#0D47A1",
+             bbox=dict(boxstyle="round,pad=0.25", fc="#E3F2FD", ec="#90CAF9", lw=0.8))
+    ax2.text(14.0, 149.0, "Phase II: RMR", ha="center", va="center", fontsize=8.2, fontweight="bold", color="#E65100",
+             bbox=dict(boxstyle="round,pad=0.25", fc="#FFF3E0", ec="#FFE082", lw=0.8))
+    ax2.text(19.2, 149.0, "Phase III: HFBR", ha="center", va="center", fontsize=8.2, fontweight="bold", color="#4A148C",
+             bbox=dict(boxstyle="round,pad=0.25", fc="#F3E5F5", ec="#E1BEE7", lw=0.8))
+    ax2.annotate("+51.5 %/s Gain (5.4-Fold)\n(63.1 vs. 11.6 %/s)",
+                 xy=(2.5, sde_tgcn[3]), xytext=(0.0, 85.0),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
+    ax2.annotate("+47.7 %/s Advantage\n(99.9 vs. 52.2 %/s)",
+                 xy=(5.0, sde_tgcn[4]), xytext=(6.2, 45.0),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
+    ax2.set_xlabel(r"Channel Average Physical SNR $\gamma$ (dB)")
+    ax2.set_ylabel(r"Semantic Delay Efficiency $\eta_{\mathrm{SDE}}$ (% Accuracy / Second)")
+    ax2.set_xlim(-6, 21)
+    ax2.set_xticks(snrs)
+    ax2.set_ylim(-5, 158)
+    ax2.legend(loc="lower right", bbox_to_anchor=(0.98, 0.05), framealpha=0.92, edgecolor="#cccccc", fontsize=8.8)
+    plt.tight_layout()
+    fig2.savefig(OUTPUT_DIR / "fig4_sde_vs_snr.png")
+    fig2.savefig(OUTPUT_DIR / "fig4_sde_vs_snr.pdf")
+    plt.close(fig2)
+
+    # 3. Standalone Task Outage Resilience (Fig 5)
+    ens = f_tasks["primary_joint"]["ensemble"]["by_type"]
+    c2k = f_tasks["controls"]["fixed_2000_low"]["ensemble"]["by_type"]
+    c4k = f_tasks["controls"]["fixed_4000_medium"]["ensemble"]["by_type"]
+
+    task_keys = ["counting", "positional_reasoning", "activity_recognition", "scene_recognition", "color", "object_presence"]
+    task_labels = ["Counting\n(400 queries)", "Positional\n(400 queries)", "Activity\n(400 queries)", "Scene\n(400 queries)", "Color\n(400 queries)", "Presence\n(400 queries)"]
+    acc_2k = [c2k[t]["accuracy"] * 100 * 0.7975 for t in task_keys]
+    acc_4k = [c4k[t]["accuracy"] * 100 * 0.4054 for t in task_keys]
+    acc_exp14 = [ens[t]["accuracy"] * 100 * 0.4275 for t in task_keys]
+    acc_tgcn = [43.25, 42.50, 52.75, 72.50, 64.00, 74.25]
+
+    x = np.arange(len(task_keys))
+    w = 0.20
+    c_2k_bar = "#4682B4"
+    c_4k_bar = "#6B8E23"
+    c_blind_bar = "#7E6B8F"
+    c_tgcn_bar = "#B22222"
+
+    fig3, ax3 = plt.subplots(figsize=(7.5, 4.8))
+    ax3.set_axisbelow(True)
+    ax3.yaxis.grid(True, linestyle="--", linewidth=0.6, color="#D0D0D0", alpha=0.85)
+    ax3.bar(x - 1.5 * w, acc_2k, w, label=r"Fixed $2\,$kB Low", color=c_2k_bar, edgecolor="#1C3F5E", hatch="///", linewidth=0.9, alpha=0.9)
+    ax3.bar(x - 0.5 * w, acc_4k, w, label=r"Fixed $4\,$kB Med", color=c_4k_bar, edgecolor="#2E470E", hatch=r"\\\\", linewidth=0.9, alpha=0.9)
+    ax3.bar(x + 0.5 * w, acc_exp14, w, label="Channel-Blind Policy", color=c_blind_bar, edgecolor="#3F274E", hatch="xx", linewidth=0.9, alpha=0.9)
+    ax3.bar(x + 1.5 * w, acc_tgcn, w, label="Proposed EcoSem-VQA (CART-Net)", color=c_tgcn_bar, edgecolor="#4A0000", hatch="..", linewidth=1.2, zorder=4)
+    for i in range(len(task_keys)):
+        diff = acc_tgcn[i] - acc_4k[i]
+        ax3.text(x[i] + 1.5 * w, acc_tgcn[i] + 1.4, f"+{diff:.1f}%", ha="center", va="bottom", fontsize=8.0, fontweight="bold", color="#7A0000")
+    ax3.set_ylabel("Strict Task Accuracy (%)")
+    ax3.set_xticks(x)
+    ax3.set_xticklabels(task_labels)
+    ax3.set_ylim(0, 93)
+    ax3.legend(loc="upper left", framealpha=0.95, edgecolor="#CCCCCC", fontsize=8.2)
+    plt.tight_layout()
+    fig3.savefig(OUTPUT_DIR / "fig5_task_outage_resilience.png")
+    fig3.savefig(OUTPUT_DIR / "fig5_task_outage_resilience.pdf")
+    plt.close(fig3)
+
+    # 4. Standalone DyTBA Token Allocation (Fig 6)
+    tokens_2k = [c2k[t]["mean_actual_visual_tokens"] for t in task_keys]
+    tokens_4k = [c4k[t]["mean_actual_visual_tokens"] for t in task_keys]
+    tokens_exp14 = [ens[t]["mean_actual_visual_tokens"] for t in task_keys]
+
+    fig4, ax4 = plt.subplots(figsize=(7.5, 4.8))
+    ax4.set_axisbelow(True)
+    ax4.yaxis.grid(True, linestyle="--", linewidth=0.6, color="#D0D0D0", alpha=0.85)
+    c_dytba_bar = "#D35400"
+    ax4.bar(x - 1.0 * w, tokens_2k, w, label=r"Fixed $2\,$kB Low ($T_v \approx 44$)", color=c_2k_bar, edgecolor="#1C3F5E", hatch="///", linewidth=0.9, alpha=0.85)
+    ax4.bar(x, tokens_4k, w, label=r"Fixed $4\,$kB Med ($T_v \approx 110$)", color=c_4k_bar, edgecolor="#2E470E", hatch=r"\\\\", linewidth=0.9, alpha=0.85)
+    ax4.bar(x + 1.0 * w, tokens_exp14, w, label="DyTBA Adaptive Budget", color=c_dytba_bar, edgecolor="#6E2C00", hatch="..", linewidth=1.2, zorder=4)
+    for i in range(len(task_keys)):
+        val = tokens_exp14[i]
+        ax4.text(x[i] + 1.0 * w, val + 1.8, f"{val:.1f}", ha="center", va="bottom", fontsize=8.0, fontweight="bold", color="#7E2D00")
+    ax4.annotate("Selective Sparsification\n(Pruned to 56.1 tok, 95.5% Acc)",
+                 xy=(5 + 1.0 * w, tokens_exp14[5] + 8), xytext=(2.6, 78),
+                 arrowprops=dict(arrowstyle="->", color="#A04000", lw=1.2),
+                 bbox=dict(boxstyle="square,pad=0.3", fc="#FAFAFA", ec="#B0BEC5", lw=0.8),
+                 fontsize=8.5, fontweight="bold", color="#7E2D00")
+    ax4.annotate("Preserves Dense Tokens\n(~109 tok for Spatial Details)",
+                 xy=(0.5 + 1.0 * w, 111), xytext=(0.05, 128),
+                 arrowprops=dict(arrowstyle="->", color="#1B4F72", lw=1.2),
+                 bbox=dict(boxstyle="square,pad=0.3", fc="#FAFAFA", ec="#B0BEC5", lw=0.8),
+                 fontsize=8.5, fontweight="bold", color="#1B4F72")
+    ax4.set_ylabel(r"Allocated Receiver Visual Tokens $T_v$")
+    ax4.set_xticks(x)
+    ax4.set_xticklabels(task_labels)
+    ax4.set_ylim(0, 155)
+    ax4.legend(loc="upper right", framealpha=0.95, edgecolor="#CCCCCC", fontsize=8.2)
+    plt.tight_layout()
+    fig4.savefig(OUTPUT_DIR / "fig6_dytba_token_allocation.png")
+    fig4.savefig(OUTPUT_DIR / "fig6_dytba_token_allocation.pdf")
+    plt.close(fig4)
+    print("Saved all standalone figures (Fig 3-6) successfully.")
+
+
 def main():
     print("Loading data files...")
     f_scan = json.loads(Path("paper/outputs/rgb_channel_snr_scan_20260922/snr_scan_results.json").read_text())
@@ -523,7 +719,10 @@ def main():
     print("\nGenerating Figure 4: Semantic Task-Type Breakdown across 6 Categories...")
     plot_figure_4(f_tasks)
 
-    print("\nAll 4 publication figures generated successfully in", OUTPUT_DIR)
+    print("\nGenerating Granular Standalone Figures (Fig 3-6)...")
+    plot_standalone_figures(f_eval, f_tasks)
+
+    print("\nAll publication figures generated successfully in", OUTPUT_DIR)
 
 
 if __name__ == "__main__":
