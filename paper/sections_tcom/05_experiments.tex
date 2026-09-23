@@ -61,9 +61,9 @@ Wireless channels are simulated across 10 channel SNR operating points: $\gamma 
 \subsection{Benchmark Baselines}
 We compare the proposed cross-layer policy against a comprehensive suite of competitive baselines:
 \begin{itemize}
-    \item \textbf{Fixed-Rate Static Baselines}: Nine static configurations spanning all combinations of source bitrates $B \in \{2\text{k}, 4\text{k}, 8\text{k}\}$ and receiver visual budgets $T_v \in \{\mathrm{low}, \mathrm{medium}, \mathrm{high}\}$. The standard operational reference is \texttt{4000\_medium} ($4\text{k}$ bytes, $\sim 110.2$ visual tokens).
-    \item \textbf{Channel-Blind Semantic Policy}: A semantic routing policy that inspects question and image preview features $(f_q, f_I)$ to select source rate and visual budget, but lacks physical channel state information (CSI $\gamma$). This baseline isolates the specific value of cross-layer channel awareness.
-    \item \textbf{Theoretical Upper Bound (Oracle)}: An offline upper bound that selects the optimal action per query with a posteriori knowledge of task correctness and channel realization.
+    \item \textit{Fixed-Rate Static Baselines}: Nine static configurations spanning all combinations of source bitrates $B \in \{2\text{k}, 4\text{k}, 8\text{k}\}$ and receiver visual budgets $T_v \in \{\mathrm{low}, \mathrm{medium}, \mathrm{high}\}$. The standard operational reference is \texttt{4000\_medium} ($4\text{k}$ bytes, $\sim 110.2$ visual tokens).
+    \item \textit{Channel-Blind Semantic Policy}: A semantic routing policy that inspects question and image preview features $(f_q, f_I)$ to select source rate and visual budget, but lacks physical channel state information (CSI $\gamma$). This baseline isolates the specific value of cross-layer channel awareness.
+    \item \textit{Theoretical Upper Bound (Oracle)}: An offline upper bound that selects the optimal action per query with a posteriori knowledge of task correctness and channel realization.
 \end{itemize}
 
 \begin{table*}[!t]
@@ -107,8 +107,8 @@ In Fig.~\ref{fig:accuracy_cspm}, transmit energy scales proportionally with payl
 CART-Net strictly envelopes all individual fixed-rate baselines across the entire SNR continuum. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), CART-Net attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, CART-Net reaches $76.50\%$ accuracy, closely approaching the 8000-byte ceiling ($76.62\%$).
 
 \subsubsection{Constant Query-Energy Mode (CQEM) with PPC Power Boost (Fig.~\ref{fig:accuracy_cqem})}
-Fig.~\ref{fig:accuracy_cqem} illustrates the transformative impact of green cross-layer co-optimization under CQEM. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a \textbf{$+3.01\text{ dB}$ physical SNR boost over 4000 bytes} and a \textbf{$+6.00\text{ dB}$ boost over 8000 bytes} via the Physical Power Concentration (PPC) mechanism.
-This shifts the LDPC waterfall curve: at $\gamma = 2.5\text{ dB}$, fixed 4k collapses to \textbf{$7.00\%$}, and the blind policy collapses to \textbf{$9.21\%$}. In stark contrast, CART-Net delivers \textbf{$36.92\%$ accuracy}---a \textbf{$+29.92\%$ advantage over fixed 4k} and \textbf{$+27.71\%$ over the blind policy}. At $\gamma = 5.0\text{ dB}$, CART-Net achieves \textbf{$58.71\%$ accuracy} ($+27.12\%$ over fixed 4k). At $\gamma \ge 15.0\text{ dB}$, it smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
+Fig.~\ref{fig:accuracy_cqem} illustrates the transformative impact of green cross-layer co-optimization under CQEM. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a $+3.01\text{ dB}$ physical SNR boost over 4000 bytes and a $+6.00\text{ dB}$ boost over 8000 bytes via the Physical Power Concentration (PPC) mechanism.
+This shifts the LDPC waterfall curve: at $\gamma = 2.5\text{ dB}$, fixed 4k collapses to $7.00\%$, and the blind policy collapses to $9.21\%$. In stark contrast, CART-Net delivers $36.92\%$ accuracy---a $+29.92\%$ advantage over fixed 4k and $+27.71\%$ over the blind policy. At $\gamma = 5.0\text{ dB}$, CART-Net achieves $58.71\%$ accuracy ($+27.12\%$ over fixed 4k). At $\gamma \ge 15.0\text{ dB}$, it smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
 
 \begin{figure}[!t]
 \centering
@@ -133,16 +133,16 @@ where $\mathrm{Acc}$ is strict accuracy (\%), $E_{\mathrm{tx}} / E_{2\mathrm{k}}
 
 \subsubsection{Semantic Energy Efficiency Trends (Fig.~\ref{fig:see_vs_snr})}
 \begin{itemize}
-    \item \textbf{Severe Fading ($\gamma = 2.5\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines suffer from low packet delivery ratios due to codeword failure, collapsing energy efficiency to $3.50$ and $0.02$, respectively. CART-Net activates PPC at minimal baseline energy ($E_{\mathrm{tx}} / E_{2\mathrm{k}} = 1.00$), achieving $\eta_{\mathrm{SEE}} = 36.92$---an outstanding \textbf{10.5-fold energy efficiency enhancement} ($+33.42$ margin over fixed 4k) and \textbf{8.0-fold advantage over the blind policy} ($4.61$).
-    \item \textbf{Moderate Fading ($\gamma = 10.0\text{ dB}$)}: CART-Net peaks at $\eta_{\mathrm{SEE}} = 71.38$, achieving a \textbf{2.1-fold improvement over fixed 4k} ($34.77$) by transmitting half the complex symbols while preserving $71.38\%$ task accuracy.
-    \item \textbf{High-SNR Regime ($\gamma \ge 12.5\text{ dB}$)}: As the channel clears, CART-Net deliberately migrates queries into higher-capacity rate bands ($4\text{ kB}$ and $8\text{ kB}$), trading raw energy efficiency for visual fidelity to approach the $76.62\%$ task ceiling.
+    \item \textit{Severe Fading ($\gamma = 2.5\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines suffer from low packet delivery ratios due to codeword failure, collapsing energy efficiency to $3.50$ and $0.02$, respectively. CART-Net activates PPC at minimal baseline energy ($E_{\mathrm{tx}} / E_{2\mathrm{k}} = 1.00$), achieving $\eta_{\mathrm{SEE}} = 36.92$---an outstanding 10.5-fold energy efficiency enhancement ($+33.42$ margin over fixed 4k) and 8.0-fold advantage over the blind policy ($4.61$).
+    \item \textit{Moderate Fading ($\gamma = 10.0\text{ dB}$)}: CART-Net peaks at $\eta_{\mathrm{SEE}} = 71.38$, achieving a 2.1-fold improvement over fixed 4k ($34.77$) by transmitting half the complex symbols while preserving $71.38\%$ task accuracy.
+    \item \textit{High-SNR Regime ($\gamma \ge 12.5\text{ dB}$)}: As the channel clears, CART-Net deliberately migrates queries into higher-capacity rate bands ($4\text{ kB}$ and $8\text{ kB}$), trading raw energy efficiency for visual fidelity to approach the $76.62\%$ task ceiling.
 \end{itemize}
 
 \subsubsection{Semantic Delay Efficiency Trends (Fig.~\ref{fig:sde_vs_snr})}
 The metric $\eta_{\mathrm{SDE}}$ quantifies task throughput in percentage accuracy delivered per second of total pipeline execution:
 \begin{itemize}
-    \item At $\gamma = 2.5\text{ dB}$, CART-Net attains \textbf{$63.1\%/\text{s}$}, providing an absolute throughput advantage of \textbf{$+51.5\%/\text{s}$ (a 5.4-fold gain)} over fixed 4k ($11.6\%/\text{s}$) and outstripping the blind policy ($15.2\%/\text{s}$).
-    \item At $\gamma = 5.0\text{ dB}$, CART-Net expands its advantage to \textbf{$99.9\%/\text{s}$}, delivering a \textbf{$+47.7\%/\text{s}$ throughput leap} over fixed 4k ($52.2\%/\text{s}$).
+    \item At $\gamma = 2.5\text{ dB}$, CART-Net attains $63.1\%/\text{s}$, providing an absolute throughput advantage of $+51.5\%/\text{s}$ (a 5.4-fold gain) over fixed 4k ($11.6\%/\text{s}$) and outstripping the blind policy ($15.2\%/\text{s}$).
+    \item At $\gamma = 5.0\text{ dB}$, CART-Net expands its advantage to $99.9\%/\text{s}$, delivering a $+47.7\%/\text{s}$ throughput leap over fixed 4k ($52.2\%/\text{s}$).
     \item Throughout the entire SNR operating range, CART-Net's joint rate-token adaptation guarantees that end-to-end task progress per unit time remains strictly superior or comparable to all static configurations.
 \end{itemize}
 
@@ -166,14 +166,14 @@ A core premise of task-oriented communication is that different semantic queries
 \subsubsection{Asymmetric Visual Token Demands (Fig.~\ref{fig:dytba_token_allocation})}
 Fig.~\ref{fig:dytba_token_allocation} reveals that DyTBA autonomously discovers the underlying semantic entropy of different VQA tasks:
 \begin{itemize}
-    \item \textbf{Low-Entropy Query (``Object Presence'')}: Verifying whether an object exists in a scene is a coarse binary classification task. DyTBA compresses the visual token budget to a mean of \textbf{$56.1$ tokens}---a \textbf{$49.2\%$ token reduction} compared to the standard 110-token baseline. Despite this aggressive pruning, the VLM achieves an exceptional \textbf{$95.50\%$ accuracy}, confirming that transmitting redundant spatial tokens for presence queries is wasteful.
-    \item \textbf{High-Entropy Spatial Queries (``Counting'' and ``Positional Reasoning'')}: In contrast, counting small objects and identifying positional relations (e.g., ``left of'', ``under'') require dense spatial geometry. DyTBA autonomously preserves \textbf{$108.4 \sim 108.9$ visual tokens}, safeguarding fine-grained spatial representations.
-    \item \textbf{Contextual Queries (``Color'', ``Scene Recognition'', ``Activity Recognition'')}: These queries require intermediate spatial contexts, receiving an average of $97.7 \sim 110.2$ visual tokens.
+    \item \textit{Low-Entropy Query (``Object Presence'')}: Verifying whether an object exists in a scene is a coarse binary classification task. DyTBA compresses the visual token budget to a mean of $56.1$ tokens---a $49.2\%$ token reduction compared to the standard 110-token baseline. Despite this aggressive pruning, the VLM achieves an exceptional $95.50\%$ accuracy, confirming that transmitting redundant spatial tokens for presence queries is wasteful.
+    \item \textit{High-Entropy Spatial Queries (``Counting'' and ``Positional Reasoning'')}: In contrast, counting small objects and identifying positional relations (e.g., ``left of'', ``under'') require dense spatial geometry. DyTBA autonomously preserves $108.4 \sim 108.9$ visual tokens, safeguarding fine-grained spatial representations.
+    \item \textit{Contextual Queries (``Color'', ``Scene Recognition'', ``Activity Recognition'')}: These queries require intermediate spatial contexts, receiving an average of $97.7 \sim 110.2$ visual tokens.
 \end{itemize}
 
 \subsubsection{Task-Level Outage Resilience under Harsh Fading (Fig.~\ref{fig:task_outage_resilience})}
 Fig.~\ref{fig:task_outage_resilience} evaluates category-specific accuracy under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). Due to severe block error rates, the fixed \texttt{4000\_medium} baseline suffers from a low packet delivery ratio ($40.5\%$), crashing across all six task categories. 
-CART-Net maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes (activating PPC) while DyTBA adaptively budgets receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category: Object Presence ($74.25\%$ vs. $41.25\%$, \textbf{$+33.00\%$ gain}), Scene Recognition ($72.50\%$ vs. $34.75\%$, \textbf{$+37.75\%$ gain}), Color Recognition ($64.00\%$ vs. $33.75\%$, \textbf{$+30.25\%$ gain}), Activity Recognition ($52.75\%$ vs. $30.75\%$, \textbf{$+22.00\%$ gain}), Counting ($43.25\%$ vs. $23.50\%$, \textbf{$+19.75\%$ gain}), and Positional Reasoning ($42.50\%$ vs. $25.50\%$, \textbf{$+17.00\%$ gain}).
+CART-Net maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes (activating PPC) while DyTBA adaptively budgets receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category: Object Presence ($74.25\%$ vs. $41.25\%$, $+33.00\%$ gain), Scene Recognition ($72.50\%$ vs. $34.75\%$, $+37.75\%$ gain), Color Recognition ($64.00\%$ vs. $33.75\%$, $+30.25\%$ gain), Activity Recognition ($52.75\%$ vs. $30.75\%$, $+22.00\%$ gain), Counting ($43.25\%$ vs. $23.50\%$, $+19.75\%$ gain), and Positional Reasoning ($42.50\%$ vs. $25.50\%$, $+17.00\%$ gain).
 
 \begin{table}[!t]
 \centering
