@@ -272,13 +272,13 @@ def plot_figure_3(f_eval: dict):
     # -------------------------------------------------------------
     ax1.plot(snrs, see_tgcn, label="Proposed EcoSem-VQA (CART-Net)", color=C_TGCN,
              linestyle="-", marker="D", markersize=6.5, linewidth=2.5, zorder=5)
-    ax1.plot(snrs, see_2k, label=r"Fixed $2\,$kB Baseline ($1.0\times$)", color=C_2K,
+    ax1.plot(snrs, see_2k, label=r"Fixed $2\,$kB Baseline", color=C_2K,
              linestyle="--", marker="o", markersize=6, alpha=0.85)
-    ax1.plot(snrs, see_4k, label=r"Fixed $4\,$kB Baseline ($2.0\times$)", color=C_4K,
+    ax1.plot(snrs, see_4k, label=r"Fixed $4\,$kB Baseline", color=C_4K,
              linestyle="--", marker="s", markersize=6, alpha=0.85)
-    ax1.plot(snrs, see_blind, label=r"Channel-Blind Policy ($2.0\times$)", color=C_EXP14,
+    ax1.plot(snrs, see_blind, label=r"Channel-Blind Policy", color=C_EXP14,
              linestyle="-.", marker="x", markersize=6, alpha=0.85)
-    ax1.plot(snrs, see_8k, label=r"Fixed $8\,$kB Baseline ($4.0\times$)", color=C_8K,
+    ax1.plot(snrs, see_8k, label=r"Fixed $8\,$kB Baseline", color=C_8K,
              linestyle="--", marker="^", markersize=6, alpha=0.85)
 
     # Shaded SEE advantage over 4k
