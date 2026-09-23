@@ -1,0 +1,94 @@
+%% main_tgcn_2026.tex --- Manuscript for IEEE Transactions on Green Communications and Networking (TGCN)
+%% Title: Green Cross-Layer Semantic Communication for Edge Visual Question Answering:
+%%        Joint Rate and Visual Token Budget Allocation
+%% Authors: Qiankun Zhang, Yue Liu, Zhijin Qin, Hongbin Liang, Nelson L. S. da Fonseca
+
+\documentclass[12pt,lettersize,journal,onecolumn]{IEEEtran}
+
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{setspace}
+\doublespacing % IEEE TGCN review format (single column, double spaced)
+
+\usepackage{etoolbox}
+\AtBeginEnvironment{table}{\singlespacing}
+\AtBeginEnvironment{figure}{\singlespacing}
+
+% Float placement adjustments
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.9}
+\setcounter{topnumber}{4}
+\setcounter{totalnumber}{6}
+
+\setlength{\textfloatsep}{10pt plus 2pt minus 3pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+
+\newcommand{\eg}{e.g.,\xspace}
+\newcommand{\ie}{i.e.,\xspace}
+\newcommand{\etal}{\textit{et al.}\xspace}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\title{Green Cross-Layer Semantic Communication for Edge Visual Question Answering: Joint Rate and Visual Token Budget Allocation}
+
+\author{Qiankun~Zhang,
+        Yue~Liu,~\IEEEmembership{Member,~IEEE,}
+        Zhijin~Qin,~\IEEEmembership{Senior~Member,~IEEE,}
+        Hongbin~Liang,~\IEEEmembership{Member,~IEEE,}
+        and~Nelson~L.~S.~da~Fonseca,~\IEEEmembership{Senior~Member,~IEEE}
+\thanks{Manuscript submitted September~2026. \emph{(Corresponding author: Yue Liu.)}}
+\thanks{Q.\ Zhang and Y.\ Liu are with the Faculty of Applied Sciences, Macao Polytechnic University, Macao SAR, China (e-mail: yue.liu@mpu.edu.mo).}
+\thanks{Z.\ Qin is with the Department of Electronic Engineering, Tsinghua University, Beijing, China (e-mail: qinzhijin@tsinghua.edu.cn).}
+\thanks{H.\ Liang is with the School of Transportation and Logistics, Southwest Jiaotong University, Chengdu, China (e-mail: hbliang@swjtu.edu.cn).}
+\thanks{N.\ L.\ S.\ da Fonseca is with the Institute of Computing, State University of Campinas (UNICAMP), Campinas 13083-852, Brazil (e-mail: nfonseca@ic.unicamp.br).}}
+
+\markboth{IEEE Transactions on Green Communications and Networking (submitted)}%
+{Zhang \MakeLowercase{\textit{et al.}}: Green Cross-Layer Semantic Communication for Edge VQA}
+
+\maketitle
+
+\begin{abstract}
+Deploying edge-assisted Visual Question Answering (VQA) over resource-constrained wireless links requires balancing physical-layer transmission energy against server-side model inference complexity. Existing semantic communication (SemCom) frameworks predominantly presume analog, unquantized transmissions, employ toy-scale decoders, and overlook the energy consumption of large foundational Vision--Language Models (VLMs). This paper proposes an energy-frugal, cross-layer task-oriented semantic communication system for edge VQA under standardized digital physical layers. The system integrates deep variational neural image compression, 3GPP 5G-compliant $\text{LDPC}(1020, 512)$ channel coding over Rician fading ($K=6\text{ dB}$), and an edge-deployed Qwen3-VL-4B model adapted via parameter-efficient low-rank adaptation (LoRA). Under a rigorous dual-mode green energy formulation, we demonstrate that when transmitting under a constant query energy budget (Mode~2), selecting compact source bitrates unlocks up to $+3.01\text{ dB}$ and $+6.00\text{ dB}$ of physical SNR gain, shielding the link from catastrophic packet erasure. We develop a lightweight, channel-aware policy network that inspects multimodal query semantics and instantaneous physical channel state information (CSI) to dynamically co-optimize transmitter source bitrates ($2\text{k}, 4\text{k}, 8\text{k}$ bytes) and receiver visual token budgets ($T_v \in \{\mathrm{low}, \mathrm{medium}, \mathrm{high}\}$). Extensive evaluation over 2,400 independent blind test images across 10 channel SNR points ($-5.0\text{ dB} \dots 20.0\text{ dB}$) on the TDIUC benchmark demonstrates that our policy attains $36.92\%$ accuracy under harsh fading ($2.5\text{ dB}$), outperforming fixed 4k by $+29.92\%$ and channel-blind policies by $+27.71\%$. Furthermore, the policy autonomously prunes visual tokens by $49.2\%$ for low-entropy semantic tasks while strictly defining the non-dominated Pareto efficiency frontier across RF energy, system latency, and task accuracy.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Green communications, semantic communications, visual question answering, vision--language models, cross-layer optimization, LDPC codes, energy efficiency.
+\end{IEEEkeywords}
+
+\input{sections_tgcn/01_introduction}
+\input{sections_tgcn/02_related_work}
+\input{sections_tgcn/03_system_model}
+\input{sections_tgcn/04_policy_design}
+\input{sections_tgcn/05_experiments}
+\input{sections_tgcn/06_conclusion}
+
+\begin{singlespace}
+\renewcommand{\footnotesize}{\scriptsize}
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+\end{singlespace}
+
+\end{document}

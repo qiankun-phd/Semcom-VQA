@@ -1,0 +1,117 @@
+\section{System Model and Problem Formulation}\label{sec:system}
+
+\subsection{End-to-End System Architecture}
+We consider a task-oriented wireless edge VQA system where a remote edge transmitter (e.g., an aerial UAV or IoT vision sensor) captures an RGB image $I \in \mathbb{R}^{H \times W \times 3}$ and is tasked with answering a user-submitted natural language question $q$. An edge server equipped with an adapted foundational Vision--Language Model (VLM) executes multimodal reasoning to infer the ground-truth answer $A^*$. 
+
+To minimize energy consumption while guaranteeing task accuracy over an unreliable wireless link, the system dynamically co-optimizes the source transmission bitrate $B$ and the receiver visual token budget $T_v$ via a cross-layer policy network $\pi$. The overall pipeline comprises three core subsystems: neural variational source compression, a digital physical layer with LDPC channel coding over Rician fading, and an edge VLM with dynamic visual token budget allocation.
+
+\subsection{Neural Source Compression and Digital Channel Model}
+\subsubsection{Variational Source Compression}
+The transmitter employs a deep variational autoencoder with a scale hyperprior architecture~\cite{balle2018variational,begaint2020compressai}. The raw image $I$ is mapped to a latent semantic representation $\mathbf{y} = g_a(I; \boldsymbol{\theta}_a)$ via a convolutional analysis transform. To capture spatial dependencies, a hyper-analysis transform extracts hyper-latents $\mathbf{z} = h_a(\mathbf{y}; \boldsymbol{\phi}_a)$, which parameterize the conditional Gaussian entropy model $p(\mathbf{\tilde y} \mid \mathbf{\hat z}) \sim \mathcal{N}(\mathbf{0}, \boldsymbol{\sigma}^2)$ where $\boldsymbol{\sigma} = h_s(\mathbf{\hat z}; \boldsymbol{\phi}_s)$. 
+
+The quantized latents $\mathbf{\hat y} = \lfloor \mathbf{y} \rceil$ and hyper-latents $\mathbf{\hat z} = \lfloor \mathbf{z} \rceil$ are losslessly encoded into a discrete binary bitstream using an asymmetric numeral systems (ANS) entropy coder. By regulating entropy thresholds, the transmitter controls the total compressed payload size $B \in \mathcal{B} = \{2000, 4000, 8000\}$ bytes.
+
+\subsubsection{3GPP LDPC Channel Coding and Digital Modulation}
+Unlike prior analog JSCC literature, our physical layer strictly adheres to standardized digital transmission specifications. The binary bitstream of length $8B$ bits is partitioned into $N_{\mathrm{blocks}}$ codewords. Each block is appended with a 32-bit cyclic redundancy check (CRC-32) and encoded using a 3GPP 5G-compliant $\text{LDPC}(N_b, K_b)$ code, where the codeword length is $N_b = 1020$ bits, the information payload per block is $K_b = 512$ bits (including CRC), and the code rate is $R_c = 512/1020 \approx 0.502$.
+
+Each block of 480 payload bytes (3840 bits) maps into $\lceil 3840 / 480 \rceil = 8$ LDPC codeblocks. Hence, the total number of LDPC blocks required to transmit $B$ bytes is:
+\begin{equation}
+N_{\mathrm{blocks}}(B) = \left\lceil \frac{B}{48} \right\rceil.
+\end{equation}
+The encoded bits are modulated via Gray-mapped Quadrature Phase Shift Keying (QPSK, modulation order $m=2$ bits/symbol), producing $N_s$ complex channel symbols:
+\begin{equation}
+N_s(B) = N_{\mathrm{blocks}}(B) \cdot \frac{N_b}{m} = \left\lceil \frac{B}{48} \right\rceil \cdot 510.
+\end{equation}
+Specifically, for our three candidate bitrates:
+\begin{itemize}
+    \item $B = 2000$ B $\implies N_{\mathrm{blocks}} = 42 \implies N_s = 21{,}420$ complex symbols.
+    \item $B = 4000$ B $\implies N_{\mathrm{blocks}} = 84 \implies N_s = 42{,}840$ complex symbols.
+    \item $B = 8000$ B $\implies N_{\mathrm{blocks}} = 167 \implies N_s = 85{,}170$ complex symbols.
+\end{itemize}
+
+\subsubsection{Rician Fading Channel and Iterative Decoding}
+The transmitted symbol vector $\mathbf{x} \in \mathbb{C}^{N_s}$ with $\mathbb{E}[|x_k|^2] = 1$ traverses a block flat-fading Rician channel:
+\begin{equation}\label{eq:channel_model}
+y_k = \sqrt{P_s} h_k x_k + n_k, \quad k = 1, \dots, N_s,
+\end{equation}
+where $P_s$ is the average transmit energy per symbol, $n_k \sim \mathcal{CN}(0, \sigma_n^2)$ represents complex additive white Gaussian noise, and $h_k$ denotes the Rician fading coefficient characterized by the Rician $K$-factor:
+\begin{equation}
+h_k = \sqrt{\frac{K}{K+1}} h_{\mathrm{LOS}} + \sqrt{\frac{1}{K+1}} h_{\mathrm{NLOS}},
+\end{equation}
+where $h_{\mathrm{LOS}} = e^{j\theta}$ is the deterministic line-of-sight (LOS) component, $h_{\mathrm{NLOS}} \sim \mathcal{CN}(0, 1)$ is the scattered Rayleigh non-line-of-sight (NLOS) component, and $K = 6\text{ dB}$ reflects typical elevated air-to-ground or micro-cellular propagation. The channel gain is normalized such that $\mathbb{E}[|h_k|^2] = 1$. The nominal received SNR is defined as $\gamma = P_s / \sigma_n^2$.
+
+At the receiver, log-likelihood ratios (LLRs) are computed from the channel observations $y_k$ and fed into an iterative Soft Belief Propagation (BP) decoder executing up to 50 iterations with early stopping upon syndrome check satisfaction. A transmission block is declared successful if and only if its CRC-32 checksum passes. The packet delivery ratio (PDR) $\Pi(\gamma, B)$ is the probability that all $N_{\mathrm{blocks}}(B)$ codewords are successfully decoded:
+\begin{equation}
+\Pi(\gamma, B) = \prod_{i=1}^{N_{\mathrm{blocks}}(B)} \left(1 - \mathrm{BLER}_i(\gamma)\right).
+\end{equation}
+If any block fails CRC verification, a packet outage occurs, and the image is dropped ($\hat{I} = \emptyset$). Otherwise, the bitstream is assembled and passed to the synthesis transform $g_s(\mathbf{\hat y}; \boldsymbol{\theta}_s)$ to reconstruct the RGB image $\hat{I}$.
+
+\subsection{Receiver VLM and Dynamic Visual Token Budgeting}
+The edge server runs Qwen3-VL-4B-Instruct~\cite{wang2024qwen2vl,bai2025qwen25vl}, quantized to 4-bit NormalFloat (NF4) and adapted via parameter-efficient Low-Rank Adaptation (LoRA) on the query, key, value, and output projection layers of the language backbone.
+
+Before feeding the reconstructed image $\hat{I}$ into the Vision Transformer (ViT) encoder, the receiver dynamically resizes and tokenizes the image according to a prescribed visual token budget $T_v \in \mathcal{T} = \{\mathrm{low}, \mathrm{medium}, \mathrm{high}\}$:
+\begin{itemize}
+    \item \textbf{Low Budget} ($T_v \approx 43.6$ tokens): Downsamples the input resolution to an area of $50{,}176$ pixels, capturing global semantic layout with minimal compute.
+    \item \textbf{Medium Budget} ($T_v \approx 110.2$ tokens): Scales the input to $100{,}352$ pixels, providing balanced spatial granularity.
+    \item \textbf{High Budget} ($T_v \approx 215.8$ tokens): Preserves dense resolution ($200{,}704$ pixels) for fine-grained spatial and count reasoning.
+\end{itemize}
+The VLM autoregressively generates the predicted answer $\hat{A} = \mathrm{VLM}(\hat{I}, q; T_v)$. Task accuracy is measured by strict string exact match after canonicalization:
+\begin{equation}
+\mathrm{Acc} = \mathbb{I}(\hat{A} = A^*).
+\end{equation}
+
+\subsection{Energy and Latency Accounting Models}
+A fundamental contribution of this work is the cross-layer formulation of energy consumption spanning both the wireless transmission and the edge inference phases.
+
+\subsubsection{Transmission Power and Energy Modes}
+We consider two operational energy modes reflecting distinct real-world deployment constraints:
+\begin{itemize}
+    \item \textbf{Mode 1: Constant Transmission Power per Symbol ($P_s = P_0$)}: In grid-powered or macro-cell systems, the transmit power per symbol is held constant. The total RF transmission energy per query scales proportionally with the symbol count:
+    \begin{equation}
+    E_{\mathrm{tx}}^{(1)}(B) = P_0 \cdot N_s(B).
+    \end{equation}
+    \item \textbf{Mode 2: Constant Transmission Energy Budget per Query ($E_{\mathrm{tx}} = E_0$)}: In battery-constrained edge devices (e.g., UAVs with fixed per-frame transmission energy quotas), the total energy allocated to transmit an image query is clamped at a constant budget $E_0$. Consequently, the average transmit energy per symbol adjusts inversely with the symbol count:
+    \begin{equation}
+    P_s(B) = \frac{E_0}{N_s(B)}.
+    \end{equation}
+    Under Mode~2, selecting a more compact source bitrate $B_1 < B_2$ directly yields an effective SNR boost:
+    \begin{equation}\label{eq:snr_gain}
+    \Delta \gamma_{\mathrm{eff}}(B_1, B_2) = 10 \log_{10}\left(\frac{N_s(B_2)}{N_s(B_1)}\right) \text{ dB}.
+    \end{equation}
+    Specifically, transmitting 2000 bytes ($N_s = 21{,}420$) instead of 4000 bytes ($N_s = 42{,}840$) confers an exact:
+    \begin{equation}
+    \Delta \gamma = 10 \log_{10}\left(\frac{42{,}840}{21{,}420}\right) = +3.01\text{ dB}
+    \end{equation}
+    power advantage. Compressing from 8000 bytes ($N_s = 85{,}170$) to 2000 bytes yields a $+6.00\text{ dB}$ gain. In deep fading regimes, this $+3.01\sim+6.00\text{ dB}$ boost elevates the operating SNR past the LDPC waterfall threshold, shielding the link from packet erasure.
+\end{itemize}
+
+\subsubsection{Edge Computation Energy}
+The server-side computation energy consumed by the edge VLM during inference is modeled as:
+\begin{equation}
+E_{\mathrm{rx,comp}}(T_v) = P_{\mathrm{GPU}} \cdot t_{\mathrm{vlm}}(T_v),
+\end{equation}
+where $P_{\mathrm{GPU}}$ is the average GPU running power and $t_{\mathrm{vlm}}(T_v)$ is the measured forward inference time, which scales monotonically with the visual token count $T_v$. The total system energy per query is:
+\begin{equation}
+E_{\mathrm{total}} = E_{\mathrm{tx}} + E_{\mathrm{rx,comp}}.
+\end{equation}
+
+\subsubsection{End-to-End Latency Model}
+The total end-to-end processing and communication latency $t_{\mathrm{e2e}}$ is given by:
+\begin{equation}\label{eq:latency}
+t_{\mathrm{e2e}} = t_{\mathrm{enc}}(B) + t_{\mathrm{tx}}(B) + t_{\mathrm{dec}}(B) + t_{\mathrm{vlm}}(T_v),
+\end{equation}
+where $t_{\mathrm{enc}}$ is the onboard neural source encoding time, $t_{\mathrm{tx}} = N_s(B) / W_{\mathrm{sym}}$ is the wireless airtime over a symbol transmission bandwidth $W_{\mathrm{sym}}$, $t_{\mathrm{dec}}$ is the receiver decompression time, and $t_{\mathrm{vlm}}$ is the VLM answer generation time.
+
+\subsection{Cross-Layer Optimization Problem}
+Let $\mathcal{A} = \mathcal{B} \times \mathcal{T}$ denote the set of $|\mathcal{A}| = 9$ joint source-rate and visual-budget action configurations:
+\begin{equation}
+a = (B, T_v) \in \mathcal{A}.
+\end{equation}
+Our objective is to find an optimal cross-layer policy $\pi^*(I, q, \gamma)$ that maximizes the expected end-to-end VQA accuracy while satisfying strict energy and latency constraints:
+\begin{align}\label{eq:opt_problem}
+\max_{\pi} \quad & \mathbb{E}_{(I, q, \gamma)}\left[ \mathbb{I}(\hat{A}(a) = A^*) \cdot \Pi(\gamma_{\mathrm{eff}}(B), B) \right] \\
+\text{s.t.} \quad & E_{\mathrm{total}}(a) \le E_{\mathrm{budget}}, \quad \forall (I, q, \gamma), \label{eq:cons_energy} \\
+& t_{\mathrm{e2e}}(a) \le \tau_{\mathrm{deadline}}, \quad \forall (I, q, \gamma), \label{eq:cons_latency} \\
+& a = \pi(I, q, \gamma) \in \mathcal{A}.
+\end{align}
+Problem~\eqref{eq:opt_problem} is a combinatorial, non-convex stochastic optimization problem involving non-differentiable wireless packet erasure and large-scale multimodal neural reasoning. In the next section, we design an efficient neural policy network to solve it.

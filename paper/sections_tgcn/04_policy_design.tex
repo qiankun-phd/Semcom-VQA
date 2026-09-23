@@ -1,0 +1,61 @@
+\section{Cross-Layer Semantic Policy Design}\label{sec:policy}
+
+\subsection{Policy Network Architecture}
+To resolve the non-convex optimization problem formulated in~\eqref{eq:opt_problem} in real time without imposing heavy computation at the transmitter, we design a lightweight, channel-aware semantic policy network $\pi_{\boldsymbol{\theta}}(a \mid I, q, \gamma)$. The network jointly inspects multimodal query semantics and instantaneous physical channel quality to output a categorical probability distribution over the $|\mathcal{A}| = 9$ discrete actions:
+\begin{equation}
+\mathcal{A} = \left\{ (B, T_v) \mid B \in \{2\text{k}, 4\text{k}, 8\text{k}\}, T_v \in \{\mathrm{low}, \mathrm{medium}, \mathrm{high}\} \right\}.
+\end{equation}
+
+As illustrated in Fig.~\ref{fig:framework_overview}(a), the policy network comprises three input branches:
+\begin{enumerate}
+    \item \textbf{Question Semantic Feature ($f_q \in \mathbb{R}^{d_q}$)}: A frozen text embedding (dimension $d_q = 512$) extracts syntactic and semantic intent, distinguishing low-entropy categorical queries (e.g., ``Is there a car?'') from high-entropy spatial queries (e.g., ``How many pedestrians are to the left of the bench?'').
+    \item \textbf{Image Preview Feature ($f_I \in \mathbb{R}^{d_I}$)}: A lightweight convolutional feature map (dimension $d_I = 256$) extracted from a sub-sampled preview of the source image $I$. This preview incurs negligible onboard computational overhead ($< 1.5\text{ ms}$) and captures global visual complexity, object clutter, and texture density.
+    \item \textbf{Physical CSI Feature ($\gamma \in \mathbb{R}$)}: The instantaneous channel SNR $\gamma = P_s / \sigma_n^2$ estimated by the receiver and fed back via a low-rate, robust reverse control channel.
+\end{enumerate}
+
+The multimodal features are projected into a common latent representation via linear projection matrices $\mathbf{W}_q \in \mathbb{R}^{d_h \times d_q}$, $\mathbf{W}_I \in \mathbb{R}^{d_h \times d_I}$, and $\mathbf{w}_\gamma \in \mathbb{R}^{d_h \times 1}$, with a fused hidden state:
+\begin{equation}
+\mathbf{h}_0 = \mathrm{LayerNorm}\left( \mathbf{W}_q f_q + \mathbf{W}_I f_I + \mathbf{w}_\gamma \gamma + \mathbf{b}_0 \right),
+\end{equation}
+where $d_h = 256$. The fused representation $\mathbf{h}_0$ passes through two residual MLP blocks with GELU non-linearities and LayerNorm. The final linear projection yields an unnormalized logit vector $\mathbf{z} \in \mathbb{R}^9$:
+\begin{equation}
+\mathbf{z} = \mathbf{W}_{\mathrm{out}} \mathbf{h}_2 + \mathbf{b}_{\mathrm{out}}.
+\end{equation}
+The routing action probability distribution $\mathbf{p} = [p_1, \dots, p_9]^T$ is computed via a temperature-scaled softmax:
+\begin{equation}
+p(a \mid I, q, \gamma) = \frac{\exp\left(z_a / \tau\right)}{\sum_{a' \in \mathcal{A}} \exp\left(z_{a'} / \tau\right)},
+\end{equation}
+where $\tau > 0$ controls decision exploration during training and is set to $\tau = 1.0$ at deployment. During inference, greedy selection $a^* = \arg\max_{a} p(a \mid I, q, \gamma)$ selects the action in less than $0.8\text{ ms}$.
+
+\subsection{Policy Optimization and Green Regularization}
+The policy network is trained using supervised policy learning augmented with green energy and latency regularization. 
+
+Let $\mathcal{D}_{\mathrm{train}} = \{(I_n, q_n, \gamma_n)\}_{n=1}^N$ denote the training corpus. For each sample, offline ground-truth answers $\hat{A}_n(a)$ are evaluated across all 9 action configurations. The task utility of action $a = (B, T_v)$ under channel SNR $\gamma$ is defined as:
+\begin{equation}
+U(a; I_n, q_n, \gamma_n) = \mathbb{I}(\hat{A}_n(a) = A_n^*) \cdot \Pi(\gamma_{\mathrm{eff}}(B), B) - \lambda_E \frac{E_{\mathrm{total}}(a)}{E_{\mathrm{ref}}} - \lambda_L \frac{t_{\mathrm{e2e}}(a)}{t_{\mathrm{ref}}},
+\end{equation}
+where $\Pi(\gamma_{\mathrm{eff}}(B), B)$ is the precomputed LDPC packet delivery ratio, $E_{\mathrm{ref}}$ and $t_{\mathrm{ref}}$ are normalization constants, and $\lambda_E, \lambda_L \ge 0$ are hyper-parameters governing the green energy--accuracy and latency--accuracy trade-off.
+
+The optimal supervision target is defined as the utility-maximizing action:
+\begin{equation}
+a_n^* = \arg\max_{a \in \mathcal{A}} U(a; I_n, q_n, \gamma_n).
+\end{equation}
+The policy parameters $\boldsymbol{\theta}$ are optimized by minimizing the multi-class cross-entropy loss over the training distribution:
+\begin{equation}
+\mathcal{L}(\boldsymbol{\theta}) = -\frac{1}{N} \sum_{n=1}^N \sum_{a \in \mathcal{A}} \mathbb{I}(a = a_n^*) \log p(a \mid I_n, q_n, \gamma_n; \boldsymbol{\theta}) + \frac{\beta}{2} \|\boldsymbol{\theta}\|_2^2.
+\end{equation}
+Training uses the AdamW optimizer with an initial learning rate of $10^{-3}$, cosine learning rate decay, and a batch size of 64 over 50 epochs with early stopping based on validation utility.
+
+\subsection{Emergent Three-Phase Adaptation Mechanics}
+A key emergent property of the proposed policy network is that, without hard-coded thresholds, it autonomously partitions the physical SNR continuum into three distinct operational regimes (as visualized in Fig.~\ref{fig:framework_overview}(b)):
+
+\begin{enumerate}
+    \item \textbf{Phase I: Link Survival Regime ($\gamma \le 10.0\text{ dB}$)}:
+    In harsh fading conditions, transmitting large packets (4000 or 8000 bytes) incurs a block error rate that collapses the LDPC packet delivery ratio ($\Pi < 0.40$). The policy network assigns \textbf{$100\%$ of transmissions to the 2000-byte band} ($N_s = 21{,}420$ complex symbols). Within this physical envelope, the policy adaptively modulates the receiver's visual token budget: as $\gamma$ rises from $-5\text{ dB}$ to $10\text{ dB}$, average visual tokens scale smoothly from $43.8$ tokens to $136.2$ tokens, maximizing inference capacity without jeopardizing the physical link.
+    
+    \item \textbf{Phase II: Rate Migration Regime ($12.5\text{ dB} \le \gamma \le 15.0\text{ dB}$)}:
+    Once physical SNR exceeds $11.25\text{ dB}$, the LDPC frame delivery ratio for 4000 bytes surpasses $98.5\%$. The policy smoothly migrates $63.8\%$ of queries to 4000 bytes at $12.5\text{ dB}$ and $92.7\%$ at $15.0\text{ dB}$. In this regime, the system harnesses higher spatial resolution ($T_v \approx 110$ tokens) to resolve challenging semantic questions, boosting average accuracy above $75.1\%$.
+    
+    \item \textbf{Phase III: High-Fidelity Burst Regime ($\gamma \ge 20.0\text{ dB}$)}:
+    Under pristine channel conditions, the physical link supports maximum payload transmission with zero erasure. Rather than blindly transmitting 8000 bytes for all queries, the policy selectively bursts $23.2\%$ of visually intricate queries to \texttt{8000\_high} ($N_s = 85{,}170, T_v = 215.8$), while retaining the remaining queries at 4000 bytes. This selective bursting achieves peak VQA accuracy ($76.50\%$) while avoiding redundant RF energy expenditure on semantically simple queries.
+\end{enumerate}
