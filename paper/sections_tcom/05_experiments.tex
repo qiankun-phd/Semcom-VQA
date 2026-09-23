@@ -97,28 +97,30 @@ These results demonstrate that task-oriented semantic communication cannot treat
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.98\linewidth]{figures/tgcn_publication_figures_20260922/fig3_energy_latency_tradeoff.pdf}
-\caption{Normalized RF transmission energy and end-to-end system latency across the channel physical SNR continuum from $\gamma = -5.0\text{ dB}$ to $20.0\text{ dB}$. (a) Relative RF transmission energy per query ($E_{\mathrm{tx}} / E_{2\text{k}}$) versus channel SNR $\gamma$. CART-Net operates at minimal $1.0\times$ energy under harsh fading ($\le 10\text{ dB}$), achieving a 50\% RF energy reduction over fixed 4k, and dynamically caps energy at $2.45\times$ under pristine channels. (b) Mean end-to-end latency $t_{\mathrm{e2e}}$ (ms) versus channel SNR $\gamma$, demonstrating systematic delay savings enabled by DyTBA token pruning and bitrate agility.}
+\caption{Semantic energy and delay efficiency metrics across the channel physical SNR continuum from $\gamma = -5.0\text{ dB}$ to $20.0\text{ dB}$. (a) Semantic Energy Efficiency ($\eta_{\mathrm{SEE}} = \text{Accuracy} / (E_{\mathrm{tx}} / E_{2\text{k}})$, \% per unit energy) versus channel SNR $\gamma$. CART-Net delivers up to a $10.5\times$ energy efficiency advantage over fixed 4k under severe fading ($\gamma = 2.5\text{ dB}$) via PPC power concentration and reaches peak efficiency ($71.4$) at $10\text{ dB}$. (b) Semantic Delay Efficiency ($\eta_{\mathrm{SDE}} = \text{Accuracy} / t_{\mathrm{e2e}}$, \% accuracy per second) versus channel SNR $\gamma$, demonstrating superior end-to-end task throughput enabled by DyTBA visual token pruning and adaptive channel coding.}
 \label{fig:energy_latency_tradeoff}
 \end{figure*}
 
-\subsection{Green Energy and Latency Performance Evaluation (Figure~\ref{fig:energy_latency_tradeoff})}
-To validate the green communication efficiency of the proposed framework, Fig.~\ref{fig:energy_latency_tradeoff} tracks relative RF transmission energy and end-to-end system latency across the full channel SNR continuum from $-5.0\text{ dB}$ to $20.0\text{ dB}$.
+\subsection{Semantic Energy and Delay Efficiency Evaluation (Figure~\ref{fig:energy_latency_tradeoff})}
+To evaluate green edge intelligence in task-oriented communications, we define two holistic physical-semantic efficiency metrics that capture the trade-offs between task performance and resource expenditures across fading channels:
+\begin{equation}
+    \eta_{\mathrm{SEE}} = \frac{\mathrm{Acc}\,(\%)}{E_{\mathrm{tx}} / E_{2\mathrm{k}}}, \qquad \eta_{\mathrm{SDE}} = \frac{\mathrm{Acc}\,(\%)}{t_{\mathrm{e2e}}\text{ (s)}},
+\end{equation}
+where $\mathrm{Acc}$ is the strict task accuracy (\%), $E_{\mathrm{tx}} / E_{2\mathrm{k}}$ denotes the relative RF transmission energy (normalized to 2000-byte transmission), and $t_{\mathrm{e2e}}$ represents the total end-to-end latency ($t_{\mathrm{enc}} + t_{\mathrm{tx}} + t_{\mathrm{dec}} + t_{\mathrm{vlm}}$). Fig.~\ref{fig:energy_latency_tradeoff} illustrates their evolution across the SNR continuum.
 
-\subsubsection{RF Transmission Energy Savings (Fig.~\ref{fig:energy_latency_tradeoff}(a))}
+\subsubsection{Semantic Energy Efficiency Trends (Fig.~\ref{fig:energy_latency_tradeoff}(a))}
 \begin{itemize}
-    \item \textbf{Link Survival Regime ($\gamma \le 10.0\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines constantly consume $2.00\times$ and $3.98\times$ relative energy regardless of channel severity, yet suffer from catastrophic packet outages under deep fading. CART-Net clamps the transmission rate to 2000 bytes, operating at the baseline normalized energy of $1.00\times$. This secures a \textbf{$50.0\%$ RF transmission energy saving over fixed 4k and the channel-blind policy} while activating PPC to maintain link survival.
-    \item \textbf{Rate Migration Regime ($12.5\text{ dB} \le \gamma \le 15.0\text{ dB}$)}: As the channel clears, CART-Net smoothly migrates energy from $1.64\times$ to $1.93\times$, dynamically expanding payload capacity only when the physical channel can reliably decode it.
-    \item \textbf{High-Fidelity Burst Regime ($\gamma \ge 20.0\text{ dB}$)}: CART-Net stabilizes at $2.45\times$ normalized energy to attain $76.50\%$ accuracy, capturing the visual fidelity benefits of higher rates while \textbf{slashing $38.4\%$ RF energy} compared to the wasteful $3.98\times$ consumption of the fixed 8000-byte scheme.
+    \item \textbf{Severe Fading ($\gamma = 2.5\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines suffer from low packet delivery ratios due to codeword failure, collapsing their energy efficiency to $3.50$ and $0.02$, respectively. In contrast, CART-Net activates PPC to sustain link connectivity while operating at minimal baseline energy ($1.00\times$), achieving $\eta_{\mathrm{SEE}} = 36.92$---an outstanding \textbf{$10.5\times$ energy efficiency gain over fixed 4k} and \textbf{$8.0\times$ over the channel-blind policy} ($4.61$).
+    \item \textbf{Moderate Fading ($\gamma = 10.0\text{ dB}$)}: CART-Net peaks at $\eta_{\mathrm{SEE}} = 71.38$, more than \textbf{doubling the efficiency of fixed 4k} ($34.77$) by transmitting half the complex symbols while preserving $71.38\%$ task accuracy.
+    \item \textbf{High-SNR Regime ($\gamma \ge 12.5\text{ dB}$)}: As the channel clears, CART-Net deliberately migrates queries into higher-capacity rate bands ($4\text{ kB}$ and $8\text{ kB}$), trading raw energy efficiency for visual fidelity to approach the $76.62\%$ task accuracy ceiling.
 \end{itemize}
 
-\subsubsection{End-to-End System Latency Analysis (Fig.~\ref{fig:energy_latency_tradeoff}(b))}
-End-to-end latency accounts for neural source encoding ($t_{\mathrm{enc}} = 246.6\text{ ms}$), RF symbol airtime ($t_{\mathrm{tx}} = N_s / W_{\mathrm{sym}}$ over $W_{\mathrm{sym}} = 1\text{ Msps}$), receiver decompression ($t_{\mathrm{dec}} = 52.7\text{ ms}$), and VLM forward reasoning ($t_{\mathrm{vlm}} \in [238.0, 297.8]\text{ ms}$).
-
-As depicted in Fig.~\ref{fig:energy_latency_tradeoff}(b), the joint rate-token budgeting network provides significant latency reductions across all SNR regimes:
+\subsubsection{Semantic Delay Efficiency Trends (Fig.~\ref{fig:energy_latency_tradeoff}(b))}
+The metric $\eta_{\mathrm{SDE}}$ quantifies task throughput in percentage accuracy delivered per second of total pipeline execution:
 \begin{itemize}
-    \item In deep fading ($\gamma \le -2.5\text{ dB}$), DyTBA prunes visual tokens down to $43.8$ tokens, dropping end-to-end latency to \textbf{$567.8\text{ ms}$}---saving $36.8\text{ ms}$ compared to standard fixed 4k ($604.6\text{ ms}$) and $103.4\text{ ms}$ compared to fixed 8k ($671.2\text{ ms}$).
-    \item Across the Link Survival Regime ($\gamma \le 10.0\text{ dB}$), mean latency remains below $589.0\text{ ms}$, consistently delivering faster response times than fixed 4k ($604.6\text{ ms}$) by transmitting fewer complex symbols.
-    \item Under pristine channels ($\gamma = 20.0\text{ dB}$), CART-Net achieves near-peak accuracy with a mean latency of \textbf{$622.5\text{ ms}$}, representing a \textbf{$48.7\text{ ms}$ delay reduction} over the fixed 8000-byte baseline ($671.2\text{ ms}$).
+    \item At $\gamma = 2.5\text{ dB}$, CART-Net attains \textbf{$63.1\%/\text{s}$}, providing a \textbf{$5.4\times$ speed efficiency multiplier} over fixed 4k ($11.6\%/\text{s}$) and outstripping the blind policy ($15.2\%/\text{s}$).
+    \item At $\gamma = 5.0\text{ dB}$, CART-Net expands its advantage to \textbf{$99.9\%/\text{s}$}, delivering a \textbf{$+47.7\%/\text{s}$ throughput leap} over fixed 4k ($52.2\%/\text{s}$).
+    \item Throughout the entire SNR operating range, CART-Net's joint rate-token adaptation guarantees that end-to-end task progress per unit time remains strictly superior or comparable to all static configurations.
 \end{itemize}
 
 \begin{figure*}[!t]
@@ -141,14 +143,6 @@ Fig.~\ref{fig:task_breakdown}(b) reveals that DyTBA autonomously discovers the u
 
 \subsubsection{Task-Level Outage Resilience under Harsh Fading (\texorpdfstring{$\gamma = 5.0\text{ dB}$}{gamma = 5.0 dB})}
 Fig.~\ref{fig:task_breakdown}(a) evaluates category-specific accuracy under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). Due to severe block error rates, the fixed \texttt{4000\_medium} baseline suffers from a low packet delivery ratio ($40.5\%$), crashing across all six task categories. 
-
-CART-Net maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes (activating PPC) while DyTBA adaptively budgets receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category:
-\begin{itemize}
-    \item \textbf{Object Presence}: $74.25\%$ vs. $41.25\%$ (\textbf{$+33.00\%$ gain})
-    \item \textbf{Scene Recognition}: $72.50\%$ vs. $34.75\%$ (\textbf{$+37.75\%$ gain})
-    \item \textbf{Color Recognition}: $64.00\%$ vs. $33.75\%$ (\textbf{$+30.25\%$ gain})
-    \item \textbf{Activity Recognition}: $52.75\%$ vs. $30.75\%$ (\textbf{$+22.00\%$ gain})
-    \item \textbf{Counting}: $43.25\%$ vs. $23.50\%$ (\textbf{$+19.75\%$ gain})
-    \item \textbf{Positional Reasoning}: $42.50\%$ vs. $25.50\%$ (\textbf{$+17.00\%$ gain})
-\end{itemize}
+CART-Net maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes (activating PPC) while DyTBA adaptively budgets receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category: Object Presence ($74.25\%$ vs. $41.25\%$, \textbf{$+33.00\%$ gain}), Scene Recognition ($72.50\%$ vs. $34.75\%$, \textbf{$+37.75\%$ gain}), Color Recognition ($64.00\%$ vs. $33.75\%$, \textbf{$+30.25\%$ gain}), Activity Recognition ($52.75\%$ vs. $30.75\%$, \textbf{$+22.00\%$ gain}), Counting ($43.25\%$ vs. $23.50\%$, \textbf{$+19.75\%$ gain}), and Positional Reasoning ($42.50\%$ vs. $25.50\%$, \textbf{$+17.00\%$ gain}).
 These empirical findings substantiate that EcoSem-VQA successfully decouples task semantic requirements from physical channel outages, delivering unmatched resilience and green energy efficiency.
+
