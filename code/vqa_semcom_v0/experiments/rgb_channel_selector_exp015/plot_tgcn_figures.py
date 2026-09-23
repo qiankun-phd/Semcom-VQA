@@ -379,8 +379,11 @@ def plot_figure_3(f_eval: dict):
 
 
 def plot_figure_4(f_tasks: dict):
-    """Figure 4: Task-Type Semantic Breakdown across 6 TDIUC Question Categories."""
+    """Figure 4: Task-Type Semantic Breakdown across 6 TDIUC Question Categories (IEEE ComSoc Style)."""
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.4))
+
+    # Hatch linewidth global config for crisp rendering
+    plt.rcParams['hatch.linewidth'] = 0.8
 
     ens = f_tasks["primary_joint"]["ensemble"]["by_type"]
     c2k = f_tasks["controls"]["fixed_2000_low"]["ensemble"]["by_type"]
@@ -395,12 +398,12 @@ def plot_figure_4(f_tasks: dict):
         "object_presence",
     ]
     task_labels = [
-        "Counting\n(400 img)",
-        "Positional\n(400 img)",
-        "Activity\n(400 img)",
-        "Scene\n(400 img)",
-        "Color\n(400 img)",
-        "Presence\n(400 img)",
+        "Counting\n(400 queries)",
+        "Positional\n(400 queries)",
+        "Activity\n(400 queries)",
+        "Scene\n(400 queries)",
+        "Color\n(400 queries)",
+        "Presence\n(400 queries)",
     ]
 
     pdr_2k = 0.7975
@@ -414,50 +417,84 @@ def plot_figure_4(f_tasks: dict):
     x = np.arange(len(task_keys))
     w = 0.20
 
-    ax1.bar(x - 1.5 * w, acc_2k, w, label=r"Fixed $2\,$kB Low", color=C_2K, edgecolor="white", alpha=0.85)
-    ax1.bar(x - 0.5 * w, acc_4k, w, label=r"Fixed $4\,$kB Med", color=C_4K, edgecolor="white", alpha=0.85)
-    ax1.bar(x + 0.5 * w, acc_exp14, w, label="Channel-Blind Policy", color=C_EXP14, edgecolor="white", alpha=0.85)
-    ax1.bar(x + 1.5 * w, acc_tgcn, w, label="Proposed EcoSem-VQA (CQEM)", color=C_TGCN, edgecolor="black", linewidth=1.2)
+    # Colors & distinct hatches for IEEE greyscale / print readability
+    c_2k_bar = "#4682B4"      # Steel blue
+    c_4k_bar = "#6B8E23"      # Olive green
+    c_blind_bar = "#7E6B8F"   # Slate purple
+    c_tgcn_bar = "#B22222"    # Firebrick crimson
 
+    # -------------------------------------------------------------
+    # Panel (a): Channel Outage Robustness by Task
+    # -------------------------------------------------------------
+    ax1.set_axisbelow(True)
+    ax1.yaxis.grid(True, linestyle="--", linewidth=0.6, color="#D0D0D0", alpha=0.85)
+
+    ax1.bar(x - 1.5 * w, acc_2k, w, label=r"Fixed $2\,$kB Low",
+            color=c_2k_bar, edgecolor="#1C3F5E", hatch="///", linewidth=0.9, alpha=0.9)
+    ax1.bar(x - 0.5 * w, acc_4k, w, label=r"Fixed $4\,$kB Med",
+            color=c_4k_bar, edgecolor="#2E470E", hatch=r"\\\\", linewidth=0.9, alpha=0.9)
+    ax1.bar(x + 0.5 * w, acc_exp14, w, label="Channel-Blind Policy",
+            color=c_blind_bar, edgecolor="#3F274E", hatch="xx", linewidth=0.9, alpha=0.9)
+    ax1.bar(x + 1.5 * w, acc_tgcn, w, label="Proposed EcoSem-VQA (CART-Net)",
+            color=c_tgcn_bar, edgecolor="#4A0000", hatch="..", linewidth=1.2, zorder=4)
+
+    # Clean gain text directly above the proposed bar
     for i in range(len(task_keys)):
         diff = acc_tgcn[i] - acc_4k[i]
-        ax1.text(x[i] + 1.5 * w, acc_tgcn[i] + 1.2, f"+{diff:.1f}%", ha="center", va="bottom",
-                 fontsize=8.5, fontweight="bold", color=C_TGCN)
+        ax1.text(x[i] + 1.5 * w, acc_tgcn[i] + 1.4, f"+{diff:.1f}%", ha="center", va="bottom",
+                 fontsize=8.0, fontweight="bold", color="#7A0000")
 
-    ax1.set_title(r"(a) Channel Outage Robustness by Task ($\gamma = 5.0\,$dB, CQEM)", pad=10, fontweight="bold")
-    ax1.set_ylabel("Strict Accuracy (%)")
+    ax1.set_title(r"(a) Task Outage Resilience under Harsh Fading ($\gamma = 5.0\,$dB, CQEM)", pad=10, fontweight="bold")
+    ax1.set_ylabel("Strict Task Accuracy (%)")
     ax1.set_xticks(x)
     ax1.set_xticklabels(task_labels)
-    ax1.set_ylim(0, 90)
-    ax1.legend(loc="upper left", framealpha=0.92, edgecolor="#cccccc")
+    ax1.set_ylim(0, 93)
+    ax1.legend(loc="upper left", framealpha=0.95, edgecolor="#CCCCCC", fontsize=8.2)
 
-    # Panel (b): Semantic Visual Token Budget Allocation vs Task Complexity
+    # -------------------------------------------------------------
+    # Panel (b): DyTBA Visual Token Budget by Task Complexity
+    # -------------------------------------------------------------
     tokens_2k = [c2k[t]["mean_actual_visual_tokens"] for t in task_keys]
     tokens_4k = [c4k[t]["mean_actual_visual_tokens"] for t in task_keys]
     tokens_exp14 = [ens[t]["mean_actual_visual_tokens"] for t in task_keys]
 
-    ax2.bar(x - 1.0 * w, tokens_2k, w, label=r"Fixed $2\,$kB Low ($T_v \approx 44$)", color=C_2K, alpha=0.7, edgecolor="white")
-    ax2.bar(x, tokens_4k, w, label=r"Fixed $4\,$kB Med ($T_v \approx 110$)", color=C_4K, alpha=0.7, edgecolor="white")
-    ax2.bar(x + 1.0 * w, tokens_exp14, w, label="DyTBA Dynamic Budget", color="#FF8F00", edgecolor="black", linewidth=1.2)
+    ax2.set_axisbelow(True)
+    ax2.yaxis.grid(True, linestyle="--", linewidth=0.6, color="#D0D0D0", alpha=0.85)
 
-    ax2.annotate("Selective Sparsification\n(56.1 tok → 95.5% Acc)",
-                 xy=(5 + 1.0 * w, tokens_exp14[5]), xytext=(3.3, 75),
-                 arrowprops=dict(arrowstyle="->", color="#D84315", lw=1.5),
-                 bbox=dict(boxstyle="round,pad=0.35", fc="#FFF3E0", ec="#FF8F00", lw=1.2),
-                 fontsize=9, fontweight="bold", color="#D84315")
+    c_dytba_bar = "#D35400"   # Terracotta rust
 
-    ax2.annotate("High Token Demands\n(~109 tok for Spatial Details)",
-                 xy=(0 + 1.0 * w, tokens_exp14[0]), xytext=(0.2, 125),
-                 arrowprops=dict(arrowstyle="->", color="#1565C0", lw=1.5),
-                 bbox=dict(boxstyle="round,pad=0.35", fc="#E3F2FD", ec="#1976D2", lw=1.2),
-                 fontsize=9, fontweight="bold", color="#1565C0")
+    ax2.bar(x - 1.0 * w, tokens_2k, w, label=r"Fixed $2\,$kB Low ($T_v \approx 44$)",
+            color=c_2k_bar, edgecolor="#1C3F5E", hatch="///", linewidth=0.9, alpha=0.85)
+    ax2.bar(x, tokens_4k, w, label=r"Fixed $4\,$kB Med ($T_v \approx 110$)",
+            color=c_4k_bar, edgecolor="#2E470E", hatch=r"\\\\", linewidth=0.9, alpha=0.85)
+    ax2.bar(x + 1.0 * w, tokens_exp14, w, label="DyTBA Adaptive Budget",
+            color=c_dytba_bar, edgecolor="#6E2C00", hatch="..", linewidth=1.2, zorder=4)
 
-    ax2.set_title(r"(b) DyTBA Visual Token Budget by Task Complexity", pad=10, fontweight="bold")
-    ax2.set_ylabel(r"Allocated Visual Tokens $T_v$")
+    # Numerical token labels on top of DyTBA bars
+    for i in range(len(task_keys)):
+        val = tokens_exp14[i]
+        ax2.text(x[i] + 1.0 * w, val + 1.8, f"{val:.1f}", ha="center", va="bottom",
+                 fontsize=8.0, fontweight="bold", color="#7E2D00")
+
+    # Dignified IEEE technical annotations with clean rectangular styling
+    ax2.annotate("Selective Sparsification\n(Pruned to 56.1 tok, 95.5% Acc)",
+                 xy=(5 + 1.0 * w, tokens_exp14[5] + 8), xytext=(3.2, 78),
+                 arrowprops=dict(arrowstyle="->", color="#A04000", lw=1.2),
+                 bbox=dict(boxstyle="square,pad=0.3", fc="#FAFAFA", ec="#B0BEC5", lw=0.8),
+                 fontsize=8.5, fontweight="bold", color="#7E2D00")
+
+    ax2.annotate("Preserves Dense Tokens\n(~109 tok for Spatial Details)",
+                 xy=(0.5 + 1.0 * w, 111), xytext=(0.1, 128),
+                 arrowprops=dict(arrowstyle="->", color="#1B4F72", lw=1.2),
+                 bbox=dict(boxstyle="square,pad=0.3", fc="#FAFAFA", ec="#B0BEC5", lw=0.8),
+                 fontsize=8.5, fontweight="bold", color="#1B4F72")
+
+    ax2.set_title(r"(b) DyTBA Visual Token Budget Allocation ($T_v$) by Semantic Demand", pad=10, fontweight="bold")
+    ax2.set_ylabel(r"Allocated Receiver Visual Tokens $T_v$")
     ax2.set_xticks(x)
     ax2.set_xticklabels(task_labels)
-    ax2.set_ylim(0, 150)
-    ax2.legend(loc="upper right", framealpha=0.92, edgecolor="#cccccc")
+    ax2.set_ylim(0, 155)
+    ax2.legend(loc="upper right", framealpha=0.95, edgecolor="#CCCCCC", fontsize=8.2)
 
     plt.tight_layout()
     p_png = OUTPUT_DIR / "fig4_semantic_task_breakdown.png"
