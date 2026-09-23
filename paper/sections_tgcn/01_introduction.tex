@@ -11,7 +11,7 @@ However, delivering high-accuracy VQA services over wireless networks encounters
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.98\linewidth]{figures/tgcn_publication_figures_20260922/fig2_dynamic_routing_architecture.pdf}
-\caption{System framework and dynamic action routing of the proposed EcoSem-VQA framework. (a) A lightweight transmitter-side CART-Net policy inspects question text embeddings, an image spatial preview, and physical channel state information (CSI) $\gamma$, dynamically selecting an action $a \in \mathcal{A}$ spanning 3 source bitrates and 3 DyTBA receiver visual token budgets. (b) Empirical routing distribution across 2,400 blind test images over Rician fading ($K=6\text{ dB}$), illustrating the emergent three-phase adaptation mechanics: Link Survival Regime (LSR, $\le 10\text{ dB}$), Rate Migration Regime (RMR, $12.5 \sim 15\text{ dB}$), and High-Fidelity Burst Regime (HFBR, $\ge 20\text{ dB}$).}
+\caption{Empirical dynamic action routing distribution and emergent three-phase adaptation mechanics of EcoSem-VQA across 2,400 blind test images over Rician fading ($K=6\text{ dB}$): Link Survival Regime (LSR, $\le 10\text{ dB}$), Rate Migration Regime (RMR, $12.5 \sim 15\text{ dB}$), and High-Fidelity Burst Regime (HFBR, $\ge 20\text{ dB}$). The overlaid curves show the mean DyTBA receiver visual token budget $\bar{T}_v$ and mean complex channel symbols $N_s$.}
 \label{fig:framework_overview}
 \end{figure*}
 

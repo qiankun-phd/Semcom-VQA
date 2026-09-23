@@ -44,12 +44,19 @@ Edge Server Platform & NVIDIA A100 (80 GB), AMD EPYC 7763 \\
 \subsubsection{Physical Layer Simulation and Neural Specifications}
 Wireless channels are simulated across 10 channel SNR operating points: $\gamma \in \{-5.0, -2.5, 0.0, \dots, 20.0\}\text{ dB}$ over Rician fading ($K=6\text{ dB}$) under 3GPP 5G $\text{LDPC}(1020, 512)$ coding and QPSK modulation. Neural image compression uses CompressAI \texttt{bmshj2018-hyperprior}, and the edge VLM is Qwen3-VL-4B-Instruct in 4-bit NormalFloat (NF4) adapted via rank-8 LoRA ($5.9\text{M}$ parameters). Benchmarks are executed on an NVIDIA A100 GPU and AMD EPYC 7763 processor. Full parameters are summarized in Table~\ref{tab:system_parameters}.
 
-\begin{figure*}[!t]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.98\linewidth]{figures/tgcn_publication_figures_20260922/fig1_snr_vs_accuracy_dual_mode.pdf}
-\caption{End-to-End VQA Strict Accuracy (\%) versus average channel SNR $\gamma$ (dB) under DigiSem-PHY $\text{LDPC}(1020, 512)$ channel coding over Rician fading ($K=6\text{ dB}$) across 2,400 blind test images. (a) \textbf{CSPM}: Constant symbol power ($P_s = P_0$). (b) \textbf{CQEM}: Constant query-energy budget ($E_{\mathrm{tx}} = E_0$).}
-\label{fig:accuracy_vs_snr}
-\end{figure*}
+\includegraphics[width=\columnwidth]{figures/tgcn_publication_figures_20260922/fig2_accuracy_cspm.pdf}
+\caption{End-to-End VQA Strict Accuracy (\%) versus channel SNR $\gamma$ (dB) under Constant Symbol-Power Mode (CSPM, $P_s = P_0$). Transmit energy scales with payload size, and the proposed CART-Net strictly envelopes all static baselines.}
+\label{fig:accuracy_cspm}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/tgcn_publication_figures_20260922/fig3_accuracy_cqem.pdf}
+\caption{End-to-End VQA Strict Accuracy (\%) versus channel SNR $\gamma$ (dB) under Constant Query-Energy Mode (CQEM, $E_{\mathrm{tx}} = E_0$). Physical Power Concentration (PPC) concentrates RF power on compact payloads, delivering up to $+29.92\%$ and $+27.12\%$ accuracy gains over static 4k under fading.}
+\label{fig:accuracy_cqem}
+\end{figure}
 
 \subsection{Benchmark Baselines}
 We compare the proposed cross-layer policy against a comprehensive suite of competitive baselines:
@@ -92,15 +99,15 @@ Oracle Upper Bound & $0.00\%$ & $0.00\%$ & $40.50\%$ & $41.83\%$ & $76.12\%$ & $
 }
 \end{table*}
 
-\subsection{Physical Layer Robustness and Outage Protection (Figure~\ref{fig:accuracy_vs_snr})}
-Fig.~\ref{fig:accuracy_vs_snr} compares end-to-end VQA strict accuracy across the full range of channel SNRs from $-5.0\text{ dB}$ to $20.0\text{ dB}$ for both CSPM and CQEM.
+\subsection{Physical Layer Robustness and Outage Protection (Figures~\ref{fig:accuracy_cspm} and~\ref{fig:accuracy_cqem})}
+Figs.~\ref{fig:accuracy_cspm} and~\ref{fig:accuracy_cqem} compare end-to-end VQA strict accuracy across the full range of channel SNRs from $-5.0\text{ dB}$ to $20.0\text{ dB}$ for CSPM and CQEM, respectively.
 
-\subsubsection{Constant Symbol-Power Mode (CSPM)}
-In Fig.~\ref{fig:accuracy_vs_snr}(a), transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$ in CSPM, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks). 
+\subsubsection{Constant Symbol-Power Mode (CSPM, Fig.~\ref{fig:accuracy_cspm})}
+In Fig.~\ref{fig:accuracy_cspm}, transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$ in CSPM, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks). 
 CART-Net strictly envelopes all individual fixed-rate baselines across the entire SNR continuum. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), CART-Net attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, CART-Net reaches $76.50\%$ accuracy, closely approaching the 8000-byte ceiling ($76.62\%$).
 
-\subsubsection{Constant Query-Energy Mode (CQEM) with PPC Power Boost}
-Fig.~\ref{fig:accuracy_vs_snr}(b) illustrates the transformative impact of green cross-layer co-optimization under CQEM. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a \textbf{$+3.01\text{ dB}$ physical SNR boost over 4000 bytes} and a \textbf{$+6.00\text{ dB}$ boost over 8000 bytes} via the Physical Power Concentration (PPC) mechanism.
+\subsubsection{Constant Query-Energy Mode (CQEM) with PPC Power Boost (Fig.~\ref{fig:accuracy_cqem})}
+Fig.~\ref{fig:accuracy_cqem} illustrates the transformative impact of green cross-layer co-optimization under CQEM. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a \textbf{$+3.01\text{ dB}$ physical SNR boost over 4000 bytes} and a \textbf{$+6.00\text{ dB}$ boost over 8000 bytes} via the Physical Power Concentration (PPC) mechanism.
 This shifts the LDPC waterfall curve: at $\gamma = 2.5\text{ dB}$, fixed 4k collapses to \textbf{$7.00\%$}, and the blind policy collapses to \textbf{$9.21\%$}. In stark contrast, CART-Net delivers \textbf{$36.92\%$ accuracy}---a \textbf{$+29.92\%$ advantage over fixed 4k} and \textbf{$+27.71\%$ over the blind policy}. At $\gamma = 5.0\text{ dB}$, CART-Net achieves \textbf{$58.71\%$ accuracy} ($+27.12\%$ over fixed 4k). At $\gamma \ge 15.0\text{ dB}$, it smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
 
 \begin{figure}[!t]
@@ -139,26 +146,33 @@ The metric $\eta_{\mathrm{SDE}}$ quantifies task throughput in percentage accura
     \item Throughout the entire SNR operating range, CART-Net's joint rate-token adaptation guarantees that end-to-end task progress per unit time remains strictly superior or comparable to all static configurations.
 \end{itemize}
 
-\begin{figure*}[!t]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.98\linewidth]{figures/tgcn_publication_figures_20260922/fig4_semantic_task_breakdown.pdf}
-\caption{Semantic task-type analysis across the six TDIUC question categories (400 blind test images per category). (a) End-to-end VQA accuracy under harsh fading ($\gamma = 5.0\text{ dB}$, CQEM). (b) Receiver visual token budget $T_v$ allocated by DyTBA compared to fixed baselines.}
-\label{fig:task_breakdown}
-\end{figure*}
+\includegraphics[width=\columnwidth]{figures/tgcn_publication_figures_20260922/fig5_task_outage_resilience.pdf}
+\caption{Task-level outage resilience across the six TDIUC question categories (400 blind test images per category) under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). CART-Net maintains link survival and delivers double-digit accuracy gains across all categories.}
+\label{fig:task_outage_resilience}
+\end{figure}
 
-\subsection{Semantic Task-Type Analysis and Token Entropy (Figure~\ref{fig:task_breakdown})}
-A core premise of task-oriented communication is that different semantic queries demand vastly different visual information densities. Fig.~\ref{fig:task_breakdown} dissects model performance and allocated visual token budgets across the six TDIUC question categories.
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{figures/tgcn_publication_figures_20260922/fig6_dytba_token_allocation.pdf}
+\caption{Receiver visual token budget $T_v$ allocated by DyTBA across question categories. DyTBA autonomously discovers task visual entropy, pruning presence queries to 56.1 tokens while preserving dense spatial tokens (~109 tokens) for counting and positional reasoning.}
+\label{fig:dytba_token_allocation}
+\end{figure}
 
-\subsubsection{Asymmetric Visual Token Demands}
-Fig.~\ref{fig:task_breakdown}(b) reveals that DyTBA autonomously discovers the underlying semantic entropy of different VQA tasks:
+\subsection{Semantic Task-Type Analysis and Token Entropy (Figures~\ref{fig:task_outage_resilience} and~\ref{fig:dytba_token_allocation})}
+A core premise of task-oriented communication is that different semantic queries demand vastly different visual information densities. Figs.~\ref{fig:task_outage_resilience} and~\ref{fig:dytba_token_allocation} dissect model performance and allocated visual token budgets across the six TDIUC question categories.
+
+\subsubsection{Asymmetric Visual Token Demands (Fig.~\ref{fig:dytba_token_allocation})}
+Fig.~\ref{fig:dytba_token_allocation} reveals that DyTBA autonomously discovers the underlying semantic entropy of different VQA tasks:
 \begin{itemize}
     \item \textbf{Low-Entropy Query (``Object Presence'')}: Verifying whether an object exists in a scene is a coarse binary classification task. DyTBA compresses the visual token budget to a mean of \textbf{$56.1$ tokens}---a \textbf{$49.2\%$ token reduction} compared to the standard 110-token baseline. Despite this aggressive pruning, the VLM achieves an exceptional \textbf{$95.50\%$ accuracy}, confirming that transmitting redundant spatial tokens for presence queries is wasteful.
     \item \textbf{High-Entropy Spatial Queries (``Counting'' and ``Positional Reasoning'')}: In contrast, counting small objects and identifying positional relations (e.g., ``left of'', ``under'') require dense spatial geometry. DyTBA autonomously preserves \textbf{$108.4 \sim 108.9$ visual tokens}, safeguarding fine-grained spatial representations.
     \item \textbf{Contextual Queries (``Color'', ``Scene Recognition'', ``Activity Recognition'')}: These queries require intermediate spatial contexts, receiving an average of $97.7 \sim 110.2$ visual tokens.
 \end{itemize}
 
-\subsubsection{Task-Level Outage Resilience under Harsh Fading (\texorpdfstring{$\gamma = 5.0\text{ dB}$}{gamma = 5.0 dB})}
-Fig.~\ref{fig:task_breakdown}(a) evaluates category-specific accuracy under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). Due to severe block error rates, the fixed \texttt{4000\_medium} baseline suffers from a low packet delivery ratio ($40.5\%$), crashing across all six task categories. 
+\subsubsection{Task-Level Outage Resilience under Harsh Fading (Fig.~\ref{fig:task_outage_resilience})}
+Fig.~\ref{fig:task_outage_resilience} evaluates category-specific accuracy under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). Due to severe block error rates, the fixed \texttt{4000\_medium} baseline suffers from a low packet delivery ratio ($40.5\%$), crashing across all six task categories. 
 CART-Net maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes (activating PPC) while DyTBA adaptively budgets receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category: Object Presence ($74.25\%$ vs. $41.25\%$, \textbf{$+33.00\%$ gain}), Scene Recognition ($72.50\%$ vs. $34.75\%$, \textbf{$+37.75\%$ gain}), Color Recognition ($64.00\%$ vs. $33.75\%$, \textbf{$+30.25\%$ gain}), Activity Recognition ($52.75\%$ vs. $30.75\%$, \textbf{$+22.00\%$ gain}), Counting ($43.25\%$ vs. $23.50\%$, \textbf{$+19.75\%$ gain}), and Positional Reasoning ($42.50\%$ vs. $25.50\%$, \textbf{$+17.00\%$ gain}).
 
 \begin{table}[!t]

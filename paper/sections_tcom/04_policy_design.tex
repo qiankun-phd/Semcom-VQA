@@ -6,7 +6,7 @@ To resolve the non-convex optimization problem formulated in~\eqref{eq:opt_probl
 \mathcal{A} = \{2\text{k}, 4\text{k}, 8\text{k}\} \times \{\mathrm{low}, \mathrm{med}, \mathrm{high}\}.
 \end{equation}
 
-As illustrated in Fig.~\ref{fig:framework_overview}(a), CART-Net comprises three input branches:
+As detailed in the EcoSem-VQA architecture, CART-Net comprises three input branches:
 \begin{enumerate}
     \item \textbf{Question Semantic Feature ($f_q \in \mathbb{R}^{d_q}$)}: A frozen text embedding (dimension $d_q = 512$) extracts syntactic and semantic intent, distinguishing low-entropy categorical queries (e.g., ``Is there a car?'') from high-entropy spatial queries (e.g., ``How many pedestrians are to the left of the bench?'').
     \item \textbf{Image Preview Feature ($f_I \in \mathbb{R}^{d_I}$)}: A lightweight convolutional feature map (dimension $d_I = 256$) extracted from a sub-sampled preview of the source image $I$. This preview incurs negligible onboard computational overhead ($< 1.5\text{ ms}$) and captures global visual complexity, object clutter, and texture density.
@@ -53,7 +53,7 @@ The policy parameters $\boldsymbol{\theta}$ are optimized by minimizing the mult
 Training uses the AdamW optimizer with an initial learning rate of $10^{-3}$, cosine learning rate decay, and a batch size of 64 over 50 epochs with early stopping based on validation utility.
 
 \subsection{Emergent Three-Phase Adaptation Mechanics: LSR, RMR, and HFBR}
-A key emergent property of CART-Net is that, without hard-coded thresholds, it autonomously partitions the physical SNR continuum into three distinct operational regimes (visualized in Fig.~\ref{fig:framework_overview}(b)):
+A key emergent property of CART-Net is that, without hard-coded thresholds, it autonomously partitions the physical SNR continuum into three distinct operational regimes (visualized in Fig.~\ref{fig:framework_overview}):
 
 \begin{enumerate}
     \item \textbf{Phase I: Link Survival Regime (LSR, $\gamma \le 10.0\text{ dB}$)}:

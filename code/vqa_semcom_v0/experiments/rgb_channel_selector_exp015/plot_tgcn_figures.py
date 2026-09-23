@@ -131,6 +131,57 @@ def plot_figure_1(f_scan: dict, f_eval: dict):
     plt.close(fig)
     print(f"Saved Figure 1 to {p_png} and {p_pdf}")
 
+    # Standalone Single-Column CSPM Figure (Fig 2)
+    fig_cspm, ax_c = plt.subplots(figsize=(7.2, 5.0))
+    ax_c.plot(snrs, m1_2k, label=r"Fixed $2\,$kB Med ($N_s=21.4\,$k)", color=C_2K, linestyle="--", marker="o", markersize=5.5, linewidth=1.8)
+    ax_c.plot(snrs, m1_4k, label=r"Fixed $4\,$kB Med ($N_s=42.8\,$k)", color=C_4K, linestyle="-.", marker="s", markersize=5.5, linewidth=1.8)
+    ax_c.plot(snrs, m1_8k, label=r"Fixed $8\,$kB High ($N_s=85.2\,$k)", color=C_8K, linestyle=":", marker="^", markersize=5.5, linewidth=1.8)
+    ax_c.plot(snrs, m1_exp14, label="Channel-Blind Policy", color=C_EXP14, linestyle="--", marker="x", markersize=6.5, linewidth=1.6)
+    ax_c.plot(snrs, m1_tgcn, label="Proposed EcoSem-VQA (CSPM)", color=C_TGCN, linestyle="-", marker="D", markersize=6.5, linewidth=2.4)
+    ax_c.axhline(77.12, color=C_BOUND, linestyle=":", linewidth=1.2, label=r"Error-Free Bound ($77.1\%$)")
+    ax_c.set_xlabel(r"Channel Average Physical SNR $\gamma$ (dB)")
+    ax_c.set_ylabel("End-to-End VQA Strict Accuracy (%)")
+    ax_c.set_xlim(-6, 21)
+    ax_c.set_ylim(-2, 85)
+    ax_c.set_xticks(snrs)
+    ax_c.legend(loc="upper left", framealpha=0.92, edgecolor="#cccccc", fontsize=8.8)
+    plt.tight_layout()
+    fig_cspm.savefig(OUTPUT_DIR / "fig2_accuracy_cspm.png")
+    fig_cspm.savefig(OUTPUT_DIR / "fig2_accuracy_cspm.pdf")
+    plt.close(fig_cspm)
+    print("Saved standalone CSPM figure to fig2_accuracy_cspm.pdf")
+
+    # Standalone Single-Column CQEM Figure (Fig 3)
+    fig_cqem, ax_e = plt.subplots(figsize=(7.2, 5.0))
+    ax_e.plot(snrs, m2_2k, label=r"Fixed $2\,$kB Med ($\Delta\mathrm{SNR} = 0\,$dB)", color=C_2K, linestyle="--", marker="o", markersize=5.5, linewidth=1.8)
+    ax_e.plot(snrs, m2_4k, label=r"Fixed $4\,$kB Med ($\Delta\mathrm{SNR} = -3.01\,$dB)", color=C_4K, linestyle="-.", marker="s", markersize=5.5, linewidth=1.8)
+    ax_e.plot(snrs, m2_8k, label=r"Fixed $8\,$kB High ($\Delta\mathrm{SNR} = -6.00\,$dB)", color=C_8K, linestyle=":", marker="^", markersize=5.5, linewidth=1.8)
+    ax_e.plot(snrs, m2_exp14, label="Channel-Blind Policy", color=C_EXP14, linestyle="--", marker="x", markersize=6.5, linewidth=1.6)
+    ax_e.plot(snrs, m2_tgcn, label="Proposed EcoSem-VQA (CQEM)", color=C_TGCN, linestyle="-", marker="D", markersize=6.5, linewidth=2.5)
+    ax_e.axhline(77.12, color=C_BOUND, linestyle=":", linewidth=1.2, label=r"Error-Free Bound ($77.1\%$)")
+    ax_e.fill_between(snrs, m2_4k, m2_tgcn, where=(np.array(m2_tgcn) > np.array(m2_4k)),
+                     color="#C8E6C9", alpha=0.45, label="PPC Outage Protection Gain")
+    ax_e.annotate("+29.92% Gain\n(PPC Outage Capping)",
+                 xy=(2.5, m2_tgcn[3]), xytext=(1.5, 17),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+    ax_e.annotate("+27.12% Gain\n(Rate Migration)",
+                 xy=(5.0, m2_tgcn[4]), xytext=(6.5, 41),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+    ax_e.set_xlabel(r"Channel Average Physical SNR $\gamma$ (dB)")
+    ax_e.set_ylabel("End-to-End VQA Strict Accuracy (%)")
+    ax_e.set_xlim(-6, 21)
+    ax_e.set_xticks(snrs)
+    ax_e.legend(loc="upper left", framealpha=0.92, edgecolor="#cccccc", fontsize=8.8)
+    plt.tight_layout()
+    fig_cqem.savefig(OUTPUT_DIR / "fig3_accuracy_cqem.png")
+    fig_cqem.savefig(OUTPUT_DIR / "fig3_accuracy_cqem.pdf")
+    plt.close(fig_cqem)
+    print("Saved standalone CQEM figure to fig3_accuracy_cqem.pdf")
+
 
 def plot_figure_2(f_eval: dict):
     """Figure 2: Dynamic Action Routing Distribution across SNR."""
