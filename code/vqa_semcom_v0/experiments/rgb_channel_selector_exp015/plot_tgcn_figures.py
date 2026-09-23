@@ -296,17 +296,17 @@ def plot_figure_3(f_eval: dict):
              bbox=dict(boxstyle="round,pad=0.25", fc="#F3E5F5", ec="#E1BEE7", lw=0.8))
 
     # Annotations with arrows
-    ax1.annotate("+10.5x SEE Gain\n(36.9 vs. 3.5 %/E0)",
+    ax1.annotate("+33.4 Gain (10.5-Fold)\n(36.9 vs. 3.5 %/E0)",
                  xy=(2.5, see_tgcn[3]), xytext=(0.0, 48.0),
                  arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
                  bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
-                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
 
-    ax1.annotate("Peak SEE: 71.4 %/E0\n(2.1x over Fixed 4k)",
+    ax1.annotate("Peak SEE: 71.4 %/E0\n(2.1-Fold vs. Fixed 4k)",
                  xy=(10.0, see_tgcn[6]), xytext=(6.5, 60.0),
                  arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
                  bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
-                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
 
     ax1.set_title(r"(a) Semantic Energy Efficiency $\eta_{\mathrm{SEE}}$ vs. Channel SNR $\gamma$",
                   pad=10, fontweight="bold")
@@ -346,17 +346,17 @@ def plot_figure_3(f_eval: dict):
              bbox=dict(boxstyle="round,pad=0.25", fc="#F3E5F5", ec="#E1BEE7", lw=0.8))
 
     # Annotations with arrows
-    ax2.annotate("+5.4x Delay Efficiency\n(63.1 vs. 11.6 %/s)",
+    ax2.annotate("+51.5 %/s Gain (5.4-Fold)\n(63.1 vs. 11.6 %/s)",
                  xy=(2.5, sde_tgcn[3]), xytext=(0.0, 85.0),
                  arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
                  bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
-                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
 
     ax2.annotate("+47.7 %/s Advantage\n(99.9 vs. 52.2 %/s)",
                  xy=(5.0, sde_tgcn[4]), xytext=(6.2, 45.0),
                  arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
                  bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
-                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+                 fontsize=8.6, fontweight="bold", color=C_TGCN)
 
     ax2.set_title(r"(b) Semantic Delay Efficiency $\eta_{\mathrm{SDE}}$ vs. Channel SNR $\gamma$",
                   pad=10, fontweight="bold")

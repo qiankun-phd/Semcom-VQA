@@ -97,7 +97,7 @@ These results demonstrate that task-oriented semantic communication cannot treat
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.98\linewidth]{figures/tgcn_publication_figures_20260922/fig3_energy_latency_tradeoff.pdf}
-\caption{Semantic energy and delay efficiency metrics across the channel physical SNR continuum from $\gamma = -5.0\text{ dB}$ to $20.0\text{ dB}$. (a) Semantic Energy Efficiency ($\eta_{\mathrm{SEE}} = \text{Accuracy} / (E_{\mathrm{tx}} / E_{2\text{k}})$, \% per unit energy) versus channel SNR $\gamma$. CART-Net delivers up to a $10.5\times$ energy efficiency advantage over fixed 4k under severe fading ($\gamma = 2.5\text{ dB}$) via PPC power concentration and reaches peak efficiency ($71.4$) at $10\text{ dB}$. (b) Semantic Delay Efficiency ($\eta_{\mathrm{SDE}} = \text{Accuracy} / t_{\mathrm{e2e}}$, \% accuracy per second) versus channel SNR $\gamma$, demonstrating superior end-to-end task throughput enabled by DyTBA visual token pruning and adaptive channel coding.}
+\caption{Semantic energy and delay efficiency metrics across the channel physical SNR continuum from $\gamma = -5.0\text{ dB}$ to $20.0\text{ dB}$. (a) Semantic Energy Efficiency ($\eta_{\mathrm{SEE}} = \text{Accuracy} / (E_{\mathrm{tx}} / E_{2\text{k}})$, \% per unit energy) versus channel SNR $\gamma$. CART-Net delivers up to a 10.5-fold energy efficiency advantage ($+33.4$ margin) over fixed 4k under severe fading ($\gamma = 2.5\text{ dB}$) via PPC power concentration and reaches peak efficiency ($71.4$) at $10\text{ dB}$. (b) Semantic Delay Efficiency ($\eta_{\mathrm{SDE}} = \text{Accuracy} / t_{\mathrm{e2e}}$, \% accuracy per second) versus channel SNR $\gamma$, demonstrating superior end-to-end task throughput enabled by DyTBA visual token pruning and adaptive channel coding.}
 \label{fig:energy_latency_tradeoff}
 \end{figure*}
 
@@ -110,15 +110,15 @@ where $\mathrm{Acc}$ is the strict task accuracy (\%), $E_{\mathrm{tx}} / E_{2\m
 
 \subsubsection{Semantic Energy Efficiency Trends (Fig.~\ref{fig:energy_latency_tradeoff}(a))}
 \begin{itemize}
-    \item \textbf{Severe Fading ($\gamma = 2.5\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines suffer from low packet delivery ratios due to codeword failure, collapsing their energy efficiency to $3.50$ and $0.02$, respectively. In contrast, CART-Net activates PPC to sustain link connectivity while operating at minimal baseline energy ($1.00\times$), achieving $\eta_{\mathrm{SEE}} = 36.92$---an outstanding \textbf{$10.5\times$ energy efficiency gain over fixed 4k} and \textbf{$8.0\times$ over the channel-blind policy} ($4.61$).
-    \item \textbf{Moderate Fading ($\gamma = 10.0\text{ dB}$)}: CART-Net peaks at $\eta_{\mathrm{SEE}} = 71.38$, more than \textbf{doubling the efficiency of fixed 4k} ($34.77$) by transmitting half the complex symbols while preserving $71.38\%$ task accuracy.
+    \item \textbf{Severe Fading ($\gamma = 2.5\text{ dB}$)}: Fixed 4000-byte and 8000-byte baselines suffer from low packet delivery ratios due to codeword failure, collapsing their energy efficiency to $3.50$ and $0.02$, respectively. In contrast, CART-Net activates PPC to sustain link connectivity while operating at minimal baseline energy ($1.00\times$), achieving $\eta_{\mathrm{SEE}} = 36.92$---an outstanding \textbf{10.5-fold energy efficiency enhancement} ($+33.42$ margin over fixed 4k) and \textbf{8.0-fold advantage over the channel-blind policy} ($4.61$).
+    \item \textbf{Moderate Fading ($\gamma = 10.0\text{ dB}$)}: CART-Net peaks at $\eta_{\mathrm{SEE}} = 71.38$, more than \textbf{doubling the efficiency of fixed 4k} ($34.77$, a \textbf{2.1-fold improvement}) by transmitting half the complex symbols while preserving $71.38\%$ task accuracy.
     \item \textbf{High-SNR Regime ($\gamma \ge 12.5\text{ dB}$)}: As the channel clears, CART-Net deliberately migrates queries into higher-capacity rate bands ($4\text{ kB}$ and $8\text{ kB}$), trading raw energy efficiency for visual fidelity to approach the $76.62\%$ task accuracy ceiling.
 \end{itemize}
 
 \subsubsection{Semantic Delay Efficiency Trends (Fig.~\ref{fig:energy_latency_tradeoff}(b))}
 The metric $\eta_{\mathrm{SDE}}$ quantifies task throughput in percentage accuracy delivered per second of total pipeline execution:
 \begin{itemize}
-    \item At $\gamma = 2.5\text{ dB}$, CART-Net attains \textbf{$63.1\%/\text{s}$}, providing a \textbf{$5.4\times$ speed efficiency multiplier} over fixed 4k ($11.6\%/\text{s}$) and outstripping the blind policy ($15.2\%/\text{s}$).
+    \item At $\gamma = 2.5\text{ dB}$, CART-Net attains \textbf{$63.1\%/\text{s}$}, providing an absolute throughput advantage of \textbf{$+51.5\%/\text{s}$ (a 5.4-fold gain)} over fixed 4k ($11.6\%/\text{s}$) and outstripping the blind policy ($15.2\%/\text{s}$).
     \item At $\gamma = 5.0\text{ dB}$, CART-Net expands its advantage to \textbf{$99.9\%/\text{s}$}, delivering a \textbf{$+47.7\%/\text{s}$ throughput leap} over fixed 4k ($52.2\%/\text{s}$).
     \item Throughout the entire SNR operating range, CART-Net's joint rate-token adaptation guarantees that end-to-end task progress per unit time remains strictly superior or comparable to all static configurations.
 \end{itemize}
