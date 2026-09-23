@@ -225,112 +225,132 @@ def plot_figure_2(f_eval: dict):
 
 
 def plot_figure_3(f_eval: dict):
-    """Figure 3: Energy-Accuracy and Latency-Accuracy Pareto Frontiers."""
+    """Figure 3: Relative RF Transmission Energy and Latency vs. Channel SNR."""
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.4))
 
-    snr_scenarios = [
-        ("Harsh Fading (2.5 dB)", "2.5", "#D32F2F", "o"),
-        ("Moderate Fading (10.0 dB)", "10.0", "#1976D2", "s"),
-        ("Pristine Channel (20.0 dB)", "20.0", "#388E3C", "^"),
-    ]
-
+    snrs = np.array(f_eval["snrs"])
+    snr_keys = [str(s) for s in snrs]
     m2 = f_eval["mode2_constant_energy"]
 
-    # Fixed baselines physical metrics
-    # 2k med: 21420 sym, 110.6 tok
-    # 4k med: 42840 sym, 110.6 tok
-    # 8k high: 85170 sym, 216.0 tok
-    e_fixed = [1.0, 2.0, 3.976]
-    lat_fixed = [
-        compute_lat(21420, 110.6),  # 583.1 ms
-        compute_lat(42840, 110.6),  # 604.5 ms
-        compute_lat(85170, 216.0),  # 671.2 ms
-    ]
+    # Physical baseline values
+    e_2k = np.array([1.0] * len(snrs))
+    e_4k = np.array([2.0] * len(snrs))
+    e_8k = np.array([85170.0 / 21420.0] * len(snrs))  # 3.976x
+    e_blind = np.array([2.0] * len(snrs))
 
-    # Panel (a): RF Energy vs Accuracy
-    for label, snr_k, color, marker in snr_scenarios:
-        r = m2[snr_k]
-        a2k = r["fixed_2000_med_acc"] * 100
-        a4k = r["fixed_4000_med_acc"] * 100
-        a8k = r["fixed_8000_high_acc"] * 100
-        a_tgcn = r["tgcn_cross_layer_acc"] * 100
-        e_tgcn = r["mean_symbols"] / 21420.0
+    lat_2k = np.array([compute_lat(21420, 110.6)] * len(snrs))     # 583.16 ms
+    lat_4k = np.array([compute_lat(42840, 110.6)] * len(snrs))     # 604.58 ms
+    lat_8k = np.array([compute_lat(85170, 216.0)] * len(snrs))     # 671.15 ms
+    lat_blind = np.array([compute_lat(42840, 110.6)] * len(snrs))  # 604.58 ms
 
-        a_pts = [a2k, a4k, a8k]
+    # Proposed EcoSem-VQA (CART-Net + DyTBA)
+    e_tgcn = np.array([m2[k]["mean_symbols"] / 21420.0 for k in snr_keys])
+    lat_tgcn = np.array([compute_lat(m2[k]["mean_symbols"], m2[k]["mean_tokens"]) for k in snr_keys])
 
-        ax1.plot(e_fixed, a_pts, color=color, linestyle="--", alpha=0.55, linewidth=1.5)
-        ax1.scatter(e_fixed[0], a_pts[0], color=color, marker="o", s=70, alpha=0.7)
-        ax1.scatter(e_fixed[1], a_pts[1], color=color, marker="s", s=70, alpha=0.7)
-        ax1.scatter(e_fixed[2], a_pts[2], color=color, marker="^", s=70, alpha=0.7)
+    # -------------------------------------------------------------
+    # Panel (a): Relative RF Transmission Energy vs Channel SNR
+    # -------------------------------------------------------------
+    ax1.plot(snrs, e_8k, label=r"Fixed $8\,$kB Baseline ($4.0\times$)", color=C_8K,
+             linestyle="--", marker="^", markersize=6, alpha=0.85)
+    ax1.plot(snrs, e_4k, label=r"Fixed $4\,$kB Baseline ($2.0\times$)", color=C_4K,
+             linestyle="--", marker="s", markersize=6, alpha=0.85)
+    ax1.plot(snrs, e_blind, label=r"Channel-Blind Policy ($2.0\times$)", color=C_EXP14,
+             linestyle="-.", marker="x", markersize=6, alpha=0.85)
+    ax1.plot(snrs, e_2k, label=r"Fixed $2\,$kB Baseline ($1.0\times$)", color=C_2K,
+             linestyle="--", marker="o", markersize=6, alpha=0.85)
+    ax1.plot(snrs, e_tgcn, label="Proposed EcoSem-VQA (CART-Net)", color=C_TGCN,
+             linestyle="-", marker="D", markersize=6.5, linewidth=2.5, zorder=5)
 
-        ax1.scatter(e_tgcn, a_tgcn, color=color, marker="*", s=230, edgecolors="black", linewidth=1.2, zorder=5)
+    # Shaded green savings region
+    ax1.fill_between(snrs, e_tgcn, e_4k, where=(e_tgcn < e_4k),
+                     color="#E8F5E9", alpha=0.6, label="50% Energy Saving vs. 4k (LSR)")
+    ax1.fill_between(snrs, e_tgcn, e_8k, where=(snrs >= 12.5),
+                     color="#F3E5F5", alpha=0.6, label="38.4% Energy Saving vs. 8k (HFBR)")
 
-        # Callout annotations with arrows
-        if snr_k == "2.5":
-            ax1.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.30, a_tgcn + 6),
-                         arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
-                         fontsize=9.5, fontweight="bold", color=color)
-        elif snr_k == "10.0":
-            ax1.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.25, a_tgcn - 9),
-                         arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
-                         fontsize=9.5, fontweight="bold", color=color)
-        else:
-            ax1.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.25, a_tgcn - 7),
-                         arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
-                         fontsize=9.5, fontweight="bold", color=color)
+    # Regime division vertical markers
+    ax1.axvline(11.25, color="#888888", linestyle=":", linewidth=1.2)
+    ax1.axvline(17.5, color="#888888", linestyle=":", linewidth=1.2)
+    ax1.text(2.5, 4.22, "Phase I: LSR", ha="center", fontsize=8.5, fontweight="bold", color="#0D47A1")
+    ax1.text(14.0, 4.22, "Phase II: RMR", ha="center", fontsize=8.5, fontweight="bold", color="#E65100")
+    ax1.text(19.2, 4.22, "Phase III: HFBR", ha="center", fontsize=8.5, fontweight="bold", color="#4A148C")
 
-    ax1.set_title(r"(a) RF Transmission Energy vs. VQA Strict Accuracy", pad=10, fontweight="bold")
-    ax1.set_xlabel(r"Relative Transmission Energy per Query ($E_{\mathrm{tx}} / E_{\mathrm{2k}}$)")
-    ax1.set_ylabel("End-to-End VQA Strict Accuracy (%)")
-    ax1.set_xlim(0.7, 4.3)
-    ax1.set_ylim(-3, 85)
+    # Annotations with arrows
+    ax1.annotate("50% RF Energy Saving\n(vs. Fixed 4k & Blind)",
+                 xy=(2.5, e_tgcn[3]), xytext=(1.0, 1.45),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.8, fontweight="bold", color=C_TGCN)
 
-    p_fixed = ax1.scatter([], [], color="#555555", marker="o", s=70, label="Fixed Rates (2k, 4k, 8k)")
-    p_star = ax1.scatter([], [], color="#555555", marker="*", s=160, edgecolors="black", label="EcoSem-VQA (CART-Net)")
-    ax1.legend(handles=[p_fixed, p_star], loc="lower right", framealpha=0.92, edgecolor="#cccccc")
+    ax1.annotate("-38.4% Energy vs. 8k\n(2.45x vs. 3.98x)",
+                 xy=(20.0, e_tgcn[9]), xytext=(14.5, 2.95),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.8, fontweight="bold", color=C_TGCN)
 
-    # Panel (b): End-to-End Latency vs Accuracy
-    for label, snr_k, color, marker in snr_scenarios:
-        r = m2[snr_k]
-        a2k = r["fixed_2000_med_acc"] * 100
-        a4k = r["fixed_4000_med_acc"] * 100
-        a8k = r["fixed_8000_high_acc"] * 100
-        a_tgcn = r["tgcn_cross_layer_acc"] * 100
-        t_tgcn = compute_lat(r["mean_symbols"], r["mean_tokens"])
+    ax1.set_title(r"(a) Relative RF Transmission Energy ($E_{\mathrm{tx}} / E_{2\mathrm{k}}$) vs. Channel SNR $\gamma$",
+                  pad=10, fontweight="bold")
+    ax1.set_xlabel(r"Channel Average Physical SNR $\gamma$ (dB)")
+    ax1.set_ylabel(r"Relative Transmission Energy ($E_{\mathrm{tx}} / E_{2\mathrm{k}}$)")
+    ax1.set_xlim(-6, 21)
+    ax1.set_xticks(snrs)
+    ax1.set_ylim(0.5, 4.45)
+    ax1.legend(loc="center left", bbox_to_anchor=(0.02, 0.63), framealpha=0.92, edgecolor="#cccccc", fontsize=8.8)
 
-        a_pts = [a2k, a4k, a8k]
-        ax2.plot(lat_fixed, a_pts, color=color, linestyle="--", alpha=0.55, linewidth=1.5)
-        ax2.scatter(lat_fixed[0], a_pts[0], color=color, marker="o", s=70, alpha=0.7)
-        ax2.scatter(lat_fixed[1], a_pts[1], color=color, marker="s", s=70, alpha=0.7)
-        ax2.scatter(lat_fixed[2], a_pts[2], color=color, marker="^", s=70, alpha=0.7)
+    # -------------------------------------------------------------
+    # Panel (b): End-to-End Latency vs Channel SNR
+    # -------------------------------------------------------------
+    ax2.plot(snrs, lat_8k, label=r"Fixed $8\,$kB Baseline ($671.2\,$ms)", color=C_8K,
+             linestyle="--", marker="^", markersize=6, alpha=0.85)
+    ax2.plot(snrs, lat_4k, label=r"Fixed $4\,$kB Baseline ($604.6\,$ms)", color=C_4K,
+             linestyle="--", marker="s", markersize=6, alpha=0.85)
+    ax2.plot(snrs, lat_blind, label=r"Channel-Blind Policy ($604.6\,$ms)", color=C_EXP14,
+             linestyle="-.", marker="x", markersize=6, alpha=0.85)
+    ax2.plot(snrs, lat_2k, label=r"Fixed $2\,$kB Baseline ($583.2\,$ms)", color=C_2K,
+             linestyle="--", marker="o", markersize=6, alpha=0.85)
+    ax2.plot(snrs, lat_tgcn, label="Proposed EcoSem-VQA (CART-Net)", color=C_TGCN,
+             linestyle="-", marker="D", markersize=6.5, linewidth=2.5, zorder=5)
 
-        ax2.scatter(t_tgcn, a_tgcn, color=color, marker="*", s=230, edgecolors="black", linewidth=1.2, zorder=5)
+    # Shaded latency reduction region vs 8k
+    ax2.fill_between(snrs, lat_tgcn, lat_8k, color="#EDE7F6", alpha=0.55, label="Delay Reduction vs. 8k")
+    ax2.fill_between(snrs[:7], lat_tgcn[:7], lat_4k[:7], color="#E8F5E9", alpha=0.55, label="Delay Reduction vs. 4k")
 
-        if snr_k == "2.5":
-            ax2.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn + 6),
-                         arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
-                         fontsize=9.5, fontweight="bold", color=color)
-        elif snr_k == "10.0":
-            ax2.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn - 9),
-                         arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
-                         fontsize=9.5, fontweight="bold", color=color)
-        else:
-            ax2.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn - 7),
-                         arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
-                         fontsize=9.5, fontweight="bold", color=color)
+    # Regime division vertical markers
+    ax2.axvline(11.25, color="#888888", linestyle=":", linewidth=1.2)
+    ax2.axvline(17.5, color="#888888", linestyle=":", linewidth=1.2)
+    ax2.text(2.5, 686, "Phase I: LSR", ha="center", fontsize=8.5, fontweight="bold", color="#0D47A1")
+    ax2.text(14.0, 686, "Phase II: RMR", ha="center", fontsize=8.5, fontweight="bold", color="#E65100")
+    ax2.text(19.2, 686, "Phase III: HFBR", ha="center", fontsize=8.5, fontweight="bold", color="#4A148C")
 
-    ax2.set_title(r"(b) End-to-End Latency vs. VQA Strict Accuracy", pad=10, fontweight="bold")
-    ax2.set_xlabel(r"Mean End-to-End Processing & Transmission Latency $t_{\mathrm{e2e}}$ (ms)")
-    ax2.set_ylabel("End-to-End VQA Strict Accuracy (%)")
-    ax2.set_xlim(575, 685)
-    ax2.set_ylim(-3, 85)
-    ax2.legend(handles=[p_fixed, p_star], loc="lower right", framealpha=0.92, edgecolor="#cccccc")
+    # Annotations with arrows
+    ax2.annotate("Deep Token Pruning\n(567.8 ms, 43.8 tok)",
+                 xy=(-5.0, lat_tgcn[0]), xytext=(-4.5, 545),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+
+    ax2.annotate("-48.7 ms Delay Saving\n(622.5 ms vs. 671.2 ms)",
+                 xy=(20.0, lat_tgcn[9]), xytext=(12.5, 642),
+                 arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.3),
+                 bbox=dict(boxstyle="round,pad=0.3", fc="#FFEBEE", ec=C_TGCN, lw=1.0),
+                 fontsize=8.8, fontweight="bold", color=C_TGCN)
+
+    ax2.set_title(r"(b) Mean End-to-End Latency $t_{\mathrm{e2e}}$ (ms) vs. Channel SNR $\gamma$",
+                  pad=10, fontweight="bold")
+    ax2.set_xlabel(r"Channel Average Physical SNR $\gamma$ (dB)")
+    ax2.set_ylabel(r"Mean End-to-End Latency $t_{\mathrm{e2e}}$ (ms)")
+    ax2.set_xlim(-6, 21)
+    ax2.set_xticks(snrs)
+    ax2.set_ylim(535, 698)
+    ax2.legend(loc="center left", bbox_to_anchor=(0.02, 0.63), framealpha=0.92, edgecolor="#cccccc", fontsize=8.8)
 
     plt.tight_layout()
-    p_png = OUTPUT_DIR / "fig3_pareto_frontiers.png"
-    p_pdf = OUTPUT_DIR / "fig3_pareto_frontiers.pdf"
+    p_png = OUTPUT_DIR / "fig3_energy_latency_tradeoff.png"
+    p_pdf = OUTPUT_DIR / "fig3_energy_latency_tradeoff.pdf"
     fig.savefig(p_png)
     fig.savefig(p_pdf)
+    # Also save backwards-compatible names
+    fig.savefig(OUTPUT_DIR / "fig3_pareto_frontiers.png")
+    fig.savefig(OUTPUT_DIR / "fig3_pareto_frontiers.pdf")
     plt.close(fig)
     print(f"Saved Figure 3 to {p_png} and {p_pdf}")
 
