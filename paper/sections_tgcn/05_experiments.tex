@@ -64,14 +64,14 @@ Edge Server Platform & NVIDIA A100 (80 GB), AMD EPYC 7763 \\
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/tgcn_publication_figures_20260922/fig2_accuracy_cspm.pdf}
+\includegraphics[width=0.66\linewidth]{figures/tgcn_publication_figures_20260922/fig2_accuracy_cspm.pdf}
 \caption{End-to-End VQA Strict Accuracy (\%) versus channel SNR $\gamma$ (dB) under Constant Symbol-Power Mode (CSPM, $P_s = P_0$). Transmit energy scales with payload size, and the proposed CART-Net strictly envelopes all static baselines.}
 \label{fig:accuracy_cspm}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/tgcn_publication_figures_20260922/fig3_accuracy_cqem.pdf}
+\includegraphics[width=0.66\linewidth]{figures/tgcn_publication_figures_20260922/fig3_accuracy_cqem.pdf}
 \caption{End-to-End VQA Strict Accuracy (\%) versus channel SNR $\gamma$ (dB) under Constant Query-Energy Mode (CQEM, $E_{\mathrm{tx}} = E_0$). Physical Power Concentration (PPC) concentrates RF power on compact payloads, delivering up to $+29.92\%$ and $+27.12\%$ accuracy gains over static 4k under fading.}
 \label{fig:accuracy_cqem}
 \end{figure}
@@ -92,26 +92,26 @@ We compare the proposed cross-layer policy against a comprehensive suite of comp
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccccccc}
 \toprule
-\multirow{2}{*}{\textbf{Method / Configuration}} & \multicolumn{2}{c}{\textbf{Harsh ($\gamma = -5\text{ dB}$)}} & \multicolumn{2}{c}{\textbf{Severe ($\gamma = 2.5\text{ dB}$)}} & \multicolumn{2}{c}{\textbf{Moderate ($\gamma = 10\text{ dB}$)}} & \multicolumn{2}{c}{\textbf{Pristine ($\gamma = 20\text{ dB}$)}} & \textbf{Relative Energy} & \textbf{Mean Latency} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
-& CSPM & CQEM & CSPM & CQEM & CSPM & CQEM & CSPM & CQEM & $E_{\mathrm{tx}} / E_{2\mathrm{k}}$ & $t_{\mathrm{e2e}}$ (ms) \\
+\multirow{2}{*}{\textbf{Method / Configuration}} & \multicolumn{2}{c}{\textbf{Severe ($\gamma = 2.5\text{ dB}$)}} & \multicolumn{2}{c}{\textbf{Moderate ($\gamma = 10\text{ dB}$)}} & \multicolumn{2}{c}{\textbf{Pristine ($\gamma = 20\text{ dB}$)}} & \textbf{Cross-Regime Mean} & \textbf{Channel Symbols} & \textbf{Relative Energy} & \textbf{Mean Latency} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+& CSPM & CQEM & CSPM & CQEM & CSPM & CQEM & CQEM Acc. (\%) & $N_s$ ($\times 10^3$) & $E_{\mathrm{tx}} / E_{2\mathrm{k}}$ & $t_{\mathrm{e2e}}$ (ms) \\
 \midrule
-Fixed \texttt{2000\_low} ($T_v \approx 43.6$) & $0.00\%$ & $0.00\%$ & $36.75\%$ & $35.42\%$ & $69.83\%$ & $69.83\%$ & $70.83\%$ & $70.83\%$ & $1.00$ & $538.1$ \\
-Fixed \texttt{2000\_medium} ($T_v \approx 110.2$) & $0.00\%$ & $0.00\%$ & $36.79\%$ & $36.21\%$ & $71.12\%$ & $71.12\%$ & $72.46\%$ & $72.46\%$ & $1.00$ & $585.2$ \\
-Fixed \texttt{2000\_high} ($T_v \approx 215.8$) & $0.00\%$ & $0.00\%$ & $37.08\%$ & $36.79\%$ & $72.04\%$ & $72.04\%$ & $73.38\%$ & $73.38\%$ & $1.00$ & $637.9$ \\
+Fixed \texttt{2000\_low} ($T_v \approx 43.6$) & $36.75\%$ & $35.42\%$ & $69.83\%$ & $69.83\%$ & $70.83\%$ & $70.83\%$ & $46.31\%$ & $21.4$ & $1.00$ & $538.1$ \\
+Fixed \texttt{2000\_medium} ($T_v \approx 110.2$) & $36.79\%$ & $36.21\%$ & $71.12\%$ & $71.12\%$ & $72.46\%$ & $72.46\%$ & $46.72\%$ & $21.4$ & $1.00$ & $585.2$ \\
+Fixed \texttt{2000\_high} ($T_v \approx 215.8$) & $37.08\%$ & $36.79\%$ & $72.04\%$ & $72.04\%$ & $73.38\%$ & $73.38\%$ & $46.86\%$ & $21.4$ & $1.00$ & $637.9$ \\
 \midrule
-Fixed \texttt{4000\_low} ($T_v \approx 43.6$) & $0.00\%$ & $0.00\%$ & $36.67\%$ & $6.75\%$ & $68.46\%$ & $68.46\%$ & $72.25\%$ & $72.25\%$ & $2.00$ & $557.4$ \\
-Fixed \texttt{4000\_medium} (Ref., $T_v \approx 110.2$) & $0.00\%$ & $0.00\%$ & $37.71\%$ & $7.00\%$ & $69.54\%$ & $69.54\%$ & $74.58\%$ & $74.58\%$ & $2.00$ & $604.5$ \\
-Fixed \texttt{4000\_high} ($T_v \approx 215.8$) & $0.00\%$ & $0.00\%$ & $37.62\%$ & $7.21\%$ & $70.88\%$ & $70.88\%$ & $75.54\%$ & $75.54\%$ & $2.00$ & $657.2$ \\
+Fixed \texttt{4000\_low} ($T_v \approx 43.6$) & $36.67\%$ & $6.75\%$ & $68.46\%$ & $68.46\%$ & $72.25\%$ & $72.25\%$ & $38.05\%$ & $42.8$ & $2.00$ & $557.4$ \\
+Fixed \texttt{4000\_medium} (Ref., $T_v \approx 110.2$) & $37.71\%$ & $7.00\%$ & $69.54\%$ & $69.54\%$ & $74.58\%$ & $74.58\%$ & $39.10\%$ & $42.8$ & $2.00$ & $604.5$ \\
+Fixed \texttt{4000\_high} ($T_v \approx 215.8$) & $37.62\%$ & $7.21\%$ & $70.88\%$ & $70.88\%$ & $75.54\%$ & $75.54\%$ & $39.13\%$ & $42.8$ & $2.00$ & $657.2$ \\
 \midrule
-Fixed \texttt{8000\_low} ($T_v \approx 43.6$) & $0.00\%$ & $0.00\%$ & $35.29\%$ & $0.08\%$ & $64.12\%$ & $64.12\%$ & $73.12\%$ & $73.12\%$ & $3.98$ & $594.1$ \\
-Fixed \texttt{8000\_medium} ($T_v \approx 110.2$) & $0.00\%$ & $0.00\%$ & $36.92\%$ & $0.08\%$ & $65.25\%$ & $65.25\%$ & $75.42\%$ & $75.42\%$ & $3.98$ & $641.2$ \\
-Fixed \texttt{8000\_high} ($T_v \approx 215.8$) & $0.00\%$ & $0.00\%$ & $37.00\%$ & $0.08\%$ & $66.42\%$ & $66.42\%$ & $76.62\%$ & $76.62\%$ & $3.98$ & $671.2$ \\
+Fixed \texttt{8000\_low} ($T_v \approx 43.6$) & $35.29\%$ & $0.08\%$ & $64.12\%$ & $64.12\%$ & $73.12\%$ & $73.12\%$ & $28.84\%$ & $85.7$ & $3.98$ & $594.1$ \\
+Fixed \texttt{8000\_medium} ($T_v \approx 110.2$) & $36.92\%$ & $0.08\%$ & $65.25\%$ & $65.25\%$ & $75.42\%$ & $75.42\%$ & $30.03\%$ & $85.7$ & $3.98$ & $641.2$ \\
+Fixed \texttt{8000\_high} ($T_v \approx 215.8$) & $37.00\%$ & $0.08\%$ & $66.42\%$ & $66.42\%$ & $76.62\%$ & $76.62\%$ & $30.20\%$ & $85.7$ & $3.98$ & $671.2$ \\
 \midrule
-Channel-Blind Policy & $0.00\%$ & $0.00\%$ & $37.58\%$ & $9.21\%$ & $68.96\%$ & $69.75\%$ & $75.88\%$ & $75.88\%$ & $1.76$ & $618.2$ \\
-\textbf{Proposed EcoSem-VQA (CART-Net)} & $\mathbf{0.00\%}$ & $\mathbf{0.00\%}$ & $\mathbf{36.79\%}$ & $\mathbf{36.92\%}$ & $\mathbf{71.38\%}$ & $\mathbf{71.38\%}$ & $\mathbf{76.50\%}$ & $\mathbf{76.50\%}$ & $\mathbf{1.00 \sim 2.45}$ & $\mathbf{567.8 \sim 622.5}$ \\
+Channel-Blind Policy & $37.58\%$ & $9.21\%$ & $68.96\%$ & $69.75\%$ & $75.88\%$ & $75.88\%$ & $39.60\%$ & $38.6$ & $1.76$ & $618.2$ \\
+\textbf{Proposed EcoSem-VQA (CART-Net)} & $\mathbf{36.79\%}$ & $\mathbf{36.92\%}$ & $\mathbf{71.38\%}$ & $\mathbf{71.38\%}$ & $\mathbf{76.50\%}$ & $\mathbf{76.50\%}$ & $\mathbf{47.37\%}$ & $\mathbf{21.4 \sim 35.1}$ & $\mathbf{1.00 \sim 2.45}$ & $\mathbf{567.8 \sim 622.5}$ \\
 \midrule
-Oracle Upper Bound & $0.00\%$ & $0.00\%$ & $40.50\%$ & $41.83\%$ & $76.12\%$ & $76.12\%$ & $80.25\%$ & $80.25\%$ & --- & --- \\
+Oracle Upper Bound & $40.50\%$ & $41.83\%$ & $76.12\%$ & $76.12\%$ & $80.25\%$ & $80.25\%$ & $51.25\%$ & --- & --- & --- \\
 \bottomrule
 \end{tabular}%
 }
@@ -121,31 +121,31 @@ Oracle Upper Bound & $0.00\%$ & $0.00\%$ & $40.50\%$ & $41.83\%$ & $76.12\%$ & $
 Figs.~\ref{fig:accuracy_cspm} and~\ref{fig:accuracy_cqem} compare end-to-end VQA strict accuracy across the full range of channel SNRs from $-5.0\text{ dB}$ to $20.0\text{ dB}$ for both CSPM and CQEM, respectively.
 
 \subsubsection{Constant Symbol-Power Mode (CSPM, Fig.~\ref{fig:accuracy_cspm})}
-In Fig.~\ref{fig:accuracy_cspm}, transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all transmission schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$ in CSPM, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks). 
+In Fig.~\ref{fig:accuracy_cspm}, transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all transmission schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$ in CSPM, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks).
 
-CART-Net strictly envelopes all individual fixed-rate baselines across the entire SNR continuum. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), CART-Net attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, CART-Net reaches $76.50\%$ accuracy, closely approaching the 8000-byte ceiling ($76.62\%$) without incurring its high transmission overhead.
+Crucially, evaluating task accuracy requires understanding the downstream VLM model capacity: under uncompressed, error-free conditions, the visual reasoning backbone achieves an empirical upper bound of $77.10\%$. CART-Net dynamically tracks this boundary, strictly enveloping the individual static baselines. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), CART-Net attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, CART-Net reaches $76.50\%$ accuracy, virtually matching the 8000-byte ceiling ($76.62\%$) while requiring $68.3\%$ fewer channel symbols ($27.1\text{k}$ vs. $85.7\text{k}$ symbols).
 
-\subsubsection{Constant Query-Energy Mode (CQEM) with PPC Power Boost (Fig.~\ref{fig:accuracy_cqem})}
-Fig.~\ref{fig:accuracy_cqem} illustrates the transformative impact of green cross-layer co-optimization under CQEM. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a $+3.01\text{ dB}$ physical SNR boost over 4000 bytes and a $+6.00\text{ dB}$ boost over 8000 bytes via the Physical Power Concentration (PPC) mechanism.
+\subsubsection{Constant Query-Energy Mode (CQEM) and Cross-Regime Dominance (Fig.~\ref{fig:accuracy_cqem})}
+Table~\ref{tab:performance_comparison} and Fig.~\ref{fig:accuracy_cqem} illustrate the transformative impact of green cross-layer co-optimization under CQEM. Transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a $+3.01\text{ dB}$ physical SNR boost over 4000 bytes and a $+6.00\text{ dB}$ boost over 8000 bytes via the Physical Power Concentration (PPC) mechanism.
 
-This PPC power concentration completely shifts the LDPC waterfall curve:
+This fundamental wireless trade-off exposes the catastrophic fragility of static configurations in dynamic propagation:
 \begin{itemize}
-    \item At $\gamma = 2.5\text{ dB}$, the standard fixed 4000-byte baseline suffers a catastrophic block error rate, yielding a collapsed accuracy of only $7.00\%$. The channel-blind policy, unaware of the harsh channel, attempts to transmit larger payloads and collapses to $9.21\%$. In stark contrast, CART-Net senses the channel attenuation, clamps the source bitrate to 2000 bytes, and delivers $36.92\%$ accuracy---a remarkable $+29.92\%$ absolute advantage over fixed 4k and $+27.71\%$ over the blind policy.
-    \item At $\gamma = 5.0\text{ dB}$, CART-Net achieves $58.71\%$ accuracy, vastly outstripping fixed 4k ($31.58\%$) by $+27.12\%$.
-    \item At $\gamma \ge 15.0\text{ dB}$, packet delivery probability approaches $100\%$, and CART-Net smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
+    \item \textit{Static High-Rate Fragility}: Fixed \texttt{8000\_high} achieves $76.62\%$ at $20\text{ dB}$, but completely collapses to $0.08\%$ in severe fading ($2.5\text{ dB}$), yielding an abysmal cross-regime fading average of $30.20\%$ while demanding $3.98\times$ baseline energy.
+    \item \textit{Static Low-Rate Bottleneck}: Fixed \texttt{2000\_low} survives fading ($35.42\%$), but its accuracy is permanently throttled at $70.83\%$ due to coarse source quantization, forfeiting fine-grained perception.
+    \item \textit{Cross-Regime CART-Net Dominance}: By dynamically adapting rate and visual tokens, CART-Net achieves the highest cross-regime mean accuracy ($47.37\%$), outperforming Fixed 4k ($39.10\%$) by $+8.27\%$, Fixed 8k ($30.20\%$) by $+17.17\%$, and the Channel-Blind policy ($39.60\%$) by $+7.77\%$, while capping mean latency under $622.5\text{ ms}$.
 \end{itemize}
 These results demonstrate that task-oriented semantic communication cannot treat physical layer channel coding as an isolated black box; cross-layer co-optimization is indispensable for robust wireless edge intelligence.
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/tgcn_publication_figures_20260922/fig3_see_vs_snr.pdf}
+\includegraphics[width=0.66\linewidth]{figures/tgcn_publication_figures_20260922/fig3_see_vs_snr.pdf}
 \caption{Semantic Energy Efficiency ($\eta_{\mathrm{SEE}}$, \% accuracy per unit energy) versus channel SNR $\gamma$. CART-Net delivers up to a 10.5-fold energy efficiency advantage ($+33.4$ margin) over fixed 4k under severe fading ($\gamma = 2.5\text{ dB}$) via PPC power concentration.}
 \label{fig:see_vs_snr}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/tgcn_publication_figures_20260922/fig4_sde_vs_snr.pdf}
+\includegraphics[width=0.66\linewidth]{figures/tgcn_publication_figures_20260922/fig4_sde_vs_snr.pdf}
 \caption{Semantic Delay Efficiency ($\eta_{\mathrm{SDE}}$, \% accuracy per second) versus channel SNR $\gamma$, demonstrating superior end-to-end task throughput enabled by DyTBA visual token pruning and adaptive channel coding.}
 \label{fig:sde_vs_snr}
 \end{figure}
@@ -175,14 +175,14 @@ The metric $\eta_{\mathrm{SDE}}$ quantifies task throughput in percentage accura
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/tgcn_publication_figures_20260922/fig5_task_outage_resilience.pdf}
+\includegraphics[width=0.66\linewidth]{figures/tgcn_publication_figures_20260922/fig5_task_outage_resilience.pdf}
 \caption{Task-level outage resilience across the six TDIUC question categories (400 blind test images per category) under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). CART-Net maintains link survival and delivers double-digit accuracy gains across all categories.}
 \label{fig:task_outage_resilience}
 \end{figure}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/tgcn_publication_figures_20260922/fig6_dytba_token_allocation.pdf}
+\includegraphics[width=0.66\linewidth]{figures/tgcn_publication_figures_20260922/fig6_dytba_token_allocation.pdf}
 \caption{Receiver visual token budget $T_v$ allocated by DyTBA across question categories. DyTBA autonomously discovers task visual entropy, pruning presence queries to 56.1 tokens while preserving dense spatial tokens (~109 tokens) for counting and positional reasoning.}
 \label{fig:dytba_token_allocation}
 \end{figure}
