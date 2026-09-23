@@ -72,11 +72,11 @@ def plot_figure_1(f_scan: dict, f_eval: dict):
     ax1.plot(snrs, m1_2k, label=r"Fixed $2\,$kB Med ($N_s=21.4\,$k)", color=C_2K, linestyle="--", marker="o", markersize=5, linewidth=1.8)
     ax1.plot(snrs, m1_4k, label=r"Fixed $4\,$kB Med ($N_s=42.8\,$k)", color=C_4K, linestyle="-.", marker="s", markersize=5, linewidth=1.8)
     ax1.plot(snrs, m1_8k, label=r"Fixed $8\,$kB High ($N_s=85.2\,$k)", color=C_8K, linestyle=":", marker="^", markersize=5, linewidth=1.8)
-    ax1.plot(snrs, m1_exp14, label="EXP-014 Blind Joint", color=C_EXP14, linestyle="--", marker="x", markersize=6, linewidth=1.6)
-    ax1.plot(snrs, m1_tgcn, label="TGCN Adaptive (Ours)", color=C_TGCN, linestyle="-", marker="D", markersize=6, linewidth=2.4)
+    ax1.plot(snrs, m1_exp14, label="Channel-Blind Policy", color=C_EXP14, linestyle="--", marker="x", markersize=6, linewidth=1.6)
+    ax1.plot(snrs, m1_tgcn, label="Proposed EcoSem-VQA (CSPM)", color=C_TGCN, linestyle="-", marker="D", markersize=6, linewidth=2.4)
     ax1.axhline(77.12, color=C_BOUND, linestyle=":", linewidth=1.2, label=r"Error-Free Bound ($77.1\%$)")
 
-    ax1.set_title(r"(a) Mode 1: Constant Symbol Power ($P_s = P_0$)", pad=10, fontweight="bold")
+    ax1.set_title(r"(a) CSPM: Constant Symbol Power ($P_s = P_0$)", pad=10, fontweight="bold")
     ax1.set_xlabel(r"Channel Average SNR $\gamma$ (dB)")
     ax1.set_ylabel("End-to-End VQA Strict Accuracy (%)")
     ax1.set_xlim(-6, 21)
@@ -96,28 +96,28 @@ def plot_figure_1(f_scan: dict, f_eval: dict):
     ax2.plot(snrs, m2_2k, label=r"Fixed $2\,$kB Med ($\Delta\mathrm{SNR} = 0\,$dB)", color=C_2K, linestyle="--", marker="o", markersize=5, linewidth=1.8)
     ax2.plot(snrs, m2_4k, label=r"Fixed $4\,$kB Med ($\Delta\mathrm{SNR} = -3.01\,$dB)", color=C_4K, linestyle="-.", marker="s", markersize=5, linewidth=1.8)
     ax2.plot(snrs, m2_8k, label=r"Fixed $8\,$kB High ($\Delta\mathrm{SNR} = -6.00\,$dB)", color=C_8K, linestyle=":", marker="^", markersize=5, linewidth=1.8)
-    ax2.plot(snrs, m2_exp14, label="EXP-014 Blind Joint", color=C_EXP14, linestyle="--", marker="x", markersize=6, linewidth=1.6)
-    ax2.plot(snrs, m2_tgcn, label="TGCN Cross-Layer (EXP-015)", color=C_TGCN, linestyle="-", marker="D", markersize=6, linewidth=2.5)
+    ax2.plot(snrs, m2_exp14, label="Channel-Blind Policy", color=C_EXP14, linestyle="--", marker="x", markersize=6, linewidth=1.6)
+    ax2.plot(snrs, m2_tgcn, label="Proposed EcoSem-VQA (CQEM)", color=C_TGCN, linestyle="-", marker="D", markersize=6, linewidth=2.5)
     ax2.axhline(77.12, color=C_BOUND, linestyle=":", linewidth=1.2, label=r"Error-Free Bound ($77.1\%$)")
 
     # Shaded Gain Region
     ax2.fill_between(snrs, m2_4k, m2_tgcn, where=(np.array(m2_tgcn) > np.array(m2_4k)),
-                     color="#C8E6C9", alpha=0.45, label="Outage Protection Gain")
+                     color="#C8E6C9", alpha=0.45, label="PPC Outage Protection Gain")
 
     # Annotations on Panel (b)
-    ax2.annotate("+29.92% Gain\n(Survival Capping)",
+    ax2.annotate("+29.92% Gain\n(PPC Outage Capping)",
                  xy=(2.5, m2_tgcn[3]), xytext=(3.0, 18),
                  arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.5),
                  bbox=dict(boxstyle="round,pad=0.35", fc="#FFEBEE", ec=C_TGCN, lw=1.2),
                  fontsize=9.5, fontweight="bold", color=C_TGCN)
 
-    ax2.annotate("+27.12% Gain\n(Rate Adaptation)",
+    ax2.annotate("+27.12% Gain\n(Rate Migration)",
                  xy=(5.0, m2_tgcn[4]), xytext=(6.5, 42),
                  arrowprops=dict(arrowstyle="->", color=C_TGCN, lw=1.5),
                  bbox=dict(boxstyle="round,pad=0.35", fc="#FFEBEE", ec=C_TGCN, lw=1.2),
                  fontsize=9.5, fontweight="bold", color=C_TGCN)
 
-    ax2.set_title(r"(b) Mode 2: Constant Transmission Energy Budget ($E_{\mathrm{tx}} = E_0$)", pad=10, fontweight="bold")
+    ax2.set_title(r"(b) CQEM: Constant Query-Energy Budget ($E_{\mathrm{tx}} = E_0$)", pad=10, fontweight="bold")
     ax2.set_xlabel(r"Channel Average SNR $\gamma$ (dB)")
     ax2.set_xlim(-6, 21)
     ax2.set_xticks(snrs)
@@ -177,7 +177,7 @@ def plot_figure_2(f_eval: dict):
             bottom += counts[i]
 
     ax1.set_xlabel(r"Channel Physical SNR $\gamma$ (dB)", labelpad=8)
-    ax1.set_ylabel("Cross-Layer Action Allocation (%)", labelpad=8)
+    ax1.set_ylabel("CART-Net Action Allocation (%)", labelpad=8)
     ax1.set_xlim(-6.5, 21.5)
     ax1.set_ylim(0, 118)
     ax1.set_xticks(snrs)
@@ -185,9 +185,9 @@ def plot_figure_2(f_eval: dict):
     # Twin axis for mean tokens and symbols
     ax2 = ax1.twinx()
     ax2.plot(snrs, mean_tokens, color="#C62828", linestyle="-", marker="o", markersize=7,
-             linewidth=2.4, label=r"Mean Visual Tokens $\bar{T}_v$", zorder=10)
+             linewidth=2.4, label=r"DyTBA Mean Tokens $\bar{T}_v$", zorder=10)
     ax2.plot(snrs, mean_symbols, color="#1565C0", linestyle="--", marker="s", markersize=6,
-             linewidth=2.0, label=r"Mean Symbols $N_s$ ($\times 10^3$)", zorder=10)
+             linewidth=2.0, label=r"DigiSem Mean Symbols $N_s$ ($\times 10^3$)", zorder=10)
     ax2.set_ylabel(r"Visual Tokens / Complex Symbols ($\times 10^3$)", color="#333333", labelpad=8)
     ax2.set_ylim(30, 185)
     ax2.grid(False)
@@ -197,13 +197,13 @@ def plot_figure_2(f_eval: dict):
     ax1.plot([17.5, 17.5], [0, 100], color="#666666", linestyle=":", linewidth=1.5, zorder=4)
 
     # Non-overlapping Regime Banners
-    ax1.text(2.5, 104, "Regime I: Link Survival (γ ≤ 10 dB)\n100% 2 kB band, dynamic Tv tuning",
+    ax1.text(2.5, 104, "Phase I: LSR (γ ≤ 10 dB)\n100% 2 kB band (PPC activated)",
              ha="center", va="bottom", fontsize=8.8, fontweight="bold", color="#0D47A1",
              bbox=dict(boxstyle="square,pad=0.3", fc="#E3F2FD", ec="#90CAF9", lw=1))
-    ax1.text(14.0, 104, "Regime II: Rate Migration\n64%–93% to 4 kB band",
+    ax1.text(14.0, 104, "Phase II: RMR (12.5–15 dB)\n64%–93% to 4 kB band",
              ha="center", va="bottom", fontsize=8.8, fontweight="bold", color="#E65100",
              bbox=dict(boxstyle="square,pad=0.3", fc="#FFF3E0", ec="#FFE082", lw=1))
-    ax1.text(19.8, 104, "Regime III: High Burst\n23% to 8 kB High",
+    ax1.text(19.8, 104, "Phase III: HFBR (≥ 20 dB)\n23% to 8 kB High",
              ha="center", va="bottom", fontsize=8.8, fontweight="bold", color="#4A148C",
              bbox=dict(boxstyle="square,pad=0.3", fc="#F3E5F5", ec="#E1BEE7", lw=1))
 
@@ -211,7 +211,7 @@ def plot_figure_2(f_eval: dict):
     handles1, labels1 = ax1.get_legend_handles_labels()
     handles2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(handles1, labels1, loc="center left", bbox_to_anchor=(0.015, 0.52),
-               ncol=2, framealpha=0.94, edgecolor="#cccccc", title="Action Selection (Bitrate + Tokens)")
+               ncol=2, framealpha=0.94, edgecolor="#cccccc", title="Action Selection (Rate + DyTBA)")
     ax2.legend(handles2, labels2, loc="center left", bbox_to_anchor=(0.015, 0.32),
                framealpha=0.94, edgecolor="#cccccc")
 
@@ -267,15 +267,15 @@ def plot_figure_3(f_eval: dict):
 
         # Callout annotations with arrows
         if snr_k == "2.5":
-            ax1.annotate(f"TGCN ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.30, a_tgcn + 6),
+            ax1.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.30, a_tgcn + 6),
                          arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
                          fontsize=9.5, fontweight="bold", color=color)
         elif snr_k == "10.0":
-            ax1.annotate(f"TGCN ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.25, a_tgcn - 9),
+            ax1.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.25, a_tgcn - 9),
                          arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
                          fontsize=9.5, fontweight="bold", color=color)
         else:
-            ax1.annotate(f"TGCN ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.25, a_tgcn - 7),
+            ax1.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(e_tgcn, a_tgcn), xytext=(e_tgcn + 0.25, a_tgcn - 7),
                          arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
                          fontsize=9.5, fontweight="bold", color=color)
 
@@ -286,7 +286,7 @@ def plot_figure_3(f_eval: dict):
     ax1.set_ylim(-3, 85)
 
     p_fixed = ax1.scatter([], [], color="#555555", marker="o", s=70, label="Fixed Rates (2k, 4k, 8k)")
-    p_star = ax1.scatter([], [], color="#555555", marker="*", s=160, edgecolors="black", label="TGCN Cross-Layer (Ours)")
+    p_star = ax1.scatter([], [], color="#555555", marker="*", s=160, edgecolors="black", label="EcoSem-VQA (CART-Net)")
     ax1.legend(handles=[p_fixed, p_star], loc="lower right", framealpha=0.92, edgecolor="#cccccc")
 
     # Panel (b): End-to-End Latency vs Accuracy
@@ -307,15 +307,15 @@ def plot_figure_3(f_eval: dict):
         ax2.scatter(t_tgcn, a_tgcn, color=color, marker="*", s=230, edgecolors="black", linewidth=1.2, zorder=5)
 
         if snr_k == "2.5":
-            ax2.annotate(f"TGCN ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn + 6),
+            ax2.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn + 6),
                          arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
                          fontsize=9.5, fontweight="bold", color=color)
         elif snr_k == "10.0":
-            ax2.annotate(f"TGCN ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn - 9),
+            ax2.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn - 9),
                          arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
                          fontsize=9.5, fontweight="bold", color=color)
         else:
-            ax2.annotate(f"TGCN ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn - 7),
+            ax2.annotate(f"EcoSem-VQA ({snr_k} dB)", xy=(t_tgcn, a_tgcn), xytext=(t_tgcn + 10, a_tgcn - 7),
                          arrowprops=dict(arrowstyle="->", color=color, lw=1.2),
                          fontsize=9.5, fontweight="bold", color=color)
 
@@ -373,15 +373,15 @@ def plot_figure_4(f_tasks: dict):
 
     ax1.bar(x - 1.5 * w, acc_2k, w, label=r"Fixed $2\,$kB Low", color=C_2K, edgecolor="white", alpha=0.85)
     ax1.bar(x - 0.5 * w, acc_4k, w, label=r"Fixed $4\,$kB Med", color=C_4K, edgecolor="white", alpha=0.85)
-    ax1.bar(x + 0.5 * w, acc_exp14, w, label="EXP-014 Blind Joint", color=C_EXP14, edgecolor="white", alpha=0.85)
-    ax1.bar(x + 1.5 * w, acc_tgcn, w, label="TGCN Cross-Layer (Ours)", color=C_TGCN, edgecolor="black", linewidth=1.2)
+    ax1.bar(x + 0.5 * w, acc_exp14, w, label="Channel-Blind Policy", color=C_EXP14, edgecolor="white", alpha=0.85)
+    ax1.bar(x + 1.5 * w, acc_tgcn, w, label="Proposed EcoSem-VQA (CQEM)", color=C_TGCN, edgecolor="black", linewidth=1.2)
 
     for i in range(len(task_keys)):
         diff = acc_tgcn[i] - acc_4k[i]
         ax1.text(x[i] + 1.5 * w, acc_tgcn[i] + 1.2, f"+{diff:.1f}%", ha="center", va="bottom",
                  fontsize=8.5, fontweight="bold", color=C_TGCN)
 
-    ax1.set_title(r"(a) Channel Outage Robustness by Task ($\gamma = 5.0\,$dB, Mode 2)", pad=10, fontweight="bold")
+    ax1.set_title(r"(a) Channel Outage Robustness by Task ($\gamma = 5.0\,$dB, CQEM)", pad=10, fontweight="bold")
     ax1.set_ylabel("Strict Accuracy (%)")
     ax1.set_xticks(x)
     ax1.set_xticklabels(task_labels)
@@ -395,7 +395,7 @@ def plot_figure_4(f_tasks: dict):
 
     ax2.bar(x - 1.0 * w, tokens_2k, w, label=r"Fixed $2\,$kB Low ($T_v \approx 44$)", color=C_2K, alpha=0.7, edgecolor="white")
     ax2.bar(x, tokens_4k, w, label=r"Fixed $4\,$kB Med ($T_v \approx 110$)", color=C_4K, alpha=0.7, edgecolor="white")
-    ax2.bar(x + 1.0 * w, tokens_exp14, w, label="Learned Semantic Allocation", color="#FF8F00", edgecolor="black", linewidth=1.2)
+    ax2.bar(x + 1.0 * w, tokens_exp14, w, label="DyTBA Dynamic Budget", color="#FF8F00", edgecolor="black", linewidth=1.2)
 
     ax2.annotate("Selective Sparsification\n(56.1 tok → 95.5% Acc)",
                  xy=(5 + 1.0 * w, tokens_exp14[5]), xytext=(3.3, 75),
@@ -409,7 +409,7 @@ def plot_figure_4(f_tasks: dict):
                  bbox=dict(boxstyle="round,pad=0.35", fc="#E3F2FD", ec="#1976D2", lw=1.2),
                  fontsize=9, fontweight="bold", color="#1565C0")
 
-    ax2.set_title(r"(b) Receiver Visual Token Budget by Task Complexity", pad=10, fontweight="bold")
+    ax2.set_title(r"(b) DyTBA Visual Token Budget by Task Complexity", pad=10, fontweight="bold")
     ax2.set_ylabel(r"Allocated Visual Tokens $T_v$")
     ax2.set_xticks(x)
     ax2.set_xticklabels(task_labels)
