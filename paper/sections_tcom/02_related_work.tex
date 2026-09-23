@@ -1,0 +1,34 @@
+\section{Related Work}\label{sec:related}
+
+\subsection{Task-Oriented and Multimodal Semantic Communications}
+Semantic communication breaks through the Shannon paradigm of bit-level exact reproduction by transmitting only the semantic information essential for downstream task completion~\cite{qin2021semantic,gunduz2023beyond}. Deep joint source-channel coding (DeepJSCC) demonstrated that neural autoencoders achieve graceful degradation over fading channels, mitigating the cliff effect of separate source-channel coding (SSCC)~\cite{bourtsoulatze2019djscc,kurka2020deepjsccf}. In the text and speech domains, DeepSC~\cite{xie2021deepsc} and DeepSC-S~\cite{weng2021semantic} applied Transformer encoders to recover semantic meaning under severe channel fading.
+
+For multimodal tasks, semantic communication has recently expanded into Visual Question Answering (VQA). Xie \etal~\cite{xie2022mudeepscwcl,xie2021mudeepsc} proposed MU-DeepSC, employing cross-attention networks to extract and fuse correlated visual and textual features for edge VQA over Rayleigh channels. Liu \etal~\cite{liu2024gosg} developed goal-oriented scene-graph transmission, prioritizing bounding boxes and spatial relationships based on query relevance. Similarly, Chappuis \etal~\cite{chappuis2022promptrsvqa} explored symbolic prompt generation for remote sensing VQA.
+
+Despite their conceptual promise, existing multimodal semantic communication systems rely heavily on two simplifying assumptions:
+\begin{enumerate}
+    \item \emph{Continuous Analog Symbol Transmission}: Prior works predominantly transmit continuous latent feature vectors directly over AWGN or Rayleigh channels, assuming unquantized, analog physical layers. This precludes direct integration into standardized digital cellular and Wi-Fi architectures governed by discrete constellations (e.g., QPSK, 16-QAM) and block error-correction codes (e.g., LDPC, Polar codes).
+    \item \emph{Toy-Scale Answering Decoders}: Existing systems typically employ small, custom-trained attention networks (such as MCAN or 3-layer Transformers) with limited parameter capacity. In contrast, modern practical VQA tasks rely on foundational Vision--Language Models capable of complex zero-shot reasoning. Adapting semantic communication to real-world, billion-parameter VLMs remains fundamentally unaddressed.
+\end{enumerate}
+
+\subsection{Vision--Language Models and Visual Token Management}
+Recent breakthroughs in multimodal foundation models, such as LLaVA~\cite{liu2023llava} and the Qwen-VL family~\cite{wang2024qwen2vl,bai2025qwen25vl}, have unified vision and natural language processing through vision encoders (e.g., ViT) followed by large autoregressive language decoders. These models process visual inputs by dividing images into $14\times 14$ or $28\times 28$ patches, generating a 2D grid of visual tokens that are concatenated with textual query tokens.
+
+While foundational VLMs exhibit superior perceptual and reasoning accuracy, their computational cost is predominantly dominated by the self-attention layers within the language decoder, whose memory and computational complexity scale quadratically with the total token sequence length:
+\begin{equation}
+\mathcal{C}_{\mathrm{attn}} \propto \mathcal{O}\left((T_q + T_v)^2 \cdot d\right),
+\end{equation}
+where $T_q$ is the query token length, $T_v$ is the visual token sequence length, and $d$ is the hidden embedding dimension. When $T_v \gg T_q$, the visual tokens account for over $85\%$ of the total inference latency and GPU energy consumption~\cite{sabanovic2026inarvl}.
+
+Although image resizing and visual token pruning have been investigated in standalone computer vision literature to accelerate inference, their interaction with wireless channel conditions and transmission source bitrates has been overlooked. Specifically, how an edge receiver should dynamically scale its visual token budget in tandem with physical layer channel quality and transmitter source coding rates remains an open problem.
+
+\subsection{Green Communications and Cross-Layer Edge Computing}
+The energy consumption of mobile edge networks has become a central challenge in 6G green communications~\cite{zheng2024aerialee,auer2011howmuch}. Traditional cross-layer resource allocation frameworks coordinate physical layer parameters (such as transmit power, modulation and coding schemes (MCS), and bandwidth) to maximize throughput or spectral efficiency under physical constraints~\cite{cui2005energy}.
+
+In the era of edge artificial intelligence, edge optimization must jointly balance radio transmission energy with server-side computation energy~\cite{zhang2022task,sabanovic2026inarvl}. When an edge device operates under a strict battery or energy budget (such as an aerial UAV or battery-powered IoT node), the energy consumed to transmit each query is constrained by a finite quota:
+\begin{equation}
+E_{\mathrm{tx}} = P_s \cdot N_s \le E_0,
+\end{equation}
+where $P_s$ is the average energy per transmitted complex symbol and $N_s$ is the total number of channel symbols. Under this strict budget constraint, reducing the source bitrate (i.e., decreasing $N_s$) directly unlocks a physical layer power boost ($\Delta P_s > 0$), resulting in higher effective channel SNR $\gamma_{\mathrm{eff}}$ that provides physical-layer protection against severe fading.
+
+To the best of our knowledge, this work is the first to establish a unified, cross-layer semantic communication framework that co-optimizes the transmitter's neural source compression bitrate, physical LDPC blocklength, and the receiver's VLM visual token budget under realistic Rician fading channels, explicitly establishing the green Pareto efficiency frontier for multimodal edge intelligence.
