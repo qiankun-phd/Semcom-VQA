@@ -1,18 +1,18 @@
 \section{System Model and Problem Formulation}\label{sec:system}
 
 \subsection{System Overview}
-We consider a task-oriented wireless edge VQA architecture where a remote wireless edge transmitter (e.g., an aerial UAV or IoT vision sensor) captures an RGB image $I \in \mathbb{R}^{H \times W \times 3}$ and receives a user natural language query $q$. An edge server equipped with a parameter-efficient fine-tuned Vision--Language Model (VLM) executes multimodal reasoning to infer the ground-truth answer $A^*$. 
+We consider a task-oriented wireless edge VQA architecture, termed \textbf{EcoSem-VQA}, where a remote wireless edge transmitter (e.g., an aerial UAV or IoT vision sensor) captures an RGB image $I \in \mathbb{R}^{H \times W \times 3}$ and receives a user natural language query $q$. An edge server equipped with a parameter-efficient fine-tuned Vision--Language Model (VLM) executes multimodal reasoning to infer the ground-truth answer $A^*$. 
 
-To minimize energy consumption while guaranteeing task accuracy over an unreliable wireless link, the system dynamically co-optimizes the source transmission bitrate $B$ and the receiver visual token budget $T_v$ via a cross-layer policy network $\pi$. The overall pipeline comprises three core subsystems: neural variational source compression, a digital physical layer with LDPC channel coding over Rician fading, and an edge VLM with dynamic visual token budget allocation.
+To minimize energy consumption while guaranteeing task accuracy over an unreliable wireless link, the system dynamically co-optimizes the source transmission bitrate $B$ and the receiver visual token budget $T_v$ via a Channel-Aware Rate and Token Budgeting Network (\textbf{CART-Net}), denoted by $\pi$. The overall pipeline comprises three core subsystems: neural variational source compression, a digital physical layer (\textbf{DigiSem-PHY}) with LDPC channel coding over Rician fading, and an edge VLM equipped with a Dynamic Token Budget Allocator (\textbf{DyTBA}).
 
-\subsection{Neural Source Compression and Digital Channel Model}
+\subsection{Neural Source Compression and DigiSem-PHY Digital Channel Model}
 \subsubsection{Variational Source Compression}
 The transmitter employs a deep variational autoencoder with a scale hyperprior architecture~\cite{balle2018variational,begaint2020compressai}. The raw image $I$ is mapped to a latent semantic representation $\mathbf{y} = g_a(I; \boldsymbol{\theta}_a)$ via a convolutional analysis transform. To capture spatial dependencies, a hyper-analysis transform extracts hyper-latents $\mathbf{z} = h_a(\mathbf{y}; \boldsymbol{\phi}_a)$, which parameterize the conditional Gaussian entropy model $p(\mathbf{\tilde y} \mid \mathbf{\hat z}) \sim \mathcal{N}(\mathbf{0}, \boldsymbol{\sigma}^2)$ where $\boldsymbol{\sigma} = h_s(\mathbf{\hat z}; \boldsymbol{\phi}_s)$. 
 
 The quantized latents $\mathbf{\hat y} = \lfloor \mathbf{y} \rceil$ and hyper-latents $\mathbf{\hat z} = \lfloor \mathbf{z} \rceil$ are losslessly encoded into a discrete binary bitstream using an asymmetric numeral systems (ANS) entropy coder. By regulating entropy thresholds, the transmitter controls the total compressed payload size $B \in \mathcal{B} = \{2000, 4000, 8000\}$ bytes.
 
 \subsubsection{3GPP LDPC Channel Coding and Digital Modulation}
-Unlike prior analog JSCC literature, our physical layer strictly adheres to standardized digital transmission specifications. The binary bitstream of length $8B$ bits is partitioned into $N_{\mathrm{blocks}}$ codewords. Each block is appended with a 32-bit cyclic redundancy check (CRC-32) and encoded using a 3GPP 5G-compliant $\text{LDPC}(N_b, K_b)$ code, where the codeword length is $N_b = 1020$ bits, the information payload per block is $K_b = 512$ bits (including CRC), and the code rate is $R_c = 512/1020 \approx 0.502$.
+Unlike prior analog JSCC literature, our physical layer, designated \textbf{DigiSem-PHY}, strictly adheres to standardized digital transmission specifications. The binary bitstream of length $8B$ bits is partitioned into $N_{\mathrm{blocks}}$ codewords. Each block is appended with a 32-bit cyclic redundancy check (CRC-32) and encoded using a 3GPP 5G-compliant $\text{LDPC}(N_b, K_b)$ code, where the codeword length is $N_b = 1020$ bits, the information payload per block is $K_b = 512$ bits (including CRC), and the code rate is $R_c = 512/1020 \approx 0.502$.
 
 Each block of 480 payload bytes (3840 bits) maps into $\lceil 3840 / 480 \rceil = 8$ LDPC codeblocks. Hence, the total number of LDPC blocks required to transmit $B$ bytes is:
 \begin{equation}
@@ -46,10 +46,10 @@ At the receiver, log-likelihood ratios (LLRs) are computed from the channel obse
 \end{equation}
 If any block fails CRC verification, a packet outage occurs, and the image is dropped ($\hat{I} = \emptyset$). Otherwise, the bitstream is assembled and passed to the synthesis transform $g_s(\mathbf{\hat y}; \boldsymbol{\theta}_s)$ to reconstruct the RGB image $\hat{I}$.
 
-\subsection{Receiver VLM and Dynamic Visual Token Budgeting}
+\subsection{Receiver VLM and Dynamic Token Budget Allocator (DyTBA)}
 The edge server runs Qwen3-VL-4B-Instruct~\cite{wang2024qwen2vl,bai2025qwen25vl}, quantized to 4-bit NormalFloat (NF4) and adapted via parameter-efficient Low-Rank Adaptation (LoRA) on the query, key, value, and output projection layers of the language backbone.
 
-Before feeding the reconstructed image $\hat{I}$ into the Vision Transformer (ViT) encoder, the receiver dynamically resizes and tokenizes the image according to a prescribed visual token budget $T_v \in \mathcal{T} = \{\mathrm{low}, \mathrm{medium}, \mathrm{high}\}$:
+Before feeding the reconstructed image $\hat{I}$ into the Vision Transformer (ViT) encoder, the receiver employs a Dynamic Token Budget Allocator (\textbf{DyTBA}) to dynamically resize and tokenize the image according to a prescribed visual token budget $T_v \in \mathcal{T} = \{\mathrm{low}, \mathrm{medium}, \mathrm{high}\}$:
 \begin{itemize}
     \item \textbf{Low Budget} ($T_v \approx 43.6$ tokens): Downsamples the input resolution to an area of $50{,}176$ pixels, capturing global semantic layout with minimal compute.
     \item \textbf{Medium Budget} ($T_v \approx 110.2$ tokens): Scales the input to $100{,}352$ pixels, providing balanced spatial granularity.
@@ -61,18 +61,18 @@ The VLM autoregressively generates the predicted answer $\hat{A} = \mathrm{VLM}(
 \end{equation}
 
 \subsection{Energy and Latency Accounting Models}
-\subsubsection{Transmission Power and Energy Modes}
+\subsubsection{Transmission Power and Energy Modes: CSPM vs. CQEM}
 We consider two operational energy modes reflecting distinct real-world deployment constraints:
 \begin{itemize}
-    \item \textbf{Mode 1: Constant Transmission Power per Symbol ($P_s = P_0$)}: In grid-powered or macro-cell systems, the transmit power per symbol is held constant. The total RF transmission energy per query scales proportionally with the symbol count:
+    \item \textbf{Constant Symbol-Power Mode (CSPM)}: In grid-powered or macro-cell systems, the transmit power per symbol is held constant ($P_s = P_0$). The total RF transmission energy per query scales proportionally with the symbol count:
     \begin{equation}
-    E_{\mathrm{tx}}^{(1)}(B) = P_0 \cdot N_s(B).
+    E_{\mathrm{tx}}^{\mathrm{CSPM}}(B) = P_0 \cdot N_s(B).
     \end{equation}
-    \item \textbf{Mode 2: Constant Transmission Energy Budget per Query ($E_{\mathrm{tx}} = E_0$)}: In battery-constrained edge devices (e.g., UAVs with fixed per-frame transmission energy quotas), the total energy allocated to transmit an image query is clamped at a constant budget $E_0$. Consequently, the average transmit energy per symbol adjusts inversely with the symbol count:
+    \item \textbf{Constant Query-Energy Mode (CQEM)}: In battery-constrained edge devices (e.g., UAVs with fixed per-frame transmission energy quotas), the total energy allocated to transmit an image query is clamped at a constant budget $E_0$. Consequently, the average transmit energy per symbol adjusts inversely with the symbol count:
     \begin{equation}
     P_s(B) = \frac{E_0}{N_s(B)}.
     \end{equation}
-    Under Mode~2, selecting a more compact source bitrate $B_1 < B_2$ directly yields an effective SNR boost:
+    Under CQEM, selecting a more compact source bitrate $B_1 < B_2$ directly activates the \textbf{Physical Power Concentration (PPC)} mechanism, yielding an effective SNR boost:
     \begin{equation}\label{eq:snr_gain}
     \Delta \gamma_{\mathrm{eff}}(B_1, B_2) = 10 \log_{10}\left(\frac{N_s(B_2)}{N_s(B_1)}\right) \text{ dB}.
     \end{equation}
@@ -80,7 +80,7 @@ We consider two operational energy modes reflecting distinct real-world deployme
     \begin{equation}
     \Delta \gamma = 10 \log_{10}\left(\frac{42{,}840}{21{,}420}\right) = +3.01\text{ dB}
     \end{equation}
-    power advantage. Compressing from 8000 bytes ($N_s = 85{,}170$) to 2000 bytes yields a $+6.00\text{ dB}$ gain. In deep fading regimes, this $+3.01\sim+6.00\text{ dB}$ boost elevates the operating SNR past the LDPC waterfall threshold, shielding the link from packet erasure.
+    power advantage. Compressing from 8000 bytes ($N_s = 85{,}170$) to 2000 bytes yields a $+6.00\text{ dB}$ gain. In deep fading regimes, this $+3.01\sim+6.00\text{ dB}$ PPC boost elevates the operating SNR past the LDPC waterfall threshold, shielding the link from packet erasure.
 \end{itemize}
 
 \subsubsection{Edge Computation Energy}

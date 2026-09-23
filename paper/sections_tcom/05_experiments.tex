@@ -67,7 +67,7 @@ Fixed \texttt{8000\_medium} ($T_v \approx 110.2$) & $0.00\%$ & $0.00\%$ & $0.04\
 Fixed \texttt{8000\_high} ($T_v \approx 215.8$) & $0.00\%$ & $0.00\%$ & $0.04\%$ & $0.08\%$ & $66.42\%$ & $66.42\%$ & $76.62\%$ & $76.62\%$ & $3.98\times$ & $671.2$ \\
 \midrule
 Channel-Blind Policy (EXP-014) & $0.00\%$ & $0.00\%$ & $4.50\%$ & $9.21\%$ & $68.96\%$ & $69.75\%$ & $75.88\%$ & $75.88\%$ & $1.76\times$ & $618.2$ \\
-\textbf{Proposed Cross-Layer Policy} & $\mathbf{0.00\%}$ & $\mathbf{0.00\%}$ & $\mathbf{17.46\%}$ & $\mathbf{36.92\%}$ & $\mathbf{71.38\%}$ & $\mathbf{71.38\%}$ & $\mathbf{76.50\%}$ & $\mathbf{76.50\%}$ & $\mathbf{1.00\times \sim 2.45\times}$ & $\mathbf{585.2 \sim 622.8}$ \\
+\textbf{Proposed EcoSem-VQA (CART-Net)} & $\mathbf{0.00\%}$ & $\mathbf{0.00\%}$ & $\mathbf{17.46\%}$ & $\mathbf{36.92\%}$ & $\mathbf{71.38\%}$ & $\mathbf{71.38\%}$ & $\mathbf{76.50\%}$ & $\mathbf{76.50\%}$ & $\mathbf{1.00\times \sim 2.45\times}$ & $\mathbf{585.2 \sim 622.8}$ \\
 \midrule
 Oracle Upper Bound & $0.00\%$ & $0.00\%$ & $20.25\%$ & $41.83\%$ & $76.12\%$ & $76.12\%$ & $80.25\%$ & $80.25\%$ & --- & --- \\
 \bottomrule
@@ -76,21 +76,21 @@ Oracle Upper Bound & $0.00\%$ & $0.00\%$ & $20.25\%$ & $41.83\%$ & $76.12\%$ & $
 \end{table*}
 
 \subsection{Physical Layer Robustness and Outage Protection (Figure~\ref{fig:accuracy_vs_snr})}
-Fig.~\ref{fig:accuracy_vs_snr} compares end-to-end VQA strict accuracy across the full range of channel SNRs from $-5.0\text{ dB}$ to $20.0\text{ dB}$ for both Mode~1 and Mode~2.
+Fig.~\ref{fig:accuracy_vs_snr} compares end-to-end VQA strict accuracy across the full range of channel SNRs from $-5.0\text{ dB}$ to $20.0\text{ dB}$ for both CSPM (Mode~1) and CQEM (Mode~2).
 
-\subsubsection{Mode 1 (Constant Symbol Power \texorpdfstring{$P_s = P_0$}{Ps = P0})}
-In Fig.~\ref{fig:accuracy_vs_snr}(a), transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all transmission schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks). 
+\subsubsection{Constant Symbol-Power Mode (CSPM)}
+In Fig.~\ref{fig:accuracy_vs_snr}(a), transmit energy scales proportionally with payload length. In the deep fading regime ($\gamma \le 0\text{ dB}$), all transmission schemes experience low packet delivery ratios due to Shannon limit constraints. As SNR improves past $5.0\text{ dB}$ in CSPM, the 2000-byte configurations recover earliest due to shorter codeword spans ($42$ blocks vs. $84$ and $167$ blocks). 
 
-The proposed cross-layer policy network strictly envelopes all individual fixed-rate baselines across the entire SNR continuum. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), our policy attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, our policy reaches $76.50\%$ accuracy, closely approaching the 8000-byte ceiling ($76.62\%$) without incurring its high transmission overhead.
+CART-Net strictly envelopes all individual fixed-rate baselines across the entire SNR continuum. At $\gamma = 10.0\text{ dB}$ (Table~\ref{tab:performance_comparison}), CART-Net attains $71.38\%$ accuracy, outperforming the standard \texttt{4000\_medium} reference ($69.54\%$) while transmitting half the payload. At $\gamma = 20.0\text{ dB}$, CART-Net reaches $76.50\%$ accuracy, closely approaching the 8000-byte ceiling ($76.62\%$) without incurring its high transmission overhead.
 
-\subsubsection{Mode 2 (Constant Query Energy Budget \texorpdfstring{$E_{\mathrm{tx}} = E_0$}{Etx = E0})}
-Fig.~\ref{fig:accuracy_vs_snr}(b) illustrates the transformative impact of green cross-layer co-optimization under a fixed query energy budget. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a \textbf{$+3.01\text{ dB}$ physical SNR boost over 4000 bytes} and a \textbf{$+6.00\text{ dB}$ boost over 8000 bytes}.
+\subsubsection{Constant Query-Energy Mode (CQEM) with PPC Power Boost}
+Fig.~\ref{fig:accuracy_vs_snr}(b) illustrates the transformative impact of green cross-layer co-optimization under CQEM. Because energy is fixed per query, transmitting a compact 2000-byte payload concentrates RF energy over fewer symbols ($N_s = 21{,}420$), unlocking a \textbf{$+3.01\text{ dB}$ physical SNR boost over 4000 bytes} and a \textbf{$+6.00\text{ dB}$ boost over 8000 bytes} via the Physical Power Concentration (PPC) mechanism.
 
-This power concentration completely shifts the LDPC waterfall curve:
+This PPC power concentration completely shifts the LDPC waterfall curve:
 \begin{itemize}
-    \item At $\gamma = 2.5\text{ dB}$, the standard fixed 4000-byte baseline suffers a catastrophic block error rate, yielding a collapsed accuracy of only \textbf{$7.00\%$}. The channel-blind policy (EXP-014), unaware of the harsh channel, attempts to transmit larger payloads and collapses to \textbf{$9.21\%$}. In stark contrast, our cross-layer policy senses the channel attenuation, clamps the source bitrate to 2000 bytes, and delivers \textbf{$36.92\%$ accuracy}---a remarkable \textbf{$+29.92\%$ absolute advantage over fixed 4k} and \textbf{$+27.71\%$ over the blind policy}.
-    \item At $\gamma = 5.0\text{ dB}$, our policy achieves \textbf{$58.71\%$ accuracy}, vastly outstripping fixed 4k ($31.58\%$) by \textbf{$+27.12\%$}.
-    \item At $\gamma \ge 15.0\text{ dB}$, packet delivery probability approaches $100\%$, and the policy smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
+    \item At $\gamma = 2.5\text{ dB}$, the standard fixed 4000-byte baseline suffers a catastrophic block error rate, yielding a collapsed accuracy of only \textbf{$7.00\%$}. The channel-blind policy (EXP-014), unaware of the harsh channel, attempts to transmit larger payloads and collapses to \textbf{$9.21\%$}. In stark contrast, CART-Net senses the channel attenuation, clamps the source bitrate to 2000 bytes, and delivers \textbf{$36.92\%$ accuracy}---a remarkable \textbf{$+29.92\%$ absolute advantage over fixed 4k} and \textbf{$+27.71\%$ over the blind policy}.
+    \item At $\gamma = 5.0\text{ dB}$, CART-Net achieves \textbf{$58.71\%$ accuracy}, vastly outstripping fixed 4k ($31.58\%$) by \textbf{$+27.12\%$}.
+    \item At $\gamma \ge 15.0\text{ dB}$, packet delivery probability approaches $100\%$, and CART-Net smoothly migrates queries into higher rate tiers, reaching $76.50\%$ at $20\text{ dB}$.
 \end{itemize}
 These results demonstrate that task-oriented semantic communication cannot treat physical layer channel coding as an isolated black box; cross-layer co-optimization is indispensable for robust wireless edge intelligence.
 
@@ -106,9 +106,9 @@ To validate the green computing efficiency of the proposed framework, Fig.~\ref{
 
 \subsubsection{RF Transmission Energy Efficiency (Fig.~\ref{fig:pareto_frontiers}(a))}
 \begin{itemize}
-    \item \textbf{Harsh Regime ($\gamma = 2.5\text{ dB}$)}: Fixed 4k and 8k configurations consume $2.00\times$ and $3.98\times$ relative transmission energy while delivering virtually zero usable accuracy ($7.00\%$ and $0.08\%$) due to packet loss. The proposed cross-layer policy operates at a normalized energy of $1.00\times$ while securing $36.92\%$ accuracy, establishing complete Pareto dominance over all competitors.
-    \item \textbf{Moderate Regime ($\gamma = 10.0\text{ dB}$)}: The proposed policy delivers $71.38\%$ accuracy at normalized energy $1.00\times$. In comparison, fixed 4000-byte transmission achieves $69.54\%$ accuracy while consuming twice the RF energy ($2.00\times$). Our policy \textbf{halves RF transmission energy while outperforming fixed 4k by $+1.84\%$ in accuracy}.
-    \item \textbf{Pristine Regime ($\gamma = 20.0\text{ dB}$)}: The policy strategically consumes $2.45\times$ normalized energy to attain $76.50\%$ accuracy, completely avoiding the wasteful $3.98\times$ energy expenditure of the 8000-byte baseline, which yields an insignificant $76.62\%$ accuracy.
+    \item \textbf{Harsh Regime ($\gamma = 2.5\text{ dB}$)}: Fixed 4k and 8k configurations consume $2.00\times$ and $3.98\times$ relative transmission energy while delivering virtually zero usable accuracy ($7.00\%$ and $0.08\%$) due to packet loss. CART-Net operates at a normalized energy of $1.00\times$ while securing $36.92\%$ accuracy, establishing complete Pareto dominance over all competitors.
+    \item \textbf{Moderate Regime ($\gamma = 10.0\text{ dB}$)}: CART-Net delivers $71.38\%$ accuracy at normalized energy $1.00\times$. In comparison, fixed 4000-byte transmission achieves $69.54\%$ accuracy while consuming twice the RF energy ($2.00\times$). EcoSem-VQA \textbf{halves RF transmission energy while outperforming fixed 4k by $+1.84\%$ in accuracy}.
+    \item \textbf{Pristine Regime ($\gamma = 20.0\text{ dB}$)}: CART-Net strategically consumes $2.45\times$ normalized energy to attain $76.50\%$ accuracy, completely avoiding the wasteful $3.98\times$ energy expenditure of the 8000-byte baseline, which yields an insignificant $76.62\%$ accuracy.
 \end{itemize}
 
 \subsubsection{End-to-End Latency Trade-Off (Fig.~\ref{fig:pareto_frontiers}(b))}
@@ -123,7 +123,7 @@ As shown in Fig.~\ref{fig:pareto_frontiers}(b), the proposed policy defines the 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.98\linewidth]{figures/tgcn_publication_figures_20260922/fig4_semantic_task_breakdown.pdf}
-\caption{Semantic task-type analysis across the six TDIUC question categories (400 blind test images per category). (a) End-to-end VQA accuracy under harsh fading ($\gamma = 5.0\text{ dB}$, Mode 2). (b) Receiver visual token budget $T_v$ allocated by the cross-layer policy network compared to fixed baselines.}
+\caption{Semantic task-type analysis across the six TDIUC question categories (400 blind test images per category). (a) End-to-end VQA accuracy under harsh fading ($\gamma = 5.0\text{ dB}$, CQEM). (b) Receiver visual token budget $T_v$ allocated by DyTBA compared to fixed baselines.}
 \label{fig:task_breakdown}
 \end{figure*}
 
@@ -131,17 +131,17 @@ As shown in Fig.~\ref{fig:pareto_frontiers}(b), the proposed policy defines the 
 A core premise of task-oriented communication is that different semantic queries demand vastly different visual information densities. Fig.~\ref{fig:task_breakdown} dissects model performance and allocated visual token budgets across the six TDIUC question categories.
 
 \subsubsection{Asymmetric Visual Token Demands}
-Fig.~\ref{fig:task_breakdown}(b) reveals that the learned policy autonomously discovers the underlying semantic entropy of different VQA tasks:
+Fig.~\ref{fig:task_breakdown}(b) reveals that DyTBA autonomously discovers the underlying semantic entropy of different VQA tasks:
 \begin{itemize}
-    \item \textbf{Low-Entropy Query (``Object Presence'')}: Verifying whether an object exists in a scene is a coarse binary classification task. The cross-layer policy compresses the visual token budget to a mean of \textbf{$56.1$ tokens}---a \textbf{$49.2\%$ token reduction} compared to the standard 110-token baseline. Despite this aggressive pruning, the VLM achieves an exceptional \textbf{$95.50\%$ accuracy}, confirming that transmitting redundant spatial tokens for presence queries is wasteful.
-    \item \textbf{High-Entropy Spatial Queries (``Counting'' and ``Positional Reasoning'')}: In contrast, counting small objects and identifying positional relations (e.g., ``left of'', ``under'') require dense spatial geometry. The policy autonomously preserves \textbf{$108.4 \sim 108.9$ visual tokens}, safeguarding fine-grained spatial representations.
+    \item \textbf{Low-Entropy Query (``Object Presence'')}: Verifying whether an object exists in a scene is a coarse binary classification task. DyTBA compresses the visual token budget to a mean of \textbf{$56.1$ tokens}---a \textbf{$49.2\%$ token reduction} compared to the standard 110-token baseline. Despite this aggressive pruning, the VLM achieves an exceptional \textbf{$95.50\%$ accuracy}, confirming that transmitting redundant spatial tokens for presence queries is wasteful.
+    \item \textbf{High-Entropy Spatial Queries (``Counting'' and ``Positional Reasoning'')}: In contrast, counting small objects and identifying positional relations (e.g., ``left of'', ``under'') require dense spatial geometry. DyTBA autonomously preserves \textbf{$108.4 \sim 108.9$ visual tokens}, safeguarding fine-grained spatial representations.
     \item \textbf{Contextual Queries (``Color'', ``Scene Recognition'', ``Activity Recognition'')}: These queries require intermediate spatial contexts, receiving an average of $97.7 \sim 110.2$ visual tokens.
 \end{itemize}
 
 \subsubsection{Task-Level Outage Resilience under Harsh Fading (\texorpdfstring{$\gamma = 5.0\text{ dB}$}{gamma = 5.0 dB})}
-Fig.~\ref{fig:task_breakdown}(a) evaluates category-specific accuracy under harsh channel fading ($\gamma = 5.0\text{ dB}$, Mode 2). Due to severe block error rates, the fixed \texttt{4000\_medium} baseline suffers from a low packet delivery ratio ($40.5\%$), crashing across all six task categories. 
+Fig.~\ref{fig:task_breakdown}(a) evaluates category-specific accuracy under harsh channel fading ($\gamma = 5.0\text{ dB}$, CQEM). Due to severe block error rates, the fixed \texttt{4000\_medium} baseline suffers from a low packet delivery ratio ($40.5\%$), crashing across all six task categories. 
 
-The proposed cross-layer policy maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes while adaptively budgeting receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category:
+CART-Net maintains a $79.8\%$ packet delivery ratio by throttling payload to 2000 bytes (activating PPC) while DyTBA adaptively budgets receiver visual tokens, achieving dramatic double-digit accuracy gains across every single category:
 \begin{itemize}
     \item \textbf{Object Presence}: $74.25\%$ vs. $41.25\%$ (\textbf{$+33.00\%$ gain})
     \item \textbf{Scene Recognition}: $72.50\%$ vs. $34.75\%$ (\textbf{$+37.75\%$ gain})
@@ -150,4 +150,4 @@ The proposed cross-layer policy maintains a $79.8\%$ packet delivery ratio by th
     \item \textbf{Counting}: $43.25\%$ vs. $23.50\%$ (\textbf{$+19.75\%$ gain})
     \item \textbf{Positional Reasoning}: $42.50\%$ vs. $25.50\%$ (\textbf{$+17.00\%$ gain})
 \end{itemize}
-These empirical findings substantiate that cross-layer semantic adaptation successfully decouples task semantic requirements from physical channel outages, delivering unmatched resilience and green energy efficiency.
+These empirical findings substantiate that EcoSem-VQA successfully decouples task semantic requirements from physical channel outages, delivering unmatched resilience and green energy efficiency.
