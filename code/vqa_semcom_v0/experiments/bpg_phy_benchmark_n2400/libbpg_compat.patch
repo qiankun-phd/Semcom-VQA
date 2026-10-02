@@ -1,0 +1,8 @@
+--- a/bpgdec.c
++++ b/bpgdec.c
+@@ -1,3 +1,5 @@
++#include <string.h>
++#include <strings.h>
+ /*
+  * BPG decoder
+  *
