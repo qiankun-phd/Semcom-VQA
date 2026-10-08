@@ -1,0 +1,1 @@
+{"kind": "rule", "pol": "fixed2", "M": 4, "lam": 60.0, "seeds": 3, "parameters": 0, "slots": 21670, "candidates": 143827, "policy_ms_per_slot": 0.012109882048913449, "policy_us_per_candidate": 1.8245610629433584, "matching_ms_per_slot": 0.8770556224734687, "candidates_per_slot": 6.637148131056761}

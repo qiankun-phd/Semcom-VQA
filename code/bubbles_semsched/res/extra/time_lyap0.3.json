@@ -1,0 +1,1 @@
+{"kind": "rule", "pol": "lyap0.3", "M": 4, "lam": 60.0, "seeds": 3, "parameters": 0, "slots": 21387, "candidates": 99276, "policy_ms_per_slot": 0.5639151726749867, "policy_us_per_candidate": 121.48408273902999, "matching_ms_per_slot": 0.6327619350072354, "candidates_per_slot": 4.6418852573993545}

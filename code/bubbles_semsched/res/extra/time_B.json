@@ -1,0 +1,1 @@
+{"kind": "hppo", "pol": "mrl5k_B_M4_s0_best.pt", "M": 4, "lam": 60.0, "seeds": 3, "parameters": 5766, "slots": 22621, "candidates": 124138, "policy_ms_per_slot": 0.9350765146102864, "policy_us_per_candidate": 170.3939634680701, "matching_ms_per_slot": 0.8055900956191353, "candidates_per_slot": 5.48773263781442}

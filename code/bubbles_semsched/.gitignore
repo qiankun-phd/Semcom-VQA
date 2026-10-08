@@ -1,0 +1,7 @@
+# generated when the tools or the experiments are run
+repro/.tmp/
+repro/out*/
+repro/cache/
+res_repro/
+figs/out/*.png
+**/__pycache__/

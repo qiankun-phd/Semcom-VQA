@@ -1,0 +1,1 @@
+{"kind": "sppo", "pol": "sppoX_fast5_s0_final.pt", "M": 4, "lam": 60.0, "seeds": 3, "parameters": 3, "slots": 21421, "candidates": 101436, "policy_ms_per_slot": 0.8477756742449069, "policy_us_per_candidate": 179.0311400094656, "matching_ms_per_slot": 0.7249750891181598, "candidates_per_slot": 4.735353158115868}

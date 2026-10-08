@@ -1,0 +1,1 @@
+{"kind": "d3qn", "pol": "mrl5k_d3qn_M4_s0_best.pt", "M": 4, "lam": 60.0, "seeds": 3, "parameters": 7066, "slots": 22287, "candidates": 166081, "policy_ms_per_slot": 1.1798078777762833, "policy_us_per_candidate": 158.32261470005616, "matching_ms_per_slot": 1.0745478240678403, "candidates_per_slot": 7.451922645488401}

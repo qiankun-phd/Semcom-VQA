@@ -1,0 +1,1 @@
+{"kind": "td3", "pol": "mrl5k_td3_M4_s0_best.pt", "M": 4, "lam": 60.0, "seeds": 3, "parameters": 5766, "slots": 22397, "candidates": 164660, "policy_ms_per_slot": 1.1209900099567038, "policy_us_per_candidate": 152.47669897364443, "matching_ms_per_slot": 1.0720953733981982, "candidates_per_slot": 7.351877483591553}
