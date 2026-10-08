@@ -9,7 +9,7 @@
 
 ```bash
 # 0) 把本目录拷到服务器，按需改 env.sh（解释器、进程数）；只需要 numpy + torch（CPU 即可）
-# 1) 几分钟：按原样重算主表里的 4 个策略，与存档数值逐项比对
+# 1) 几分钟：按原样重算 6 个策略（测试流量 4 个、开发流量 2 个），与存档数值逐项比对
 PY=python3 PROCS=16 bash exp/90_check_reproduction.sh
 # 2) 一两个小时：把每一条命令都缩小规模执行一遍（2 组流量、1 个速率、训练 1 轮），只验证能跑通
 SMOKE=1 bash run_all.sh
@@ -86,15 +86,15 @@ python tools/replay_as_run.py && python tools/trace_figs.py && python tools/buil
 |---|---|---|
 | 生成脚本与运行记录逐条比较（`tools/check_equivalence.py`） | Mac（不运行仿真） | 199 条命令全部相同 |
 | 命令与结果文件元数据比对（`tools/build.py`） | Mac | 185 条一致，12 条的结果文件无可比元数据，2 条为重建 |
-| 全保真复现检查（`exp/90_check_reproduction.sh`，48 组测试流量，M=4、60 架次/h、无缓冲：drift-plus-penalty、网格搜索规则、提出的方法种子 0、H-PPO 种子 0） | AutoDL | 28 个数值与存档**完全相同**（最大绝对差 0），用时约 5.5 分钟 |
-| 全流程冒烟（`SMOKE=1 bash run_all.sh`） | 182 | 进行中：截至 10-08 23:00，三个训练脚本中前两个全部通过、第三个在跑，35 条命令完成、0 条失败；评估脚本尚未轮到 |
+| 全保真复现检查（`exp/90_check_reproduction.sh`，48 组流量，M=4、60 架次/h、无缓冲。测试流量：drift-plus-penalty、网格搜索规则、提出的方法种子 0、H-PPO 种子 0；开发流量：一条规则和早期两阶段协议的一个策略） | AutoDL | 42 个数值与存档**完全相同**（最大绝对差 0），用时约 10 分钟 |
+| 全流程冒烟（`SMOKE=1 bash run_all.sh`） | 182 | 199 条命令全部执行通过。首轮 198 条通过、1 条失败（`main_M4_48seeds`，重建的命令有误，见第七节）；修正后补跑通过，11 个脚本均报告全部完成。首轮用时约 2 小时 20 分 |
 
 ## 七、已知事项
 
 - **评估进程数不影响结果**，所以统一成 `PROCS`；**训练命令里的 rollout 进程数会影响随机数序列**，保持当时的数值不变。
 - **提出的方法有两组训练，各 5 个种子**：`sppoX_fast5_s*`（rollout 进程数 2，在 3090 上训）与 `sppoX_fast_s*`（rollout 进程数 4，在 182 上训）。协议、种子、超参、训练量都相同，但 rollout 进程数不同，随机数序列就不同，所以两组训出的参数不同——这**不能只归因于机器差异**（整理本包时才发现这一点）。两组都随包附带，都进了结果表。
 - **源码版本**：`src/` 是 3090 上的版本（与本地一致）。AutoDL 与 182 上当时的若干文件是较早版本，差别只是后来新增的、默认关闭的选项；`hppo_hold.py` 的差别是"token 档数不是 4 时观测特征越界"的修复，四档时行为不变。
-- **两条命令是重建的**：`mrl5k_B_M4_s0`（H-PPO 种子 0 的训练）和 `main_M4_48seeds`（开发流量 M=4 网格）当时是手敲的，这里按结果文件里存的配置重建，`MANIFEST.md` 里标为 rebuilt。
+- **两条命令是重建的**（`MANIFEST.md` 里标为 rebuilt），当时是手敲的、没有链脚本记录：`mrl5k_B_M4_s0`（H-PPO 种子 0 的训练）按种子 1–4 的记录命令重建；`main_M4_48seeds`（开发流量 M=4 网格）按有记录的同类命令（M=3、M=5）和结果文件里的元数据重建。后者第一版重建有误（把 5 个学出的策略写成了规则名），被冒烟测试查出；改正后它用的检查点由全保真复现检查确认（开发流量上两个单元与存档完全相同）。前者只核对了元数据，没有重训验证。
 - **语义侧未在本包内重跑**：`stageA/` 是原样归档，需要 GPU、VisDrone 数据、SwinJSCC 权重和 x265。当时的命令是
   `BUB_DATA=~/bub_work BUB_ROOT=~/bub_store BUB_WORKERS=8 BUB_HEVC_WORKERS=12 python colab_run_all_cell.py`，
   之后用 `build_sim_inputs.py` 汇总成 `sim_inputs.json`。

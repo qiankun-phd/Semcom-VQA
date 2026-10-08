@@ -134,6 +134,7 @@ def legend_top(ax, ncol=2, order=None):
 def save(f, name, out=None):
     out = out or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out')
     os.makedirs(out, exist_ok=True)
-    f.savefig(os.path.join(out, name + '.pdf')); f.savefig(os.path.join(out, name + '.png'))
+    f.savefig(os.path.join(out, name + '.pdf'), metadata={'CreationDate': None, 'ModDate': None})      # no time stamp: the same data give the same file
+    f.savefig(os.path.join(out, name + '.png'))
     plt.close(f)
     return os.path.join(out, name + '.pdf')

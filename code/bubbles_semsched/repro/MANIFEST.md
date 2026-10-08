@@ -59,7 +59,7 @@
 | `base48_d3qn_M4.json` | pass1 | `exp/30_dev_traffic.sh` | `run_base_eval.sh` | rented 3090 | checked | 表 |
 | `base48_rules_M4.json` | pass1 | `exp/30_dev_traffic.sh` | `run_base_eval.sh` | rented 3090 | checked | 表 |
 | `base48_td3_M4.json` | pass1 | `exp/30_dev_traffic.sh` | `run_base_eval.sh` | rented 3090 | checked | 表 |
-| `main_M4_48seeds.json` | main | `exp/30_dev_traffic.sh` | `(by hand; rebuilt from the metadata stored in the result)` | — | rebuilt | trade |
+| `main_M4_48seeds.json` | main | `exp/30_dev_traffic.sh` | `(by hand; rebuilt from the recorded sibling main_M5_48seeds and the metadata stored in the result)` | — | rebuilt | trade |
 | `main_hevc48.json` | pass1 | `exp/30_dev_traffic.sh` | `run_base_more.sh` | rented 3090 | checked | cap |
 | `raw48_B.json` | extra | `exp/30_dev_traffic.sh` | `run_extra.sh` | AutoDL | checked | 表 |
 | `raw48_d3qn.json` | extra | `exp/30_dev_traffic.sh` | `run_extra.sh` | AutoDL | checked | 表 |

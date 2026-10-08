@@ -10,7 +10,8 @@ REPRO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$REPRO/env.sh"
 SRC="$REPRO/src"
 [ -n "$SMOKE" ] && OUT="${OUT}_smoke"
-mkdir -p "$OUT/.failed" "$CACHE"
+FAILDIR="$OUT/.failed/$(basename "$0" .sh)"            # failure markers of THIS script (a command that later succeeds removes its marker)
+mkdir -p "$FAILDIR" "$CACHE"
 [ -e "$OUT/sim_inputs.json" ] || cp "$SRC/sim_inputs.json" "$OUT/"
 _PFX='^(BUB_|PPO_|SPPO_|OFF_|CAP_|STRAT_|EVAL_|VAL_|DG_|TD_|OMP_|MKL_)'
 
@@ -41,7 +42,7 @@ _one() {
   while [ "$1" != "--" ]; do envs+=("$1"); shift; done; shift
   local script=$1; shift; local args=("$@")
   if [ -s "$OUT/$out" ] && [ -z "$FORCE" ]; then echo "  skip  $out (already there)"; return 0; fi
-  if [ -z "$NODEPS" ] && ! _deps "${envs[@]}"; then touch "$OUT/.failed/$out"; return 1; fi
+  if [ -z "$NODEPS" ] && ! _deps "${envs[@]}"; then touch "$FAILDIR/$out"; return 1; fi
   if [ -n "$SMOKE" ]; then case "$script" in sppo_hold.py|hppo_hold.py|offpol_hold.py) args[${#args[@]}-1]=1 ;; esac; fi
   local t0=$(date +%s)
   ( cd "$OUT" || exit 1
@@ -51,8 +52,8 @@ _one() {
     [ -n "$SMOKE" ] && _smoke "$script"
     exec $PY "$SRC/$script" "${args[@]}" > "${out%.json}.log" 2>&1 )
   local rc=$?
-  if [ $rc -eq 0 ] && [ -s "$OUT/$out" ]; then rm -f "$OUT/.failed/$out"; echo "  done  $out  ($(( $(date +%s) - t0 )) s)"
-  else touch "$OUT/.failed/$out"; echo "  FAIL  $out (exit $rc) - see $OUT/${out%.json}.log"; fi
+  if [ $rc -eq 0 ] && [ -s "$OUT/$out" ]; then rm -f "$FAILDIR/$out"; echo "  done  $out  ($(( $(date +%s) - t0 )) s)"
+  else touch "$FAILDIR/$out"; echo "  FAIL  $out (exit $rc) - see $OUT/${out%.json}.log"; fi
   return $rc
 }
 
@@ -61,7 +62,7 @@ runbg() { while [ "$(jobs -rp | wc -l)" -ge "$JOBS" ]; do sleep 2; done; _one "$
 waitall() { wait; }
 report() {
   wait
-  local n; n=$(ls "$OUT/.failed" 2>/dev/null | wc -l | tr -d ' ')
-  if [ "$n" -gt 0 ]; then echo "$(basename "$0"): $n command(s) failed or are waiting for a checkpoint:"; ls "$OUT/.failed" | sed 's/^/    /'; exit 1; fi
+  local n; n=$(ls "$FAILDIR" 2>/dev/null | wc -l | tr -d ' ')
+  if [ "$n" -gt 0 ]; then echo "$(basename "$0"): $n command(s) failed or are waiting for a checkpoint:"; ls "$FAILDIR" | sed 's/^/    /'; exit 1; fi
   echo "$(basename "$0"): all commands done -> $OUT"
 }
